@@ -4,11 +4,12 @@
  * puts it into the initramfs together with a plan file).
  *
  * The plan has one "reps N" line, then one line per arm:
- *   <name> threads=T qd=Q size=S mode=nop|zc|bounce batch=0|1 coalesce=C
+ *   <name> threads=T qd=Q size=S mode=nop|zc|bounce|fixed batch=0|1 coalesce=C
  *          service_ns=N queues=own|one files=own|shared ms=M
  * qd is per thread; qd=0 is an idle window (no commands). coalesce is the
  * driver's debugfs value, usecs << 16 | count.
- * Every arm runs N times; repetition r starts at arm r mod (number of arms),
+ * mode=fixed registers each thread's buffers once (KDC_IOC_REGISTER) and submits
+ * KDC_SUBMIT_FIXED commands into them. Every arm runs N times; repetition r starts at arm r mod (number of arms),
  * so the arms are interleaved in time rather than run back to back.
  *
  * One window: open the files, map and fill the buffers, set the device knobs,
@@ -153,7 +154,7 @@ static bool host_mark(void)
 
 /* ---- arms ---- */
 
-enum mode { MODE_NOP, MODE_ZC, MODE_BOUNCE };
+enum mode { MODE_NOP, MODE_ZC, MODE_BOUNCE, MODE_FIXED };
 
 struct arm {
 	char name[48];
@@ -193,7 +194,8 @@ static int parse_arm(char *line, struct arm *a)
 		else if (!strcmp(tok, "batch"))
 			a->batch = atoi(eq);
 		else if (!strcmp(tok, "mode"))
-			a->mode = !strcmp(eq, "nop") ? MODE_NOP : !strcmp(eq, "bounce") ? MODE_BOUNCE : MODE_ZC;
+			a->mode = !strcmp(eq, "nop") ? MODE_NOP : !strcmp(eq, "bounce") ? MODE_BOUNCE :
+				  !strcmp(eq, "fixed") ? MODE_FIXED : MODE_ZC;
 		else if (!strcmp(tok, "queues"))
 			a->one_queue = !strcmp(eq, "one");
 		else if (!strcmp(tok, "files"))
@@ -225,6 +227,8 @@ struct worker {
 	const struct arm *arm;
 	int fd;
 	struct slot *slots;
+	uint8_t *region; /* mode=fixed: every slot's src and dst, registered */
+	unsigned buf_index;
 	pthread_t thread;
 	uint64_t deadline, t_end;
 	uint64_t done, bad;
@@ -258,7 +262,8 @@ static void submit_slot(struct worker *w, unsigned i, bool stage)
 		req.src = (uintptr_t)s->src;
 		req.dst = (uintptr_t)s->dst;
 		req.length = a->size;
-		req.flags = a->mode == MODE_BOUNCE ? KDC_SUBMIT_BOUNCE : KDC_SUBMIT_ZEROCOPY;
+		req.flags = a->mode == MODE_BOUNCE ? KDC_SUBMIT_BOUNCE :
+			    a->mode == MODE_FIXED ? KDC_SUBMIT_FIXED : KDC_SUBMIT_ZEROCOPY;
 	}
 	if (stage)
 		req.flags |= KDC_SUBMIT_BATCH;
@@ -477,10 +482,19 @@ static void run_arm(const struct arm *a, unsigned rep)
 		w->lat = malloc(w->cap * sizeof(*w->lat));
 		if (!w->slots || !w->lat)
 			die("malloc");
+		if (a->mode == MODE_FIXED && a->qd) {
+			struct kdc_buffer b = { .version = KDC_ABI_VERSION, .size = sizeof(b),
+						.length = 2 * span * a->qd };
+			w->region = map_buf(b.length);
+			b.addr = (uintptr_t)w->region;
+			if (ioctl(w->fd, KDC_IOC_REGISTER, &b))
+				die("register");
+			w->buf_index = b.index;
+		}
 		for (unsigned i = 0; i < a->qd && span; i++) {
 			struct slot *s = &w->slots[i];
-			s->src = map_buf(span);
-			s->dst = map_buf(span);
+			s->src = w->region ? w->region + 2 * i * span : map_buf(span);
+			s->dst = w->region ? w->region + (2 * i + 1) * span : map_buf(span);
 			for (size_t b = 0; b < span; b++)
 				s->src[b] = (uint8_t)(b * 31 + i * 7 + t * 13 + rep);
 			s->crc = crc32c(s->src, a->size);
@@ -556,9 +570,18 @@ static void run_arm(const struct arm *a, unsigned rep)
 		if (accepted || attempt == MAX_TRIES)
 			break;
 	}
+	for (unsigned t = 0; t < nworkers; t++) { /* before any close: a shared file is closed once */
+		struct worker *w = &workers[t];
+		struct kdc_buffer b = { .version = KDC_ABI_VERSION, .size = sizeof(b),
+					.index = w->buf_index };
+		if (w->region && ioctl(w->fd, KDC_IOC_UNREGISTER, &b))
+			die("unregister");
+	}
 	for (unsigned t = 0; t < nworkers; t++) {
 		struct worker *w = &workers[t];
-		for (unsigned i = 0; i < a->qd && span; i++) {
+		if (w->region)
+			munmap(w->region, 2 * span * a->qd);
+		for (unsigned i = 0; i < a->qd && span && !w->region; i++) {
 			munmap(w->slots[i].src, span);
 			munmap(w->slots[i].dst, span);
 		}

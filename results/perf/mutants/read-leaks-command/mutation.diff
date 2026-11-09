@@ -1,0 +1,9 @@
+--- kdc_fops.c
+-		ctx->nr_live--;
+		spin_unlock(&ctx->lock);
+		kdc_cmd_free(cmd);
+		n++;
++		ctx->nr_live--;
+		spin_unlock(&ctx->lock);
+		/* deliberate bug: the consumed command is never freed */
+		n++;

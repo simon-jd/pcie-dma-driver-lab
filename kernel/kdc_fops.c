@@ -35,7 +35,7 @@ void kdc_cmd_publish(struct kdc_cmd *cmd, int status)
 	spin_lock(&ctx->lock);
 	cmd->status = status;
 	ctx->bytes -= cmd->quota_bytes;
-	ctx->pinned_pages -= cmd->src_npages + cmd->dst_npages;
+	ctx->pinned_pages -= kdc_cmd_pinned(cmd);
 	ctx->nr_inflight--;
 	WRITE_ONCE(cmd->phase, KDC_DONE);
 	list_add_tail(&cmd->node, &ctx->done);
@@ -159,6 +159,7 @@ static int kdc_release(struct inode *inode, struct file *file)
 	struct kdc_dev *kdev = ctx->kdev;
 	struct kdc_cmd *cmd, *tmp;
 	LIST_HEAD(release);
+	unsigned int i;
 
 	/*
 	 * files_mutex excludes remove's teardown until the commands taken off
@@ -181,6 +182,13 @@ static int kdc_release(struct inode *inode, struct file *file)
 		kdc_cmd_free(cmd);
 	}
 	mutex_lock(&kdev->files_mutex);
+	/*
+	 * No command is left, so no command holds a registered buffer. Under
+	 * files_mutex: remove() unmaps them from a departing device itself.
+	 */
+	for (i = 0; i < KDC_MAX_FIXED_BUFS; i++)
+		if (ctx->bufs[i])
+			kdc_regbuf_destroy(kdev, ctx->bufs[i]);
 	list_del(&ctx->dev_node);
 	mutex_unlock(&kdev->files_mutex);
 	atomic64_dec(&kdev->open_files);
@@ -189,9 +197,120 @@ static int kdc_release(struct inode *inode, struct file *file)
 	return 0;
 }
 
+/* The registered buffer of this file that holds [addr, addr + len), or NULL. */
+static struct kdc_regbuf *kdc_find_buf(struct kdc_ctx *ctx, u64 addr, u32 len)
+{
+	unsigned int i;
+
+	lockdep_assert_held(&ctx->lock);
+	for (i = 0; i < KDC_MAX_FIXED_BUFS; i++) {
+		struct kdc_regbuf *b = ctx->bufs[i];
+
+		if (b && addr >= b->uaddr && addr - b->uaddr + len <= b->len)
+			return b;
+	}
+	return NULL;
+}
+
+/* A free index for [addr, addr + len) in this file: -EEXIST if it overlaps a buffer, -ENOSPC. */
+static int kdc_buf_slot(struct kdc_ctx *ctx, u64 addr, u64 len, unsigned int *slot)
+{
+	unsigned int i;
+	int err = -ENOSPC;
+
+	lockdep_assert_held(&ctx->lock);
+	for (i = 0; i < KDC_MAX_FIXED_BUFS; i++) {
+		struct kdc_regbuf *o = ctx->bufs[i];
+
+		if (o && addr < o->uaddr + o->len && o->uaddr < addr + len)
+			return -EEXIST;
+		if (!o && err) {
+			*slot = i;
+			err = 0;
+		}
+	}
+	return err;
+}
+
+static long kdc_ioctl_register(struct kdc_ctx *ctx, void __user *arg)
+{
+	struct kdc_dev *kdev = ctx->kdev;
+	struct kdc_regbuf *b;
+	struct kdc_buffer kb;
+	unsigned int slot;
+	int err;
+
+	if (copy_from_user(&kb, arg, sizeof(kb)))
+		return -EFAULT;
+	err = kdc_buffer_check(&kb);
+	if (err)
+		return err;
+	/* Cheap early rejection; repeated authoritatively below. */
+	spin_lock(&ctx->lock);
+	err = kdc_buf_slot(ctx, kb.addr, kb.length, &slot);
+	spin_unlock(&ctx->lock);
+	if (err)
+		return err;
+	b = kdc_regbuf_create(kdev, kb.addr, kb.length, &err);
+	if (!b)
+		return err;
+	spin_lock(&ctx->lock);
+	err = kdc_buf_slot(ctx, kb.addr, kb.length, &slot);
+	if (!err) {
+		ctx->bufs[slot] = b;
+		ctx->pinned_pages += b->npages;
+	}
+	spin_unlock(&ctx->lock);
+	if (err) {
+		mutex_lock(&kdev->files_mutex);
+		kdc_regbuf_destroy(kdev, b);
+		mutex_unlock(&kdev->files_mutex);
+		return err;
+	}
+	kb.index = slot;
+	if (copy_to_user(arg, &kb, sizeof(kb))) {
+		/* the buffer stays registered; close() or KDC_IOC_UNREGISTER frees it */
+		return -EFAULT;
+	}
+	return 0;
+}
+
+static long kdc_ioctl_unregister(struct kdc_ctx *ctx, void __user *arg)
+{
+	struct kdc_dev *kdev = ctx->kdev;
+	struct kdc_regbuf *b;
+	struct kdc_buffer kb;
+
+	if (copy_from_user(&kb, arg, sizeof(kb)))
+		return -EFAULT;
+	if (kb.version != KDC_ABI_VERSION)
+		return -EPROTO;
+	if (kb.size != sizeof(kb) || kb.reserved || kb.reserved2[0] || kb.reserved2[1])
+		return -EINVAL;
+	spin_lock(&ctx->lock);
+	b = kb.index < KDC_MAX_FIXED_BUFS ? ctx->bufs[kb.index] : NULL;
+	/* Submits take references under ctx->lock, so none can appear after this. */
+	if (b && atomic_read(&b->users)) {
+		spin_unlock(&ctx->lock);
+		return -EBUSY;
+	}
+	if (b) {
+		ctx->bufs[kb.index] = NULL;
+		ctx->pinned_pages -= b->npages;
+	}
+	spin_unlock(&ctx->lock);
+	if (!b)
+		return -ENOENT;
+	mutex_lock(&kdev->files_mutex);
+	kdc_regbuf_destroy(kdev, b);
+	mutex_unlock(&kdev->files_mutex);
+	return 0;
+}
+
 static long kdc_ioctl_submit(struct kdc_ctx *ctx, void __user *arg)
 {
 	struct kdc_dev *kdev = ctx->kdev;
+	struct kdc_regbuf *src_buf = NULL, *dst_buf = NULL;
 	struct kdc_submit s;
 	struct kdc_queue *q;
 	struct kdc_cmd *cmd;
@@ -209,11 +328,22 @@ static long kdc_ioctl_submit(struct kdc_ctx *ctx, void __user *arg)
 	      kdc_quota(ctx->nr_live, ctx->bytes, 2ull * s.length);
 	if (!err && kdc_find(ctx, s.id, NULL))
 		err = -EEXIST;
+	if (!err && (s.flags & KDC_SUBMIT_FIXED)) {
+		src_buf = kdc_find_buf(ctx, s.src, s.length);
+		dst_buf = kdc_find_buf(ctx, s.dst, s.length);
+		if (src_buf && dst_buf) {
+			/* held until kdc_cmd_release(); unregister refuses meanwhile */
+			atomic_inc(&src_buf->users);
+			atomic_inc(&dst_buf->users);
+		} else {
+			err = -EINVAL;
+		}
+	}
 	spin_unlock(&ctx->lock);
 	if (err)
 		return err;
 
-	cmd = kdc_cmd_prepare(kdev, &s, &err);
+	cmd = kdc_cmd_prepare(kdev, &s, src_buf, dst_buf, &err);
 	if (!cmd)
 		return err;
 	q = &kdev->queues[s.queue == KDC_QUEUE_AUTO ?
@@ -240,7 +370,7 @@ static long kdc_ioctl_submit(struct kdc_ctx *ctx, void __user *arg)
 	ctx->nr_live++;
 	ctx->nr_inflight++;
 	ctx->bytes += cmd->quota_bytes;
-	ctx->pinned_pages += cmd->src_npages + cmd->dst_npages;
+	ctx->pinned_pages += kdc_cmd_pinned(cmd);
 	atomic64_inc(&kdev->submitted);
 	if (s.flags & KDC_SUBMIT_BATCH) {
 		WRITE_ONCE(cmd->phase, KDC_STAGED);
@@ -429,6 +559,12 @@ static long kdc_ioctl(struct file *file, unsigned int command, unsigned long arg
 		break;
 	case KDC_IOC_STATS:
 		ret = kdc_ioctl_stats(ctx, uarg);
+		break;
+	case KDC_IOC_REGISTER:
+		ret = kdc_ioctl_register(ctx, uarg);
+		break;
+	case KDC_IOC_UNREGISTER:
+		ret = kdc_ioctl_unregister(ctx, uarg);
 		break;
 	default:
 		ret = -ENOTTY;

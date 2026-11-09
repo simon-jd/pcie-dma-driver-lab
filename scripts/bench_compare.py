@@ -14,7 +14,12 @@ Decision rule (fixed before the runs it judges):
     pairs must not fall below the lowest value the base build had in any pair.
 Writes compare-<new>-vs-<base>.md and .json into the run directory.
 
+With --pair NEW_ARM:BASE_ARM the new build's arm is compared with another arm
+of the base build (for example a new data path against the old one at the
+same size); --base and --new may then name the same build.
+
 Usage: bench_compare.py DIR --base NAME --new NAME [--target ARM,ARM,...] [--config NAME]
+                        [--pair NEW_ARM:BASE_ARM ...] [--tag TEXT]
 """
 import argparse
 import gzip
@@ -52,6 +57,8 @@ def main():
     p.add_argument("--new", required=True)
     p.add_argument("--target", default="", help="comma-separated arms the change is meant to improve")
     p.add_argument("--config", default="noiommu")
+    p.add_argument("--pair", action="append", default=[], help="NEW_ARM:BASE_ARM, compared instead of same-name arms")
+    p.add_argument("--tag", default="", help="suffix of the output file names")
     args = p.parse_args()
     windows = load(args.dir)
     base, new = per_boot(windows, args.config, args.base), per_boot(windows, args.config, args.new)
@@ -61,12 +68,18 @@ def main():
     nseq = [b["boot"] for b in boots if b["config"] == args.config and b["build"] == args.new]
     targets = [t for t in args.target.split(",") if t]
     rows, verdict = [], True
-    for arm in base:
-        if arm not in new or arm == "warmup":  # the plan's first arm only warms the guest up
+    pairs_wanted = [tuple(p.split(":")) for p in args.pair] or \
+        [(arm, arm) for arm in base if arm in new and arm != "warmup"]  # warmup only warms the guest up
+    for new_arm, base_arm in pairs_wanted:
+        if new_arm not in new or base_arm not in base:
             continue
-        bb = {b: (v, lat) for b, v, lat in base[arm]}
-        nb = {b: (v, lat) for b, v, lat in new[arm]}
-        pairs = [(bb[x], nb[y]) for x, y in zip(bseq, nseq) if x in bb and y in nb]
+        arm = new_arm if new_arm == base_arm else f"{new_arm} vs {base_arm}"
+        bb = {b: (v, lat) for b, v, lat in base[base_arm]}
+        nb = {b: (v, lat) for b, v, lat in new[new_arm]}
+        if args.base == args.new:  # two arms of one build: pair them within each boot
+            pairs = [(bb[x], nb[x]) for x in bseq if x in bb and x in nb]
+        else:
+            pairs = [(bb[x], nb[y]) for x, y in zip(bseq, nseq) if x in bb and y in nb]
         if not pairs:
             continue
         wins = sum(n[0] > b[0] for b, n in pairs)
@@ -78,18 +91,19 @@ def main():
                "ratio_median": statistics.median(ratios), "ratio_min": min(ratios), "ratio_max": max(ratios),
                "base_p50_us": statistics.median(b[1] for b, _ in pairs),
                "new_p50_us": statistics.median(n[1] for _, n in pairs),
-               "target": arm in targets}
+               "new_arm": new_arm, "base_arm": base_arm, "target": arm in targets or new_arm in targets}
         row["worse_beyond_spread"] = row["new_median"] < row["base_min"]
         row["target_ok"] = (len(pairs) >= 6 and wins >= len(pairs) - 1) if row["target"] else None
         if row["worse_beyond_spread"] or row["target_ok"] is False:
             verdict = False
         rows.append(row)
-    missing = [t for t in targets if t not in {r["arm"] for r in rows}]
+    missing = [t for t in targets if t not in {r["arm"] for r in rows} | {r["new_arm"] for r in rows}]
     if missing:
         verdict = False
     result = {"dir": str(args.dir), "config": args.config, "base": args.base, "new": args.new, "targets": targets,
               "missing_targets": missing, "keep": verdict, "arms": rows}
-    stem = f"compare-{args.new}-vs-{args.base}" + ("" if args.config == "noiommu" else f"-{args.config}")
+    stem = f"compare-{args.new}-vs-{args.base}" + ("" if args.config == "noiommu" else f"-{args.config}") + \
+        (f"-{args.tag}" if args.tag else "")
     (args.dir / f"{stem}.json").write_text(json.dumps(result, indent=2) + "\n")
     lines = [f"# {args.new} vs {args.base} ({args.config})", "",
              "Paired boots (same round). k cmds/s: median over pairs (min-max); ratio new/base: median (min-max). "

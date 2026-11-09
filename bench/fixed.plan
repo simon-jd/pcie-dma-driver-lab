@@ -1,0 +1,17 @@
+reps 1
+# Registered buffers against the per-command paths at the same size: run with
+# --configs noiommu,iommu-strict and, for a build whose client has no mode=fixed,
+# --skip-arms BUILD=fixed4k-qd1,fixed64k-qd1,fixed4k-qd32-batch,fixed64k-qd8-batch.
+warmup               mode=nop qd=1 ms=300
+zc4k-qd1             mode=zc size=4096 qd=1
+bounce4k-qd1         mode=bounce size=4096 qd=1
+fixed4k-qd1          mode=fixed size=4096 qd=1
+zc64k-qd1            mode=zc size=65536 qd=1
+bounce64k-qd1        mode=bounce size=65536 qd=1
+fixed64k-qd1         mode=fixed size=65536 qd=1
+zc4k-qd32-batch      mode=zc size=4096 qd=32 batch=1
+bounce4k-qd32-batch  mode=bounce size=4096 qd=32 batch=1
+fixed4k-qd32-batch   mode=fixed size=4096 qd=32 batch=1
+zc64k-qd8-batch      mode=zc size=65536 qd=8 batch=1
+bounce64k-qd8-batch  mode=bounce size=65536 qd=8 batch=1
+fixed64k-qd8-batch   mode=fixed size=65536 qd=8 batch=1

@@ -36,6 +36,7 @@ _Static_assert(sizeof(struct kdc_submit) == 80, "submit ABI");
 _Static_assert(sizeof(struct kdc_cancel) == 32, "cancel ABI");
 _Static_assert(sizeof(struct kdc_completion) == 40, "completion ABI");
 _Static_assert(sizeof(struct kdc_stats) == 320, "stats ABI");
+_Static_assert(sizeof(struct kdc_buffer) == 48, "buffer ABI");
 
 static int kmsg_out = -1;
 static void say(const char *fmt, ...) __attribute__((format(printf, 1, 2)));
@@ -641,6 +642,152 @@ static void data_integrity(void)
 	baseline(fd);
 	close(fd);
 	say("  data_integrity: %d copies verified (dst bytes, guard bytes, CRC32C)", cases);
+}
+
+static int reg_buf(int fd, void *addr, size_t len, unsigned *index)
+{
+	struct kdc_buffer b = { .version = KDC_ABI_VERSION, .size = sizeof(b),
+				.addr = (uintptr_t)addr, .length = len };
+	int r = ioctl(fd, KDC_IOC_REGISTER, &b);
+	if (!r && index)
+		*index = b.index;
+	return r;
+}
+
+static int unreg_buf(int fd, unsigned index)
+{
+	struct kdc_buffer b = { .version = KDC_ABI_VERSION, .size = sizeof(b), .index = index };
+	return ioctl(fd, KDC_IOC_UNREGISTER, &b);
+}
+
+static bool all_bytes(const uint8_t *p, size_t len, uint8_t v)
+{
+	for (size_t i = 0; i < len; i++)
+		if (p[i] != v)
+			return false;
+	return true;
+}
+
+/*
+ * Registered buffers: pinned and mapped once, then any number of fixed
+ * commands inside them. The register ABI; copies at the sizes and alignments
+ * of data_integrity (destination bytes, guard bytes on both sides, CRC32C);
+ * a buffer the device may still reach cannot be unregistered (EBUSY while a
+ * command is held by a stalled engine); the overlap rule covers fixed
+ * destinations; unregister and close() give back every page and mapping.
+ */
+static void fixed_buffers(void)
+{
+	enum { PAGES = 160 };
+	int fd = open_dev(0);
+	uint8_t *src = map_pages(PAGES), *dst = map_pages(PAGES), *other = map_pages(4);
+	struct globals g0 = globals();
+	unsigned si, di;
+	struct kdc_buffer b = { .version = 1, .size = sizeof(b), .addr = (uintptr_t)src,
+				.length = PAGE };
+
+	ERR(ioctl(fd, KDC_IOC_REGISTER, &b), EPROTO);
+	b.version = KDC_ABI_VERSION;
+	b.reserved = 1;
+	ERR(ioctl(fd, KDC_IOC_REGISTER, &b), EINVAL);
+	ERR(reg_buf(fd, src + 1, PAGE, NULL), EINVAL);
+	ERR(reg_buf(fd, src, PAGE + 1, NULL), EINVAL);
+	ERR(reg_buf(fd, src, 0, NULL), EINVAL);
+	ERR(reg_buf(fd, src, KDC_MAX_FIXED_BYTES + PAGE, NULL), EINVAL);
+	ERR(reg_buf(fd, (void *)0x1000, PAGE, NULL), EFAULT);
+	CHECK(reg_buf(fd, src, PAGES * PAGE, &si) == 0);
+	ERR(reg_buf(fd, src + PAGE, PAGE, NULL), EEXIST);
+	CHECK(reg_buf(fd, dst, PAGES * PAGE, &di) == 0 && di != si);
+	CHECK(stats(fd).pinned_pages == 2 * PAGES);
+	CHECK(globals().pinned == g0.pinned + 2 * PAGES && globals().mapped == g0.mapped + 2);
+	ERR(unreg_buf(fd, 7), ENOENT);
+	ERR(unreg_buf(fd, KDC_MAX_FIXED_BUFS), ENOENT);
+
+	struct kdc_submit s = req(fd, 1, other, other + 2 * PAGE, 64);
+	s.flags = KDC_SUBMIT_FIXED;
+	ERR(submit(fd, &s), EINVAL); /* not registered */
+	s = req(fd, 1, src + PAGES * PAGE - 32, dst, 64);
+	s.flags = KDC_SUBMIT_FIXED;
+	ERR(submit(fd, &s), EINVAL); /* runs past the end of its buffer */
+	s.flags = KDC_SUBMIT_FIXED | KDC_SUBMIT_ZEROCOPY;
+	ERR(submit(fd, &s), EINVAL);
+	/* registered pages take no other destination, from any path or file */
+	s = req(fd, 2, other, dst + 5 * PAGE, 64);
+	s.flags = KDC_SUBMIT_ZEROCOPY;
+	ERR(submit(fd, &s), EADDRINUSE);
+	s.flags = KDC_SUBMIT_BOUNCE;
+	ERR(submit(fd, &s), EADDRINUSE);
+	int fd2 = open_dev(0);
+	ERR(reg_buf(fd2, dst + 4 * PAGE, PAGE, NULL), EADDRINUSE);
+	close(fd2);
+	/* but they can be the source of any command */
+	s = req(fd, 3, dst + 5 * PAGE, other, 64);
+	s.flags = KDC_SUBMIT_ZEROCOPY;
+	CHECK(submit(fd, &s) == 0 && completion(fd).status == 0);
+
+	static const size_t sizes[] = { 1, 63, 64, 4095, 4096, 4097, 8197, 65536, 200003,
+					KDC_MAX_LENGTH };
+	static const size_t offs[][2] = { { 0, 0 }, { 1, 3 }, { 4095, 2048 }, { 64, 128 } };
+	unsigned id = 10, copies = 0;
+	for (unsigned i = 0; i < sizeof(sizes) / sizeof(sizes[0]); i++)
+		for (unsigned o = 0; o < 4; o++) {
+			size_t len = sizes[i], so = PAGE + offs[o][0], d0 = PAGE + offs[o][1];
+			fill_random(src + so, len, len * 7 + o);
+			memset(dst, 0xEE, PAGES * PAGE);
+			s = req(fd, ++id, src + so, dst + d0, (uint32_t)len);
+			s.flags = KDC_SUBMIT_FIXED;
+			s.crc_seed = i;
+			CHECK(submit(fd, &s) == 0);
+			struct kdc_completion c = completion(fd);
+			CHECK(c.id == id && c.status == 0 && c.length == len);
+			CHECK(!(c.flags & KDC_COMPL_BOUNCE));
+			CHECK(c.crc == crc32c(src + so, len, i));
+			CHECK(memcmp(dst + d0, src + so, len) == 0);
+			CHECK(all_bytes(dst, d0, 0xEE));
+			CHECK(all_bytes(dst + d0 + len, PAGES * PAGE - d0 - len, 0xEE));
+			copies++;
+		}
+	/* source and destination in the same registered buffer */
+	fill_random(src + PAGE, 5000, 3);
+	s = req(fd, 500, src + PAGE, src + 64 * PAGE + 7, 5000);
+	s.flags = KDC_SUBMIT_FIXED;
+	CHECK(submit(fd, &s) == 0);
+	CHECK(completion(fd).status == 0 && memcmp(src + 64 * PAGE + 7, src + PAGE, 5000) == 0);
+	CHECK(stats(fd).pinned_pages == 2 * PAGES); /* fixed commands pin nothing themselves */
+
+	/* while the device may reach a buffer, it stays registered */
+	knob(0, "fault", FAULT_STALL);
+	s = req(fd, 900, src + PAGE, dst + PAGE, 4096);
+	s.flags = KDC_SUBMIT_FIXED;
+	s.timeout_ms = HOLD_MS;
+	CHECK(submit(fd, &s) == 0);
+	for (int ms = 0; read_knob(0, "device_inflight") < 1 && ms < 5000; ms++)
+		sleep_ms(1);
+	CHECK(read_knob(0, "device_inflight") == 1);
+	ERR(unreg_buf(fd, di), EBUSY);
+	ERR(unreg_buf(fd, si), EBUSY);
+	/* the overlap rule holds for fixed destinations, against fixed and zero-copy */
+	s = req(fd, 901, src + 2 * PAGE, dst + PAGE + 100, 64);
+	s.flags = KDC_SUBMIT_FIXED;
+	ERR(submit(fd, &s), EADDRINUSE);
+	s = req(fd, 902, other, dst + PAGE + 200, 64);
+	s.flags = KDC_SUBMIT_ZEROCOPY;
+	ERR(submit(fd, &s), EADDRINUSE);
+	knob(0, "fault", 0);
+	struct kdc_completion c = completion(fd);
+	CHECK(c.id == 900 && c.status == 0 && memcmp(dst + PAGE, src + PAGE, 4096) == 0);
+	CHECK(unreg_buf(fd, si) == 0 && unreg_buf(fd, di) == 0);
+	ERR(unreg_buf(fd, si), ENOENT);
+	CHECK(globals().pinned == g0.pinned && globals().mapped == g0.mapped);
+	baseline(fd);
+	/* close() frees whatever is still registered */
+	CHECK(reg_buf(fd, src, 8 * PAGE, &si) == 0);
+	close(fd);
+	CHECK(globals().pinned == g0.pinned && globals().mapped == g0.mapped);
+	munmap(src, PAGES * PAGE);
+	munmap(dst, PAGES * PAGE);
+	munmap(other, 4 * PAGE);
+	say("  fixed_buffers: %u copies through registered buffers verified", copies);
 }
 
 static void nop_and_batch_read(void)
@@ -2237,11 +2384,17 @@ static void removal_under_load(const char *qom_id, bool surprise, unsigned *node
 	char request[96];
 
 	CHECK(dev >= 0 && r);
-	int idle = open_dev(dev), staged = open_dev(dev);
-	uint8_t *buf = map_pages(4);
+	int idle = open_dev(dev), staged = open_dev(dev), fixed = open_dev(dev);
+	uint8_t *buf = map_pages(4), *fbuf = map_pages(4);
 	struct kdc_submit s = req(staged, 1, buf, buf + 2 * PAGE, 100);
 	s.flags = KDC_SUBMIT_BATCH;
 	CHECK(submit(staged, &s) == 0);
+	/* a registered buffer with a fixed command staged: unmapped by the removal */
+	unsigned fi;
+	CHECK(reg_buf(fixed, fbuf, 4 * PAGE, &fi) == 0);
+	struct kdc_submit fs = req(fixed, 1, fbuf, fbuf + 2 * PAGE, 100);
+	fs.flags = KDC_SUBMIT_BATCH | KDC_SUBMIT_FIXED;
+	CHECK(submit(fixed, &fs) == 0);
 	knob(dev, "service_ns", 2000000);
 	for (int i = 0; i < THREADS; i++) {
 		r[i].fd = open_dev(dev);
@@ -2287,13 +2440,16 @@ static void removal_under_load(const char *qom_id, bool surprise, unsigned *node
 	CHECK(read(staged, &c, sizeof(c)) == sizeof(c) && c.status == -ENODEV);
 	ERR(read(staged, &c, sizeof(c)), ENODEV);
 	ERR(ioctl(idle, KDC_IOC_STATS, &(struct kdc_stats){ 0 }), ENODEV);
-	CHECK(close(staged) == 0 && close(idle) == 0);
+	CHECK(read(fixed, &c, sizeof(c)) == sizeof(c) && c.status == -ENODEV);
+	ERR(unreg_buf(fixed, fi), ENODEV);
+	CHECK(close(staged) == 0 && close(idle) == 0 && close(fixed) == 0);
+	munmap(fbuf, 4 * PAGE);
+	say("  %s: %u commands from %d threads, %u completed, %u ended with ENODEV, each once",
+	    surprise ? "removal_surprise" : "removal_orderly", submitted, THREADS, ok, nodev);
 	CHECK(nodev >= 1 && ok + nodev == submitted);
 	globals_idle();
 	free(r);
 	*nodev_out = nodev;
-	say("  %s: %u commands from %d threads, %u completed, %u ended with ENODEV, each once",
-	    surprise ? "removal_surprise" : "removal_orderly", submitted, THREADS, ok, nodev);
 }
 
 static void removal_orderly(void)
@@ -2324,6 +2480,7 @@ int main(void)
 		{ "cq_head_batching", cq_head_batching },
 		{ "abi_validation", abi_validation },
 		{ "data_integrity", data_integrity },
+		{ "fixed_buffers", fixed_buffers },
 		{ "nop_and_batch_read", nop_and_batch_read },
 		{ "queue_selection", queue_selection },
 		{ "batch_flush", batch_flush },

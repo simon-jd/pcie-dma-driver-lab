@@ -1,0 +1,21 @@
+{
+  "mutant": "overlap-check-off",
+  "file": "build/linux-6.12.41/drivers/misc/kdc/kdc_cmd.c",
+  "runs": [
+    {
+      "config": "tcg-iommu",
+      "failed": true,
+      "first_failed_assertion": null,
+      "allowed": [],
+      "evidence_required": [
+        "DMA-API: kdc \\S+: cacheline tracking EEXIST, overlapping mappings"
+      ],
+      "evidence_seen": [
+        "DMA-API: kdc \\S+: cacheline tracking EEXIST, overlapping mappings"
+      ],
+      "caught": true
+    }
+  ],
+  "caught": true,
+  "restored_build_ok": true
+}

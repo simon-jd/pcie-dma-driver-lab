@@ -1,0 +1,184 @@
+{
+  "utc": "2026-11-09T21:54:09+00:00",
+  "accel": "tcg",
+  "iommu": true,
+  "qemu": "release",
+  "kernel": "kasan",
+  "argv": [
+    "/home/postedism/Desktop/driver-firnware-runtime/A-kernel-device-contract-lab/.cache/build/qemu/qemu-system-x86_64",
+    "-machine",
+    "q35",
+    "-accel",
+    "tcg",
+    "-cpu",
+    "max",
+    "-m",
+    "2048",
+    "-smp",
+    "4",
+    "-nodefaults",
+    "-display",
+    "none",
+    "-serial",
+    "stdio",
+    "-monitor",
+    "none",
+    "-no-reboot",
+    "-nic",
+    "none",
+    "-device",
+    "intel-iommu",
+    "-device",
+    "pcie-root-port,id=rp0,bus=pcie.0,chassis=1,addr=0x2",
+    "-device",
+    "kdc-dma,id=kdc0,bus=rp0,queues=4",
+    "-device",
+    "pcie-root-port,id=rp1,bus=pcie.0,chassis=2,addr=0x3",
+    "-device",
+    "kdc-dma,id=kdc1,bus=rp1,queues=2",
+    "-qmp",
+    "unix:/tmp/kdc-run-hdhnbui7/qmp.sock,server=on,wait=off",
+    "-kernel",
+    "/home/postedism/Desktop/driver-firnware-runtime/A-kernel-device-contract-lab/build/kernel/arch/x86/boot/bzImage",
+    "-initrd",
+    "/home/postedism/Desktop/driver-firnware-runtime/A-kernel-device-contract-lab/build/initramfs.cpio.gz",
+    "-append",
+    "console=ttyS0 panic=-1 oops=panic panic_on_warn=1 nokaslr printk.devkmsg=on intel_iommu=on iommu.strict=1"
+  ],
+  "qemu_version": "QEMU emulator version 10.2.1",
+  "mutant": "release-before-reset",
+  "kernel_sha256": "0c88ff90b51395d37512c9ecf2d0831150e92c914d62035f976d60054bca5dc3",
+  "client_sha256": "db2cde4ee2e8b1685dcab85d082fee000c6c4bb1206b4ca666c172f26f9a2ee9",
+  "load_average": [
+    "2.81",
+    "5.70",
+    "5.64"
+  ],
+  "passed": false,
+  "host_actions": [],
+  "returncode": 0,
+  "seconds": 38.3,
+  "expectations": [
+    {
+      "tag": "timeout-abort",
+      "pattern": "timed out after",
+      "matched": 1
+    }
+  ],
+  "kmemleak_records": 0,
+  "kmemleak_driver_records": 0,
+  "cases": [
+    [
+      "device_info",
+      "5"
+    ],
+    [
+      "shadow_doorbell",
+      "12"
+    ],
+    [
+      "cq_head_batching",
+      "119"
+    ],
+    [
+      "abi_validation",
+      "76"
+    ],
+    [
+      "data_integrity",
+      "342"
+    ],
+    [
+      "fixed_buffers",
+      "169"
+    ],
+    [
+      "nop_and_batch_read",
+      "2"
+    ],
+    [
+      "queue_selection",
+      "9"
+    ],
+    [
+      "batch_flush",
+      "69"
+    ],
+    [
+      "coalescing",
+      "78"
+    ],
+    [
+      "pinned_page_not_recycled",
+      "592"
+    ],
+    [
+      "cancel_driver_owned",
+      "128"
+    ],
+    [
+      "cancel_device_owned",
+      "78"
+    ],
+    [
+      "cancel_race",
+      "1363"
+    ],
+    [
+      "close_with_inflight",
+      "224"
+    ],
+    [
+      "reset_semantics",
+      "31"
+    ],
+    [
+      "quotas",
+      "40"
+    ],
+    [
+      "file_isolation",
+      "3"
+    ],
+    [
+      "concurrency",
+      "336"
+    ],
+    [
+      "shared_file",
+      "131"
+    ],
+    [
+      "ring_overflow_all_queues",
+      "230"
+    ],
+    [
+      "second_device",
+      "6"
+    ],
+    [
+      "unbind_rebind",
+      "195"
+    ],
+    [
+      "timeout_abort",
+      "227"
+    ]
+  ],
+  "counts": [
+    "  shadow_doorbell: 4 commands behind a stalled engine, each fetched after its doorbell\r",
+    "  cq_head_batching: 16 head writes for 256 single commands; 256 with 63 in flight, batch 63\r",
+    "  data_integrity: 84 copies verified (dst bytes, guard bytes, CRC32C)\r",
+    "  fixed_buffers: 40 copies through registered buffers verified\r",
+    "  coalescing: batch of 8 in 1 interrupt, single command waited 52 ms\r",
+    "  cancel_race: 5 cancelled before the doorbell, 1260 aborted by the device, 235 completed first; 40 more aborted while held device-owned\r",
+    "  concurrency: 4 threads x 250 verified copies, own files\r",
+    "  timeout_abort: answered after 211 ms\r"
+  ],
+  "problems": [
+    "report: [   22.305982] kdc_test: FAIL timeout_reset:1665: wait_ready(fd, 10000) (errno=2 No such file or directory)",
+    "report: [   22.324809] kdc 0000:01:00.0: queue 0: completion for unknown cid 0x1000",
+    "report: [   37.243164] kdc_init: KDC_GUEST_FAILURE exit=1",
+    "expectation window left open: timeout-reset"
+  ]
+}

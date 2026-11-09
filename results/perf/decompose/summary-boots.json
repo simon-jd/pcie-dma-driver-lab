@@ -1,0 +1,194 @@
+{
+  "boots": [
+    {
+      "config": "noiommu",
+      "build": "o5",
+      "boot": 0,
+      "seconds": 18.6,
+      "windows": 14,
+      "rejected": 0,
+      "bench_exit": "0"
+    },
+    {
+      "config": "noioeventfd",
+      "build": "o5",
+      "boot": 1,
+      "seconds": 19.7,
+      "windows": 15,
+      "rejected": 1,
+      "bench_exit": "0"
+    },
+    {
+      "config": "noshadow",
+      "build": "o5",
+      "boot": 2,
+      "seconds": 25.0,
+      "windows": 20,
+      "rejected": 6,
+      "bench_exit": "0"
+    },
+    {
+      "config": "noiommu",
+      "build": "o5",
+      "boot": 3,
+      "seconds": 18.6,
+      "windows": 14,
+      "rejected": 0,
+      "bench_exit": "0"
+    },
+    {
+      "config": "noioeventfd",
+      "build": "o5",
+      "boot": 4,
+      "seconds": 19.7,
+      "windows": 15,
+      "rejected": 1,
+      "bench_exit": "0"
+    },
+    {
+      "config": "noshadow",
+      "build": "o5",
+      "boot": 5,
+      "seconds": 20.8,
+      "windows": 16,
+      "rejected": 2,
+      "bench_exit": "0"
+    },
+    {
+      "config": "noiommu",
+      "build": "o5",
+      "boot": 6,
+      "seconds": 18.6,
+      "windows": 14,
+      "rejected": 0,
+      "bench_exit": "0"
+    },
+    {
+      "config": "noioeventfd",
+      "build": "o5",
+      "boot": 7,
+      "seconds": 20.9,
+      "windows": 16,
+      "rejected": 2,
+      "bench_exit": "0"
+    },
+    {
+      "config": "noshadow",
+      "build": "o5",
+      "boot": 8,
+      "seconds": 18.4,
+      "windows": 14,
+      "rejected": 0,
+      "bench_exit": "0"
+    },
+    {
+      "config": "noiommu",
+      "build": "o5",
+      "boot": 9,
+      "seconds": 20.8,
+      "windows": 17,
+      "rejected": 3,
+      "bench_exit": "0"
+    },
+    {
+      "config": "noioeventfd",
+      "build": "o5",
+      "boot": 10,
+      "seconds": 18.5,
+      "windows": 14,
+      "rejected": 0,
+      "bench_exit": "0"
+    },
+    {
+      "config": "noshadow",
+      "build": "o5",
+      "boot": 11,
+      "seconds": 18.5,
+      "windows": 14,
+      "rejected": 0,
+      "bench_exit": "0"
+    },
+    {
+      "config": "noiommu",
+      "build": "o5",
+      "boot": 12,
+      "seconds": 22.3,
+      "windows": 17,
+      "rejected": 3,
+      "bench_exit": "0"
+    },
+    {
+      "config": "noioeventfd",
+      "build": "o5",
+      "boot": 13,
+      "seconds": 18.5,
+      "windows": 14,
+      "rejected": 0,
+      "bench_exit": "0"
+    },
+    {
+      "config": "noshadow",
+      "build": "o5",
+      "boot": 14,
+      "seconds": 19.7,
+      "windows": 15,
+      "rejected": 1,
+      "bench_exit": "0"
+    },
+    {
+      "config": "noiommu",
+      "build": "o5",
+      "boot": 15,
+      "seconds": 21.1,
+      "windows": 16,
+      "rejected": 2,
+      "bench_exit": "0"
+    },
+    {
+      "config": "noioeventfd",
+      "build": "o5",
+      "boot": 16,
+      "seconds": 18.5,
+      "windows": 14,
+      "rejected": 0,
+      "bench_exit": "0"
+    },
+    {
+      "config": "noshadow",
+      "build": "o5",
+      "boot": 17,
+      "seconds": 18.4,
+      "windows": 14,
+      "rejected": 0,
+      "bench_exit": "0"
+    },
+    {
+      "config": "noiommu",
+      "build": "o5",
+      "boot": 18,
+      "seconds": 18.6,
+      "windows": 14,
+      "rejected": 0,
+      "bench_exit": "0"
+    },
+    {
+      "config": "noioeventfd",
+      "build": "o5",
+      "boot": 19,
+      "seconds": 22.0,
+      "windows": 17,
+      "rejected": 3,
+      "bench_exit": "0"
+    },
+    {
+      "config": "noshadow",
+      "build": "o5",
+      "boot": 20,
+      "seconds": 20.9,
+      "windows": 16,
+      "rejected": 2,
+      "bench_exit": "0"
+    }
+  ],
+  "problems": []
+}

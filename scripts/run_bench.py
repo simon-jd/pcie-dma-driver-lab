@@ -62,6 +62,10 @@ CONFIGS = {
     "iommu-lazy": {"iommu": "lazy", "append": [], "device": ""},
     "notrack": {"iommu": None, "append": ["kdc.track_overlap=0"], "device": ""},
     "tablecrc": {"iommu": None, "append": [], "device": ",hw-crc=off"},
+    # shadow doorbells kept, but every doorbell is an MMIO exit to QEMU (no ioeventfd)
+    "noioeventfd": {"iommu": None, "append": [], "device": ",ioeventfd=off"},
+    # the driver does not use the device's shadow doorbells
+    "noshadow": {"iommu": None, "append": ["kdc.shadow_doorbells=0"], "device": ""},
 }
 INIT = b"""#!/bin/sh
 /bin/busybox mount -t proc proc /proc
@@ -376,6 +380,8 @@ def main():
     p.add_argument("--configs", default="noiommu", help=f"comma-separated, alternated per round: {sorted(CONFIGS)}")
     p.add_argument("--rounds", type=int, default=1, help="boots per configuration and build")
     p.add_argument("--builds", default="tree", help="comma-separated: tree (this checkout) or names under .cache/ab/")
+    p.add_argument("--skip-arms", action="append", default=[], metavar="BUILD=ARM,ARM",
+                   help="leave these arms out of the plan for one build (e.g. a mode its client does not have)")
     p.add_argument("--vcpus", default="2,4,6", help="host CPU per vCPU (also sets the vCPU count)")
     p.add_argument("--main-cpu", type=int, default=8, help="host CPU for QEMU's main loop and helper threads")
     p.add_argument("--watch-cpus", default="2-9", help="CPUs whose foreign load is checked (VM CPUs + siblings)")
@@ -397,13 +403,21 @@ def main():
     out.mkdir(parents=True, exist_ok=False)
     plan_text = args.plan.read_text()
     (out / "plan.txt").write_text(plan_text)
+    skip = {}
+    for item in args.skip_arms:
+        name, _, arms = item.partition("=")
+        skip[name] = set(arms.split(","))
+    plans = {b.name: "".join(line for line in plan_text.splitlines(keepends=True)
+                             if not line.split() or line.split()[0] not in skip.get(b.name, ()))
+             for b in builds}
     boots, problems = [], []
     with open(out / "windows.jsonl", "w") as windows_out, open(out / "serial.log", "w") as serial_out:
         index = 0
         for _ in range(args.rounds):
             for config in configs:
                 for build in builds:
-                    info, probs = boot(args, build, config, index, plan_text, out, windows_out, serial_out)
+                    info, probs = boot(args, build, config, index, plans[build.name], out, windows_out,
+                                       serial_out)
                     windows_out.flush()
                     boots.append({k: info[k] for k in ("config", "build", "boot", "seconds", "windows", "rejected",
                                                        "bench_exit")})

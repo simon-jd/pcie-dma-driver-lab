@@ -138,6 +138,18 @@ static inline int kdc_quota(u32 live, u64 bytes, u64 more)
 }
 
 /* Field validation that needs no locks; returns 0 or -errno. */
+/* KDC_IOC_REGISTER arguments; 0 or -EINVAL / -EPROTO. */
+static inline int kdc_buffer_check(const struct kdc_buffer *b)
+{
+	if (b->version != KDC_ABI_VERSION)
+		return -EPROTO;
+	if (b->size != sizeof(*b) || b->reserved || b->reserved2[0] || b->reserved2[1] ||
+	    !b->addr || (b->addr | b->length) & ~PAGE_MASK || !b->length ||
+	    b->length > KDC_MAX_FIXED_BYTES || b->addr + b->length < b->addr)
+		return -EINVAL;
+	return 0;
+}
+
 static inline int kdc_submit_check(const struct kdc_submit *s,
 				   unsigned int nr_queues)
 {
@@ -154,9 +166,11 @@ static inline int kdc_submit_check(const struct kdc_submit *s,
 	if (s->flags & KDC_SUBMIT_NOP)
 		return s->src || s->dst || s->length || s->crc_seed ||
 				       (s->flags & (KDC_SUBMIT_BOUNCE |
-						    KDC_SUBMIT_ZEROCOPY)) ?
+						    KDC_SUBMIT_ZEROCOPY | KDC_SUBMIT_FIXED)) ?
 			       -EINVAL :
 			       0;
+	if ((s->flags & KDC_SUBMIT_FIXED) && (s->flags & (KDC_SUBMIT_BOUNCE | KDC_SUBMIT_ZEROCOPY)))
+		return -EINVAL;
 	if (!s->length || s->length > KDC_MAX_LENGTH || !s->src || !s->dst ||
 	    !kdc_pages_spanned(s->src, s->length) ||
 	    !kdc_pages_spanned(s->dst, s->length) ||

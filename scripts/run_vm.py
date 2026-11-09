@@ -42,7 +42,7 @@ ROOT = pathlib.Path(__file__).resolve().parents[1]
 QEMU = {"release": ROOT / ".cache/build/qemu/qemu-system-x86_64",
         "asan": ROOT / ".cache/build/qemu-asan/qemu-system-x86_64"}
 KUNIT_CASES = 13
-CLIENT_CASES = 36
+CLIENT_CASES = 37
 INIT = b"""#!/bin/sh
 /bin/busybox mount -t proc proc /proc
 /bin/busybox mount -t sysfs sysfs /sys

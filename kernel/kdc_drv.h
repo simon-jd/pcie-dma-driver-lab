@@ -108,6 +108,32 @@ struct kdc_dst_range {
 	struct interval_tree_node it;
 };
 
+/* Destination byte ranges by physical address. */
+struct kdc_tracker {
+	spinlock_t lock;
+	struct rb_root_cached tree;
+};
+
+/*
+ * A registered buffer (KDC_IOC_REGISTER): pinned once and mapped page by page
+ * for DMA_BIDIRECTIONAL. users counts commands from submit until their
+ * kdc_cmd_release(), i.e. while the device may still reach the buffer; it is
+ * unmapped only when that is zero, or by remove() once the device has stopped.
+ * Its pages are in the module-wide tracker for as long as it is registered,
+ * so no other destination can share them; fixed commands inside it are
+ * checked against each other in fixed_dst.
+ */
+struct kdc_regbuf {
+	u64 uaddr, len;
+	unsigned int npages, nmapped, nr_ranges;
+	struct page **pages;
+	dma_addr_t *dma;
+	struct kdc_dst_range *ranges;
+	struct kdc_tracker fixed_dst;
+	bool mapped, tracked;
+	atomic_t users;
+};
+
 struct kdc_cmd {
 	struct list_head node; /* ctx->staged, queue->pending, ctx->done or a local list */
 	struct list_head ctx_node; /* ctx->live until read() consumes it */
@@ -116,8 +142,10 @@ struct kdc_cmd {
 	enum kdc_phase phase;
 	enum kdc_abort_reason abort_reason;
 	bool abort_sent, use_bounce, ended_by_reset;
+	bool fixed; /* KDC_SUBMIT_FIXED: pages belong to registered buffers */
+	struct kdc_regbuf *src_buf, *dst_buf; /* held until kdc_cmd_release() */
 	u8 retries;
-	u64 id, epoch, quota_bytes;
+	u64 id, epoch, quota_bytes, dst;
 	u32 length, head_len, tail_len;
 	u16 cid, tag;
 	unsigned long timeout, deadline, abort_deadline; /* jiffies */
@@ -127,6 +155,7 @@ struct kdc_cmd {
 	struct sg_table src_sgt, dst_sgt;
 	bool src_mapped, dst_mapped;
 	struct kdc_dst_range *ranges;
+	struct kdc_tracker *tracker; /* module-wide, or the registered buffer's */
 	unsigned int nr_ranges;
 	bool ranges_tracked;
 	void *sgl, *bounce_buf;
@@ -142,6 +171,7 @@ struct kdc_ctx {
 	wait_queue_head_t wq;
 	struct list_head live, staged, done;
 	struct list_head dev_node; /* kdev->files, under files_mutex */
+	struct kdc_regbuf *bufs[KDC_MAX_FIXED_BUFS]; /* under ctx->lock */
 	u64 epoch, bytes, pinned_pages;
 	u32 nr_live, nr_staged, nr_ready, nr_inflight;
 	bool closing, resetting;
@@ -153,7 +183,15 @@ extern atomic_t kdc_live_cmds, kdc_global_pinned, kdc_global_mapped,
 
 /* kdc_cmd.c */
 struct kdc_cmd *kdc_cmd_prepare(struct kdc_dev *kdev, const struct kdc_submit *s,
+				struct kdc_regbuf *src_buf, struct kdc_regbuf *dst_buf,
 				int *errp);
+struct kdc_regbuf *kdc_regbuf_create(struct kdc_dev *kdev, u64 uaddr, u64 len, int *errp);
+void kdc_regbuf_unmap(struct kdc_dev *kdev, struct kdc_regbuf *b);
+void kdc_regbuf_destroy(struct kdc_dev *kdev, struct kdc_regbuf *b);
+static inline unsigned int kdc_cmd_pinned(const struct kdc_cmd *cmd)
+{
+	return cmd->fixed ? 0 : cmd->src_npages + cmd->dst_npages;
+}
 void kdc_cmd_release(struct kdc_dev *kdev, struct kdc_cmd *cmd, bool copy_back);
 void kdc_cmd_free(struct kdc_cmd *cmd);
 int kdc_fill_hw_sgl(struct kdc_hw_sge *out, unsigned int max,

@@ -23,7 +23,8 @@ Mutants:
                            and KDC_IOC_RESET can wait forever
   remove-frees-queues      remove() frees the per-queue array that commands of
                            still-open files point into
-  overlap-check-off        the destination overlap check is skipped
+  overlap-check-off        the destination overlap check is skipped (caught by
+                           DMA-API debug's overlapping-mapping report in fixed_buffers)
   read-leaks-command       read() never frees a consumed command (a positive
                            control for the kmemleak scan after the suite)
   coalesce-ignored         the debugfs coalescing setting is stored but never
@@ -39,6 +40,9 @@ Mutants:
   event-index-not-published  device model never writes the event index, so a
                            driver would skip doorbells an idle device needs
                            (qtest suite)
+  unregister-in-use        KDC_IOC_UNREGISTER unmaps a registered buffer that
+                           a command still in the device uses (the driver's
+                           WARN in kdc_regbuf_destroy is the named check)
 """
 import argparse
 import json
@@ -114,9 +118,12 @@ MUTANTS = {
         runs=[("tcg-iommu", True, [], [r"BUG: KASAN: \S*use-after-free in kdc_"])]),
     "overlap-check-off": dict(
         file=KDC_TREE / "kdc_cmd.c",
-        edits=[("\t\tif (interval_tree_iter_first(&kdc_dst_tree, it->start, it->last))\n\t\t\tbreak;\n",
+        edits=[("\t\tif (interval_tree_iter_first(&t->tree, it->start, it->last))\n\t\t\tbreak;\n",
                 "\t\t/* deliberate bug: no overlap check */\n")],
-        runs=[("tcg-iommu", True, ["FAIL dst_overlap:"], [])]),
+        # Since registered buffers, fixed_buffers is the first case that puts a destination
+        # on pages another mapping holds; without the check DMA-API debug reports it there,
+        # before dst_overlap runs. Either one names this bug.
+        runs=[("tcg-iommu", True, [], [r"DMA-API: kdc \S+: cacheline tracking EEXIST, overlapping mappings"])]),
     "read-leaks-command": dict(
         file=KDC_TREE / "kdc_fops.c",
         edits=[("\t\tctx->nr_live--;\n\t\tspin_unlock(&ctx->lock);\n\t\tkdc_cmd_free(cmd);\n\t\tn++;\n",
@@ -153,6 +160,13 @@ MUTANTS = {
                 "                          &ev, sizeof(ev)) != MEMTX_OK) {\n",
                 "        if (0) { /* deliberate bug: the event index is never published */\n")],
         qtest=("shadow_doorbell", "event index published after the pass")),
+    "unregister-in-use": dict(
+        file=KDC_TREE / "kdc_fops.c",
+        edits=[("\tif (b && atomic_read(&b->users)) {\n",
+                "\tif (0) { /* deliberate bug: unmapped while a command may still use it */\n")],
+        # The driver's own check fires first: freeing a buffer a command still holds WARNs.
+        runs=[("tcg-iommu", True, [], [r"WARNING: CPU: \d+ PID: \d+ at drivers/misc/kdc/kdc_cmd\.c:\d+ "
+                                       r"kdc_regbuf_destroy"])]),
 }
 
 

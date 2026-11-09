@@ -1,0 +1,59 @@
+{
+  "boots": [
+    {
+      "config": "noiommu",
+      "build": "o5",
+      "boot": 0,
+      "seconds": 46.7,
+      "windows": 36,
+      "rejected": 6,
+      "bench_exit": "0"
+    },
+    {
+      "config": "notrack",
+      "build": "o5",
+      "boot": 1,
+      "seconds": 40.6,
+      "windows": 31,
+      "rejected": 1,
+      "bench_exit": "0"
+    },
+    {
+      "config": "noiommu",
+      "build": "o5",
+      "boot": 2,
+      "seconds": 43.1,
+      "windows": 33,
+      "rejected": 3,
+      "bench_exit": "0"
+    },
+    {
+      "config": "notrack",
+      "build": "o5",
+      "boot": 3,
+      "seconds": 43.0,
+      "windows": 33,
+      "rejected": 3,
+      "bench_exit": "0"
+    },
+    {
+      "config": "noiommu",
+      "build": "o5",
+      "boot": 4,
+      "seconds": 40.6,
+      "windows": 31,
+      "rejected": 1,
+      "bench_exit": "0"
+    },
+    {
+      "config": "notrack",
+      "build": "o5",
+      "boot": 5,
+      "seconds": 41.8,
+      "windows": 32,
+      "rejected": 2,
+      "bench_exit": "0"
+    }
+  ],
+  "problems": []
+}

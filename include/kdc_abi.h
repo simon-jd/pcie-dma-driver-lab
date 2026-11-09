@@ -7,7 +7,9 @@
  * reserved fields can gain meaning later without breaking old callers.
  *
  * Version 3 gave kdc_submit a timeout (a former reserved field) and added the
- * recovery counters to kdc_stats.
+ * recovery counters to kdc_stats. Registered buffers (KDC_IOC_REGISTER,
+ * KDC_SUBMIT_FIXED) were added later without a version change: callers that
+ * do not use them see no difference.
  */
 #ifndef KDC_ABI_H
 #define KDC_ABI_H
@@ -27,7 +29,31 @@
 #define KDC_SUBMIT_BOUNCE 0x2 /* force the bounce-buffer path */
 #define KDC_SUBMIT_ZEROCOPY 0x4 /* force the pinned zero-copy path */
 #define KDC_SUBMIT_NOP 0x8 /* no data; src, dst and length must be 0 */
-#define KDC_SUBMIT_FLAGS 0xf
+#define KDC_SUBMIT_FIXED 0x10 /* src and dst lie in buffers registered on this file */
+#define KDC_SUBMIT_FLAGS 0x1f
+
+/*
+ * Registered buffers: KDC_IOC_REGISTER pins and maps a page-aligned user range
+ * once; a KDC_SUBMIT_FIXED command whose src and dst each lie inside one such
+ * buffer then needs no pinning or DMA mapping of its own. The buffer stays
+ * pinned and mapped until KDC_IOC_UNREGISTER or close(); unregistering fails
+ * with EBUSY while a command that uses it is not finished (the device may
+ * still reach it). Up to KDC_MAX_FIXED_BUFS per file, KDC_MAX_FIXED_BYTES each.
+ * Register errors: EINVAL (alignment, length), EEXIST (overlaps a buffer of
+ * this file), ENOSPC (no free index), EFAULT, ENOMEM. A fixed submit outside
+ * the registered buffers fails with EINVAL; unregister of an unknown index
+ * with ENOENT.
+ */
+#define KDC_MAX_FIXED_BUFS 8
+#define KDC_MAX_FIXED_BYTES (16 * 1024 * 1024)
+struct kdc_buffer {
+	__u32 version, size;
+	__aligned_u64 addr; /* page aligned */
+	__u64 length; /* page multiple, 1 page .. KDC_MAX_FIXED_BYTES */
+	__u32 index; /* KDC_IOC_REGISTER returns it; KDC_IOC_UNREGISTER takes it */
+	__u32 reserved;
+	__u64 reserved2[2];
+};
 
 /*
  * Submit errors besides the usual EINVAL/EFAULT/ENOMEM:
@@ -126,4 +152,6 @@ struct kdc_stats {
 #define KDC_IOC_RESET _IO('K', 0x22) /* abort this file's work, bump epoch */
 #define KDC_IOC_FLUSH _IO('K', 0x23) /* dispatch staged commands */
 #define KDC_IOC_STATS _IOR('K', 0x24, struct kdc_stats)
+#define KDC_IOC_REGISTER _IOWR('K', 0x25, struct kdc_buffer)
+#define KDC_IOC_UNREGISTER _IOW('K', 0x26, struct kdc_buffer)
 #endif
