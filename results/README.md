@@ -55,6 +55,16 @@ windows per arm, unpaired. Every boot's `run.json` records the build's `build_in
 to 7.1 over all boots (3.6 to 7.1 in `o1-vs-main`, 2.1 to 4.8 in the others); the
 rejection rule, not the load average, decides which windows count.
 
+`perf/ci-local.txt`: `SEED_DIR=... LOCAL_TOOLS=... scripts/ci_local.sh OUT 12-15` from a
+fresh clone of `a85dafc`, the CI workflow's steps on four CPUs: 360 s, all passed.
+`perf/fresh-clone.txt`: the README's commands from a fresh clone of `a85dafc`
+(QEMU and kernel builds, qtest on the ASan QEMU, the guest suite on TCG and on KVM
+with the IOMMU, the perf kernel, a frozen build, `bench/crc.plan` and a one-round A/B
+of the clone against its own frozen build): all passed, 267 s for builds and tests,
+364 s in all. That A/B compared identical code; its single nop-qd1 pair differed by
+14% (156.5k vs 178.2k/s), which is why decisions use seven pairs and a rule rather
+than one window.
+
 ### Correctness: `perf/matrix/`, `perf/matrix-steps/`, `perf/mutants/`
 
 Every step was verified on a frozen copy of its own tree (sources plus the QEMU

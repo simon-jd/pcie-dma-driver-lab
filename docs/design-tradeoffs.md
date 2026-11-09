@@ -528,10 +528,11 @@ ones pinned in `scripts/`; the actions are pinned by commit; the Ubuntu
 packages (compiler, flex, bison, libelf, static BusyBox) come from the runner
 image and are not pinned. It then runs the guest suite under TCG with a strict
 IOMMU. The whole job fits easily in a 30-minute budget: from a fresh clone the
-same steps took 363 s on four threads of the build host with `-j4`
-(`scripts/ci_local.sh`, output in `results/round3/ci-local.txt`; tarballs
-copied in, no apt step). On a GitHub runner the first run took 21 minutes, all
-steps passing. The runner has no KVM, so CI times
+same steps took 363 s on four threads of the build host with `-j4` for the
+published commit and 360 s for this branch (`scripts/ci_local.sh`, output in
+`results/round3/ci-local.txt` and `results/perf/ci-local.txt`; tarballs copied in,
+no apt step). On a GitHub runner the first run of the published commit took 21
+minutes, all steps passing; this branch has not run there. The runner has no KVM, so CI times
 nothing.
 
 ## Not done

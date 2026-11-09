@@ -86,7 +86,7 @@ CI (`.github/workflows/ci.yml`, `ubuntu-24.04`) builds QEMU with the device,
 runs the qtest suite on both builds and builds the KASAN kernel with the
 driver and the clients, from the pinned versions and checksums in `scripts/`,
 then runs the guest suite under TCG with a strict IOMMU. From a fresh clone the
-same steps took CI_LOCAL_S s on four threads of the build host (`scripts/ci_local.sh`,
+same steps took 360 s on four threads of the build host (`scripts/ci_local.sh`,
 [results/perf/ci-local.txt](results/perf/ci-local.txt)); on a GitHub runner the
 first run of the published commit took 21 minutes.
 
