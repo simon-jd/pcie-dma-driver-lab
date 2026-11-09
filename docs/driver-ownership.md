@@ -1,8 +1,10 @@
 # Driver: buffer ownership, recovery, locking and lifetime
 
 The driver (`kernel/`) creates `/dev/kdcN` per device. Each open file has its own
-request ids, epoch, quota (64 unread commands, 4 MiB of src + dst bytes) and
-completion list. The ABI is in `include/kdc_abi.h` (version 3).
+request ids, epoch, quota (64 unread commands, 4 MiB of src + dst bytes),
+completion list and up to 8 registered buffers. The ABI is in `include/kdc_abi.h`
+(version 3; registered buffers were added without a version change, since callers
+that do not use them see no difference).
 
 ## Command states
 
@@ -94,7 +96,10 @@ frees the IRQs, then ends every staged, pending and device-owned command with
 `-ENODEV` (or its abort reason) and wakes every reader. Open files keep the
 `kdc_dev` structure alive through the class device's refcount; afterwards
 their ioctls return `ENODEV`, `read()` returns the remaining completions and
-then `ENODEV`, and `poll()` reports `POLLHUP`.
+then `ENODEV`, and `poll()` reports `POLLHUP`. Registered buffers of open files
+are unmapped by `remove()` once every command has ended (nothing may stay mapped
+for a departing device; DMA-API debug reports it at unbind) and unpinned when the
+file is closed, because the process still maps the pages.
 
 A device that stops responding before it is removed (surprise removal: BAR
 reads all-ones, no interrupts) is noticed by the watchdog within one tick
@@ -118,6 +123,16 @@ wait for the recovery work is bounded.
 - Bounce (at or below `bounce_max`): the source is copied into a pooled coherent
   buffer at submit; the device writes the second half of that buffer; on
   completion the driver copies it into the pinned destination pages.
+- Registered buffers (`KDC_IOC_REGISTER`, `KDC_SUBMIT_FIXED`): a page-aligned
+  user range of up to 16 MiB is pinned once (`FOLL_LONGTERM`) and mapped page by
+  page for `DMA_BIDIRECTIONAL`. A fixed command's source and destination must each
+  lie inside one of the file's buffers; it takes a reference on both at submit
+  (under `ctx->lock`), builds its SG lists from the per-page DMA addresses, syncs
+  its ranges for the device and after completion for the CPU, and keeps the
+  head/tail split of the zero-copy path. `kdc_cmd_release()` drops the
+  references, so the release rule above covers them: `KDC_IOC_UNREGISTER` fails
+  with `EBUSY` while any is held (the device may still reach the buffer), and
+  `close()` frees the file's buffers after its last command has ended.
 - **Destination overlap.** Before anything is mapped, the destination's
   physical byte ranges go into a module-wide interval tree. A submit whose
   destination shares a byte with the destination of any in-flight command (any
@@ -126,6 +141,11 @@ wait for the recovery work is bounded.
   Destinations that share only a cache line are allowed: the partial lines are
   bounced, so no two streaming device-writable mappings ever share a line, and
   the CPU never copies into a line under someone else's mapping.
+  A registered buffer's pages enter the same tree when it is registered and stay
+  there until it is freed, so no other destination (zero-copy, bounce, another
+  file's buffer, any device) can share them, while they may still be a source.
+  Fixed destinations can then only meet each other inside their own buffer and
+  are checked in that buffer's tree.
 
 ## Queues and interrupts
 
@@ -135,8 +155,17 @@ wait for the recovery work is bounded.
   each vector's affinity mask; `KDC_QUEUE_AUTO` uses the submitting CPU's queue.
 - Completion handling is a threaded IRQ: the hard handler only wakes the thread,
   because `unpin_user_pages_dirty_lock()` may sleep. The thread reaps entries by
-  phase bit under the queue lock, rings the CQ_HEAD doorbell, dispatches pending
-  commands into the freed ring space, then releases and publishes outside the lock.
+  phase bit under the queue lock, writes the CQ_HEAD doorbell once `cq_head_batch`
+  entries (16) have been reaped since the last write, dispatches pending commands
+  into the freed ring space, then releases and publishes outside the lock. The
+  device needs the head only to see free completion entries; it can stall only
+  when every entry it may post is in use from its point of view, all of them were
+  posted with an interrupt, and reaping them brings the unreported count to
+  depth - 1, at least the batch, so the head is written.
+- With shadow doorbells (when the device offers them) dispatch writes the new SQ
+  tail into the shadow page (`wmb()` after the ring entries), issues `mb()`, reads
+  the device's event index and writes the SQ_TAIL register only if the index lies
+  in [old tail, new tail); see the device interface for the device's half.
 - Interrupt coalescing is off by default (one interrupt per completion); the
   `coalesce_count`/`coalesce_usecs` parameters and the debugfs `coalesce` file
   set the device's per-queue count and delay, and resets keep the setting.
@@ -156,7 +185,11 @@ teardown. The abort register is written under `queue->lock` after checking that
 the slot still holds this command: a tag is only reissued after its completion
 was reaped under the same lock, so an abort cannot hit the tag's next owner.
 `close()` returns commands to the DMA pools while holding `files_mutex`, which
-keeps `remove()` from destroying the pools underneath it.
+keeps `remove()` from destroying the pools underneath it. A registered
+buffer's reference count is taken under `ctx->lock` at submit and checked under
+it by `KDC_IOC_UNREGISTER`, so no reference can appear after the check; `close()`
+frees buffers and `remove()` unmaps them under `files_mutex`, so they never
+both unmap one.
 
 ## Debugfs and module parameters
 
@@ -164,9 +197,10 @@ keeps `remove()` from destroying the pools underneath it.
   (`service_ns`, `fault`, `fault_drop`, `fault_bad_cid`, `fault_bad_dma`), its
   counters (`device_aborted`, `device_doorbells`, `device_cq_doorbells`,
   `device_irqs`), `device_inflight` (commands the device itself holds, read
-  from the queues' INFLIGHT registers), `scratch`, and `coalesce`, the
+  from the queues' INFLIGHT registers), `scratch`, `coalesce`, the
   interrupt coalescing of every queue as `usecs << 16 | count` (kept across
-  resets). Tests use them to hold commands inside the device on purpose; the
+  resets), `cq_head_batch` (reaped entries per CQ head write, clamped to
+  1..depth - 1) and `shadow_doorbells` (read-only: in use or not). Tests use them to hold commands inside the device on purpose; the
   benchmark uses `scratch` and `coalesce`.
 - `/sys/kernel/debug/kdc/`: module-wide `cmds`, `pinned_pages`, `mapped_sgts`
   and `dst_ranges`, which must return to zero once every file is closed, also
@@ -175,7 +209,8 @@ keeps `remove()` from destroying the pools underneath it.
   `abort_timeout_ms` (500), `reset_timeout_ms` (1000), `bounce_max` (-1: 2048 or
   65536 as above; read at probe, at most 65536), `queue_depth` (64), `max_queues` (16),
   `coalesce_count` and `coalesce_usecs` (0 and 0: one interrupt per completion;
-  read at probe), and
+  read at probe), `cq_head_batch` (0: a quarter of the ring), `shadow_doorbells`
+  (on; read at probe), and
   `track_overlap` (on; boot-time only). Turning `track_overlap` off breaks the
   destination rule above; it exists so that the tracker's cost can be measured
   (`results/round3/perf/tracker/`).

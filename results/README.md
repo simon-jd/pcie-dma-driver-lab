@@ -4,9 +4,120 @@ Raw output only; every number below points at the file it comes from. All runs
 are on emulated hardware (QEMU 10.2.1) on one shared build host (Intel
 i9-13900K). The matrix and deliberate-bug runs are correctness runs; their
 seconds include the whole guest boot and, for the KASAN kernel, a kmemleak
-scan. Timing comes only from `round3/perf/`, on KVM with a kernel without debug
-options. Commits named below belong to the development history, which was
+scan. Timing comes only from `round3/perf/` and `perf/`, on KVM with a kernel
+without debug options. Commits named below belong to the development history, which was
 squashed into a single commit when the repository was published.
+
+## perf round (2026-11-08/09)
+
+### Timing on KVM: `perf/`
+
+Every run compares frozen builds (`scripts/snapshot_build.py`, under `.cache/ab/`) in
+one quiet window: `scripts/run_bench.py --builds ...` boots them in turn, round by
+round; `scripts/bench_report.py` writes `summary.md` (one table per configuration and
+build), `scripts/bench_compare.py` the paired `compare-<new>-vs-<base>.md/json` with the
+keep/reject rule. Same guest and pinning as round 3 (3 vCPUs on host CPUs 2, 4, 6, QEMU's
+main loop on 8), QEMU at nice 0, `kdc.bounce_max=65536`, rejection thresholds unchanged.
+Build names: `main` the published commit; `o1` + CQ head every 16 completions; `o2` +
+two interrupts per pass; `o3` + shadow doorbells, event index, ioeventfd; `o4` + one
+reader woken per completion (rejected, not on the branch); `o6` = o4 + registered
+buffers (measured, then rebuilt without o4); `o5` = o3 + registered buffers, the
+branch's final code. Each build's `build.json` (commit, source hashes) is in the run's
+`boot-N/run.json` under `build_info`.
+
+| Directory | Command (`taskset -c 10-15,24-31 python3 scripts/run_bench.py ...`) | Boots | Windows (rejected) |
+|---|---|---|---|
+| `perf/o1-vs-main` | `--plan bench/ab.plan --builds main,o1 --rounds 7` | 14 | 239 (46) |
+| `perf/chain` | `--plan bench/ab.plan --builds main,o1,o2,o3,o4,o6 --rounds 7` | 42 | 629 (41) |
+| `perf/final` | `--plan bench/ab.plan --builds main,o3,o5 --rounds 7` | 21 | 317 (23) |
+| `perf/fixed` | `--plan bench/fixed.plan --builds main,o5 --configs noiommu,iommu-strict --rounds 7 --skip-arms main=fixed4k-qd1,...` | 28 | 337 (29) |
+| `perf/decompose` | `--plan bench/ab.plan --builds o5 --configs noiommu,noioeventfd,noshadow --rounds 7` | 21 | 320 (26) |
+| `perf/tracker` | `--plan bench/tracker.plan --builds o5 --configs noiommu,notrack --rounds 3` | 6 | 196 (16) |
+
+Decisions (rule in `scripts/bench_compare.py` and `docs/design-tradeoffs.md`):
+
+| Step | Comparison file | Targets | Result |
+|---|---|---|---|
+| o1 CQ head every 16 completions | `perf/o1-vs-main/compare-o1-vs-main.md` | one in flight, 4 and 32 in flight unbatched | keep (all 7/7) |
+| o2 two interrupts per pass | `perf/chain/compare-o2-vs-o1.md` | batched 8 and 32, three threads batched | keep (7/7) |
+| o3 shadow doorbells, event index, ioeventfd | `perf/chain/compare-o3-vs-o2.md` | one in flight, 4 and 32 in flight, three threads | keep (7/7) |
+| o4 one reader woken per completion | `perf/chain/compare-o4-vs-o3.md` | shared-file arms | reject (3/7, 4/7) |
+| registered buffers (as o6 on o4) | `perf/chain/compare-o6-vs-o4.md` | none | delayed-coalescing arm below the base minimum (median ratio 0.994) |
+| o5 registered buffers on o3 | `perf/fixed/compare-o5-vs-o5-iommu-strict-paths.md`, `perf/fixed/compare-o5-vs-o5-paths.md` | fixed vs zero-copy and bounce, strict IOMMU and none | targets 7/7 (one 6/7) |
+| o5, other paths | `perf/final/compare-o5-vs-o3.md` | none | 32 in flight 0.2% below the base minimum (median -0.9%): kept, stated as a miss |
+| before/after | `perf/final/compare-o5-vs-main.md` | | every arm 7/7, 1.21x to 4.75x |
+
+`perf/decompose` has no comparison file: its three configurations are the same build
+with the device's `ioeventfd=off` and the driver's `kdc.shadow_doorbells=0`, read from
+`summary.md`. `perf/tracker` is the round-3 tracker plan on the final build, 15
+windows per arm, unpaired. Every boot's `run.json` records the build's `build_info`
+(source hashes), the quiet-window marker and the load average (1 min) at boot: 2.1
+to 7.1 over all boots (3.6 to 7.1 in `o1-vs-main`, 2.1 to 4.8 in the others); the
+rejection rule, not the load average, decides which windows count.
+
+### Correctness: `perf/matrix/`, `perf/matrix-steps/`, `perf/mutants/`
+
+Every step was verified on a frozen copy of its own tree (sources plus the QEMU
+builds, kernels and client it was built into), so the matrices of several steps
+could run while the next step was built: `perf/matrix-steps/<step>/summary.json`
+(qtest logs included; the guest logs are in `.cache/results-raw/perf/matrix-<step>/`
+on the build host). The final code's full matrix is committed in `perf/matrix/`.
+
+| Configuration | o1 | o2 | o3 | final |
+|---|---|---|---|---|
+| qtest, ASan+UBSan and release QEMU | 17/17 | 18/18 | 20/20 | 20/20 |
+| KUnit; client cases | 12; 35 | 12; 35 | 13; 36 | 13; 37 |
+| KVM and TCG, IOMMU strict or none; ASan QEMU; KCSAN kernel | 6 of 6 pass | 6 of 6 | 6 of 6 | 6 of 6 (`perf/matrix/`) |
+
+Final matrix: KVM with the IOMMU 22.1 s, without 22.7 s, TCG 72.9 and 63.2 s, ASan
+QEMU 1357.5 s, KCSAN 25.2 s; kmemleak 0 records, `DMA_API_ERRORS 0` and the module
+counters at zero in every run. The final code's ASan configuration passed on its
+third run; the two failed runs are kept in `.cache/results-raw/perf/attempts/` on the
+build host and are not explained:
+
+- `matrix-final-1`: the guest kernel reported `BUG: KASAN: wild-memory-access in
+  do_raw_spin_lock` from `handle_edge_irq` 0.017 s into boot, during CPU
+  identification and before any PCI device is probed, while five matrices ran at
+  once on the build CPUs. Every other configuration of that run passed.
+- `matrix-final-2-asan` (that configuration alone, rerun): `removal_surprise` found
+  no command ended by the removal (`nodev >= 1` failed; every command of the three
+  threads had already completed), after 35 cases had passed. The step copies o1 to o3
+  passed the same case under the same QEMU (10 to 12 commands ended by the removal),
+  and so did every other configuration of the final code (13 to 36). The client now
+  prints the counts before checking them, so a repeat shows them; the third run
+  (`perf/matrix/`) passed with 13.
+
+Deliberate bugs: `perf/mutants/` (final code; the nine earlier mutants
+and five for the new mechanisms), produced by `python3 scripts/mutation_check.py --out
+...` and, for `overlap-check-off`, a rerun with `--only overlap-check-off`. 14 of 14
+caught; the restored build passed the guest suite and qtest again
+(`perf/mutants/restored-*`). Each mutant's `result.json` names the check that fired and
+`mutation.diff` the edit; guest serial logs are in `.cache/results-raw/perf/mutants-final/`
+on the build host.
+
+| Mutant | Named check that fired |
+|---|---|
+| unmap/unpin zero-copy buffers before the device runs | `check_copy` (TCG with and without the IOMMU) |
+| cancel treats the device abort as synchronous | `cancel_device_owned` |
+| device model skips the SG length check | qtest `malformed` |
+| buffers released when the abort times out | `timeout_reset` |
+| an unanswered abort never escalates | `timeout_reset` |
+| `remove()` frees the per-queue array | KASAN use-after-free in `kdc_read` |
+| destination overlap check skipped | DMA-API debug: overlapping mapping, in `fixed_buffers` |
+| `read()` never frees a consumed command | kmemleak record with `kdc_cmd_prepare` |
+| debugfs coalescing never reaches the queues | `coalescing` |
+| new: CQ head never written | `cq_head_batching` |
+| new: end-of-pass interrupt skipped (device) | qtest `pass_interrupts` |
+| new: shadow doorbell rung only when the queue was empty | `shadow_doorbell` |
+| new: event index never published (device) | qtest `shadow_doorbell` |
+| new: registered buffer unmapped while a command holds it | the driver's `WARN` in `kdc_regbuf_destroy` |
+
+Two expectations changed during the round, both after a run in which the bug was
+detected by something else first: `overlap-check-off` used to name `dst_overlap`, but
+`fixed_buffers` now runs earlier and DMA-API debug reports the overlapping mapping there
+(the full run counted it as missed; `perf/mutants/summary-full-run.json`); and
+`unregister-in-use` first expected `fixed_buffers` to see `EBUSY`, but the driver's own
+`WARN` fires before that (`.cache/results-raw/perf/attempts/` on the build host).
 
 ## round3 (2026-11-08)
 

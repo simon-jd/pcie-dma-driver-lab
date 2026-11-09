@@ -12,7 +12,7 @@ PCI ID 1234:4b44 is a lab-only choice under the QEMU community vendor ID.
 | BAR2 (64-bit) | MSI-X table and PBA |
 | MSI-X | vector `q` per queue (default), vector `queues` for device errors |
 | Capabilities | PCIe endpoint, FLR, MSI-X |
-| Properties | `queues` (1..16, default 4); `hw-crc` (default on, see Execution model); runtime QOM knobs and read-only counters below |
+| Properties | `queues` (1..16, default 4); `hw-crc` (default on, see Execution model); `shadow-db` (default on: offer shadow doorbells); `ioeventfd` (default on: shadow queues' doorbells through an ioeventfd); runtime QOM knobs and read-only counters below |
 
 ## Global registers
 
@@ -22,7 +22,7 @@ PCI ID 1234:4b44 is a lab-only choice under the QEMU community vendor ID.
 | 0x004 | VERSION | RO | major << 16 \| minor (1.0) |
 | 0x008 | CAP | RO | [7:0] queues, [11:8] log2 max ring entries (12), [31:16] SG entries per list (128) |
 | 0x00c | MAX_XFER | RO | 1 MiB |
-| 0x010 | FEATURES | RO | CRC32C, ABORT, COALESCE, FAULTS, FLR |
+| 0x010 | FEATURES | RO | CRC32C, ABORT, COALESCE, FAULTS, FLR, SHADOW_DB (0x20, with `shadow-db=on`) |
 | 0x020 | CTRL | RW | bit 0 ENABLE; 1 -> 0 drops all queues and in-flight work without completions |
 | 0x024 | STATUS | RO | bit 0 READY, bit 1 FATAL |
 | 0x028 | RESET | WO | write `0x52534554` for a controller reset (same effect as FLR) |
@@ -34,6 +34,7 @@ PCI ID 1234:4b44 is a lab-only choice under the QEMU community vendor ID.
 | 0x048..0x050 | FAULT_DROP, FAULT_BAD_CID, FAULT_BAD_DMA | RW | apply to the next N completions / copies; QOM `fault-drop`, `fault-bad-cid`, `fault-bad-dma` |
 | 0x060..0x074 | STAT_DONE, STAT_ABORTED, STAT_ERRORS, STAT_IRQS, STAT_DOORBELLS, STAT_CQ_DOORBELLS | RO | counters, cleared by reset; DONE, IRQS (MSI-X messages sent), DOORBELLS (SQ tail writes) and CQ_DOORBELLS (CQ head writes) are also read-only QOM properties `stat-done`, `stat-irqs`, `stat-doorbells`, `stat-cq-doorbells` |
 | 0x078 | SCRATCH | RW | no effect on the device; cleared by reset; also QOM `scratch`. The benchmark uses it to pass a token between host and guest |
+| 0x080/0x084 | DBBUF lo/hi | RW | shadow doorbell page (4 KiB aligned) with bit 0 ENABLE; cleared by reset; queues enabled while it is set use it (see Shadow doorbells); ignored with `shadow-db=off` |
 
 All accesses are 32-bit. The fault knobs exist so that recovery paths can be
 tested; the QOM properties make them settable from the host with QMP `qom-set`
@@ -61,8 +62,8 @@ be a VM exit inside the measurement (`scripts/run_bench.py`).
 | 0x14 | CTRL | bit 0 ENABLE (needs controller READY; bad config sets QUEUE_CONFIG) |
 | 0x18 | STATUS | bit 0 ENABLED, bit 1 HALTED (a ring access failed) |
 | 0x1c | IRQ_VECTOR | MSI-X vector |
-| 0x20 | COALESCE | [15:0] completions per interrupt, [31:16] max delay in microseconds |
-| 0x24 | SQ_TAIL | doorbell; out-of-range values are ignored and flagged |
+| 0x20 | COALESCE | [15:0] completions per interrupt, [31:16] max delay in microseconds; without coalescing see Execution model |
+| 0x24 | SQ_TAIL | doorbell; out-of-range values are ignored and flagged. For a shadow queue only a kick: the value is ignored and the tail read from the DBBUF page |
 | 0x28 | CQ_HEAD | doorbell; frees completion slots |
 | 0x2c | SQ_HEAD | RO: next entry to fetch |
 | 0x30 | ABORT | WO: cid of an in-flight command |
@@ -107,11 +108,32 @@ example an IOMMU fault), 5 aborted, 6 internal.
   command costs no engine time.
 - If the completion ring is full the device keeps finished commands and posts
   them after the next CQ_HEAD doorbell.
+- Interrupts without coalescing (count <= 1 or delay 0): within one run of the
+  completion bottom half (a pass), the first completion raises the queue's
+  vector at once and the rest of the pass is announced by one more message
+  after its last completion. A handler that reaps everything posted when it
+  runs sees every completion, and a burst costs two messages instead of one
+  per completion. With coalescing, the count or the delay decides, as before.
+- Shadow doorbells: entry `q` of the DBBUF page is `{sq_tail, sq_event,
+  rsvd[2]}` (`struct kdc_hw_dbbuf`). A kick makes the device read `sq_tail`
+  (an out-of-range value is flagged as a doorbell error and ignored). Whenever
+  it has fetched every entry up to the tail it has seen, it writes that tail to
+  `sq_event`, issues a full barrier and reads `sq_tail` again, fetching on if it
+  moved. A driver that orders its `sq_tail` store before its `sq_event` load
+  with a full barrier may therefore skip the kick unless `sq_event` lies in
+  [old tail, new tail): an older index means the device has not finished the
+  pass it was kicked for and will see the new tail at its end. With
+  `ioeventfd=on` the device registers an ioeventfd (any write size) on the
+  SQ_TAIL address of each shadow queue while the queue is enabled: under KVM
+  the guest's write is handled in the host kernel and wakes QEMU's main loop
+  through the eventfd, without an exit to QEMU. Without KVM the write reaches
+  the MMIO handler, which does the same. The completion side does not change.
 - All guest memory access uses `pci_dma_read`/`pci_dma_write`, so an emulated
   IOMMU translates (and can fault) every ring, SG list and data access.
 - Migration is not supported (the device registers an unmigratable vmstate).
 
-The qtest suite (`tests/qtest/kdc_qtest.py`) checks each of these statements
-with an exact virtual clock, plus 15 malformed-descriptor classes and a seeded
-random descriptor fuzz, under the ASan/UBSan QEMU build; the copy test runs
-with both CRC implementations.
+The qtest suite (`tests/qtest/kdc_qtest.py`, 20 tests) checks each of these
+statements with an exact virtual clock, plus 15 malformed-descriptor classes and
+a seeded random descriptor fuzz, under the ASan/UBSan QEMU build; the copy test
+runs with both CRC implementations, and `shadow_db_off` checks that the device
+without the feature ignores DBBUF.

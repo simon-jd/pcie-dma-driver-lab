@@ -218,7 +218,10 @@ Details:
 - **Host requests.** Hot-unplug and the vanished device need the host; the
   guest logs `KDC_HOST <request>` and the harness performs it over QMP.
 
-## Performance on KVM
+## Performance on KVM (round 3 study of the published code)
+
+The study below measured `main` and set the defaults it ships with; the
+optimizations that followed, and their measurements, are in the next section.
 
 **What the numbers measure.** The device is emulated, so these are the guest
 driver plus KVM exits plus QEMU's device model around a modeled service time,
@@ -276,7 +279,8 @@ per second, 21.7 us instead of 9.2 us. The driver cannot know the caller's
 depth, and batching gains more at depth without that cost, so the default is
 one interrupt per completion; `coalesce_count`/`coalesce_usecs` and the
 debugfs `coalesce` file turn it on. An adaptive scheme (coalesce only while
-the queue is deep, as NAPI does) is the obvious next step. A polled completion
+the queue is deep, as NAPI does) is the obvious next step (the performance round
+added its delay-free part: two interrupts per processing pass). A polled completion
 path was not added: it needs a new ioctl, and the cost per command sits in the
 two doorbell exits, which polling does not remove.
 
@@ -327,6 +331,193 @@ emulator's CRC was the bottleneck until it was replaced. The idle guest makes
 about 270 exits per second (timer and housekeeping), which bounds what the
 counters can resolve per window.
 
+## Performance round (2026-11-09): optimizing along the command path
+
+**Method.** Each change was frozen as a build (`scripts/snapshot_build.py`: release QEMU,
+`perf` kernel, benchmark client) and measured against the published `main` and the
+previous kept build inside one quiet window: `run_bench.py --builds main,o1,...` boots
+the builds in turn, one 1-second window per arm per boot (`bench/ab.plan`), seven
+rounds, QEMU at nice 0. `scripts/bench_compare.py` pairs the n-th boot of one build with
+the n-th boot of the other, which ran next to each other in time. The rule, fixed
+before the runs it judged: the arms a change targets must win in all but at most one
+of at least six pairs against the previous kept build, and no arm may end with a
+median below the lowest value the previous build had in any pair. Figures are medians
+over the seven pairs. Change 1 was decided in its own session (`results/perf/o1-vs-main`),
+changes 2 to 4 in one session of all frozen builds (`results/perf/chain`), change 5 in
+`results/perf/final` and `results/perf/fixed`. What they measure is unchanged: the guest driver, KVM exits and
+QEMU's device model around a modeled service time of 0, on one host; not device
+throughput. Raw data and the comparison tables: `results/perf/`.
+
+At the start, one 4 KiB command cost 3.65 VM exits: two MMIO exits to QEMU (the SQ
+doorbell and the CQ head write, about 3 us of vCPU time each), one HLT, and the rest;
+with 32 in flight and a doorbell per command the vCPU, at about 7 us per command, was
+the limit (133k/s), and every completion sent its own MSI-X message.
+
+### 1. CQ head written every 16 completions (driver): kept
+
+The device reads the CQ head only to see free completion entries, so the driver now
+writes it once `cq_head_batch` entries (a quarter of the ring, 16) have been reaped
+since the last write, instead of after every reap. Progress argument: the device stalls
+only when every entry it may post is in use from its point of view; all of those were
+posted with an interrupt, and reaping them brings the unreported count to depth - 1,
+which is at least the batch, so the head is written. `cq_head_batching` checks the
+device's own count (exactly 16 head writes for 256 single commands) and runs 256
+commands with 63 in flight and the largest batch (63), where the device often finds the
+ring full; the `cq-head-never-written` mutant fails it.
+
+`results/perf/o1-vs-main`: MMIO exits per command at one in flight 2.00 -> 1.06; NOP
+112.1k -> 156.0k/s, 4 KiB 102.2k -> 139.8k/s (9.5 -> 6.7 us), 64 KiB 54.6k -> 70.1k/s,
+4 in flight 128.5k -> 203.7k/s, 32 in flight 129.8k -> 205.4k/s, three threads 197.6k
+-> 297.2k/s: every targeted arm won all 7 pairs. Batched arms did not change (they
+wrote the head 0.03 times per command already); 32 batched was 550.0k vs 542.9k/s, 2 of
+6 pairs, within the spread.
+
+### 2. Two interrupts per processing pass (device model): kept
+
+Without coalescing the device sent one MSI-X message per completion, each a
+`KVM_SIGNAL_MSI` in QEMU's main loop and an interrupt in the guest. Now, within one
+run of the completion bottom half, the first completion interrupts at once and the
+rest of the pass is announced by one message after its last completion: the first
+completion is not delayed, and a handler that reaps everything posted when it runs
+sees every completion. This is the coalescing that costs no latency: it only merges
+completions that are already there (the delay-based coalescing stays available).
+qtest `pass_interrupts` checks 1 + 2 messages for a lone command and a pass of 8;
+the `pass-end-irq-skipped` mutant fails it.
+
+`results/perf/chain` (o2 vs o1): MSI-X per command with 32 batched 1.00 -> 0.06 and
+QEMU main-loop time 1.03 -> 0.71 us per command; batched 8 in flight 421.8k ->
+470.1k/s, 32 in flight 559.8k -> 695.2k/s, three threads batched 701.0k -> 858.0k/s,
+all 7 pairs each. Arms with one completion per pass did not change. Loss, within the
+rule: three threads on one file with 4 KiB copies 210.9k -> 204.6k/s, 1 of 7 pairs,
+above the base minimum (198.8k).
+
+### 3. Shadow doorbells, an event index and an ioeventfd (device + driver): kept
+
+The remaining MMIO exit per command was the SQ doorbell: an exit to QEMU userspace,
+the global lock, the device's MMIO handler. An ioeventfd lets KVM handle the write in
+the host kernel and wake QEMU's main loop through an eventfd, but it drops the written
+value, so the tail has to live in memory: the device offers a shadow doorbell page
+(`DBBUF`), as NVMe controllers do for virtualized hosts. The driver writes the new tail
+there (`wmb()` after the ring entries), issues `mb()`, reads the device's event index and
+rings only if the index lies in [old tail, new tail). The device, whenever it has fetched
+everything up to the tail it has seen, writes that tail as the event index, issues
+`smp_mb()` and reads the shadow tail again; if the driver read an older index it skipped
+its doorbell, but its tail store came before that read, so the device's second read sees
+it. A busy device therefore needs no doorbell. KUnit `shadow_event_index` covers the
+index arithmetic, qtest `shadow_doorbell` the device side (shadow tail used, doorbell
+value ignored, index published, bad tail flagged, reset clears DBBUF), the client case
+`shadow_doorbell` that an idle device is always rung; mutants `shadow-ring-only-idle`
+(driver rings only when nothing is outstanding) and `event-index-not-published`
+(device) fail them.
+
+`results/perf/chain` (o3 vs o2): MMIO exits per command at one in flight 1.06 -> 0.06
+(the doorbell exit is now a fast in-kernel MMIO exit); NOP 158.7k -> 178.1k/s, 4 KiB
+141.1k -> 151.5k/s (6.7 -> 6.1 us); with a doorbell per command the event index does
+the rest: at 32 in flight only 0.28 doorbells per command reach the device and
+208.2k -> 583.0k/s (2.8x), 4 in flight 206.5k -> 401.5k/s, three threads 301.5k ->
+958.0k/s (3.2x), three threads on one file 2.1-2.4x. Batched arms unchanged. Cost: QEMU's
+main loop spends more per command at one in flight (2.80 -> 3.49 us: the eventfd wakeup
+and the shadow page reads); the vCPU spends less (6.33 -> 5.64 us).
+`results/perf/decompose` separates the two parts on the final build, with the
+device's `ioeventfd=off` (shadow page and event index kept, every doorbell an exit
+to QEMU) and the driver's `shadow_doorbells=0` (an MMIO doorbell per dispatch, as
+before): 32 in flight 204.9k (no shadow) -> 226.8k (event index, 0.84 doorbells per
+command) -> 575.6k/s (ioeventfd, 0.29); three threads 292.5k -> 451.2k -> 949.6k/s;
+NOP one at a time 155.3k -> 155.4k -> 177.9k/s. Most of the gain is the ioeventfd;
+the event index matters more once doorbells are cheap, because the guest then
+submits faster than the device fetches and finds it busy more often.
+
+### 4. One reader woken per completion (driver): rejected
+
+Readers of a shared file slept non-exclusively, so each completion woke all of them.
+With exclusive waits (`wait_event_interruptible_exclusive`, `wake_up()`), plus passing
+the wakeup on when a reader puts a completion back, one reader wakes per completion. A
+client case checked it (two blocked readers' voluntary context switches unchanged after
+a completion woke the third; it passed on KVM, its deliberate bug was not run before
+the measurement rejected the change). But once change 3 had removed the
+doorbell exits, it did not pay (`results/perf/chain`, o4 vs o3): one file shared by three
+threads 526.8k vs 518.7k/s for NOPs (3 of 7 pairs) and 482.5k vs 488.6k/s for 4 KiB
+(4 of 7). Reverted. What a shared file still loses (4 KiB at three threads: 482.5k on
+one file vs 958.0k/s on three, o3) is therefore not in the wakeups; the file lock and
+its single completion list are the remaining shared state.
+
+### 5. Registered buffers (driver, ABI): kept, with one miss on the rule
+
+Behind QEMU's emulated Intel IOMMU in strict mode every zero-copy command maps and
+unmaps its pages, and each unmap is an IOTLB invalidation, i.e. more VM exits; that is
+why `bounce_max` is 65536 there. A registered buffer is pinned (`FOLL_LONGTERM`) and
+mapped once, page by page for `DMA_BIDIRECTIONAL` (`KDC_IOC_REGISTER`); a
+`KDC_SUBMIT_FIXED` command whose source and destination lie in the file's buffers
+takes a reference on each, builds its SG lists from the per-page DMA addresses, syncs
+its ranges (a no-op on x86) and keeps the head/tail split. The ownership contract does
+not change: the references are dropped in `kdc_cmd_release()`, under the same release
+rule as every other command; `KDC_IOC_UNREGISTER` fails with `EBUSY` while one is held;
+`close()` frees the buffers after its last command; `remove()` unmaps every open file's
+buffers once all commands have ended (they stay pinned until the file closes). A
+registered buffer's pages enter the module-wide overlap tracker for as long as it
+exists, so no other destination - zero-copy, bounce, another file's buffer - can share
+them; fixed destinations are checked against each other in the buffer's own tree.
+Per-page single mappings rather than one mapped scatter list, because the per-command
+syncs then use `dma_sync_single_range_for_*` the way the DMA API defines it. Client
+cases: `fixed_buffers` (ABI, copies at every size and alignment with guard bytes,
+`EBUSY` while a stalled engine holds a command, the overlap rule both ways, pages and
+mappings back to zero after unregister and after close), and the hot-unplug cases with a
+registered buffer and a staged fixed command open across the removal (DMA-API debug would
+report a mapping left behind at unbind). Mutant `unregister-in-use` (unregister ignores
+the references) fails `fixed_buffers`.
+
+`results/perf/fixed`, final build (o5) and `main`, 7 pairs each. Strict IOMMU: 4 KiB one
+at a time 148.0k/s fixed vs 131.4k bounce and 70.2k zero-copy in the same build (main's
+best, bounce: 98.1k); 64 KiB 67.3k vs 41.6k and 28.2k; 32 batched 4 KiB 660.5k vs 546.2k
+and 104.3k (6 of 7 pairs against bounce); 8 batched 64 KiB 103.2k vs 64.5k and 37.1k.
+Without an IOMMU fixed is the fastest path too: 4 KiB 159.3k vs 151.6k zero-copy, 32
+batched 811.4k vs 685.1k, 64 KiB 80.4k vs 73.3k.
+
+The miss: on the arms that do not use it, the final build against o3
+(`results/perf/final`) has median ratios between 0.984 and 1.021 (median 0.996), and
+32 in flight with a doorbell each ended at 577.8k/s, just below o3's lowest pair
+(579.2k; median 586.5k, 1 win of 7): the rule's second condition fails there by 0.2%.
+In the earlier session with the same code (`results/perf/chain`, o6 vs o4) that arm
+passed and the delayed-coalescing arm missed by a similar margin instead, so this is a
+cost of about half a percent on the per-command paths (more fields and branches in submit
+and release; `vCPU us` 1.58 -> 1.61 at that arm) or noise of that size. It is kept on
+the branch because the opt-in path gains 1.5x behind the IOMMU; dropping its commit
+restores o3 exactly.
+
+### What limits it now, and what was not done
+
+- **QEMU's main loop.** It runs the whole device model in one thread. After change 3,
+  three threads with 8 in flight keep it 92% busy (0.98 us per command at 952k/s)
+  while the three vCPUs run 86% of the time (2.72 us per command, halt polling
+  included), so the next step is
+  running queues outside the main loop: an IOThread per queue with irqfd interrupt
+  injection, as virtio dataplane does, plus a lock for the device state the MMIO
+  handlers share with it. Not done: it needs a host CPU per thread beyond the four
+  P-core threads this setup measures on, and the comparison would then also be one of
+  CPU budgets. The global lock itself is no longer in the doorbell path (no exit to
+  QEMU), which was the point of an IOThread for the one-queue case.
+- **Delay-based coalescing** still adds a third at depth without batching (32 in
+  flight with 16 completions or 50 us: 765.8k vs 577.8k/s, `results/perf/final`), but
+  a lone command still waits for the delay, so it stays off by default. Change 2 is
+  the delay-free part of adaptive coalescing; a driver that turns the delay on only
+  while a queue is deep (the remaining NAPI-like option) was not built.
+- **Overlap tracker.** Measured again on the final build with the tracker off at boot
+  (`results/perf/tracker`, 15 windows per arm, not paired): 512-byte batched commands
+  1022.3k vs 1073.4k/s (5%), three threads 1232.7k vs 1303.4k/s (5%), 4 KiB three
+  threads 955.3k vs 960.5k/s. The tracker's cost per command is unchanged, its share
+  grew as the rest shrank, and it does not limit scaling; a sharded tree was not built.
+  Registered buffers got their own per-buffer tree for fixed destinations.
+- **The CQ head in the shadow page** would remove the last 0.06 MMIO exits per command
+  (one per 16 completions), at most about 0.2 us per command; not done.
+- **Polling in the device** (keep reading the shadow tail for a while after a pass)
+  would let a device that is about to be busy skip doorbells at depth one too, at the
+  price of a host CPU spinning; not done.
+- **A shared file** still costs half the throughput of three files (486.3k vs
+  951.6k/s for 4 KiB at three threads), and with cheap doorbells batching at three
+  threads is now slower than not batching (852.2k vs 951.6k/s), presumably because a
+  flush waits for the whole read batch, which delays resubmission more than the
+  doorbells it saves are now worth.
+
 ## CI
 
 `.github/workflows/ci.yml` (push and pull request, `ubuntu-24.04`) builds QEMU
@@ -347,8 +538,6 @@ nothing.
 
 - Streaming data path (partial writes after an abort), PCIe AER recovery, an
   io_uring `uring_cmd` path.
-- Adaptive interrupt coalescing; writing the completion-queue head only every
-  few completions (one of the two exits per command at depth 1); doorbells
-  through an ioeventfd with a shadow tail in memory, which would turn the
-  submission exit into a lighter in-kernel one.
-- Profiling QEMU's global-lock contention on the host (needs perf).
+- The device model outside QEMU's main loop, delay-based adaptive coalescing, the CQ
+  head in the shadow page and device-side polling (see the performance round).
+- Profiling QEMU on the host (needs perf).
