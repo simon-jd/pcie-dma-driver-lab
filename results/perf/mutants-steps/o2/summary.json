@@ -1,0 +1,20 @@
+{
+  "mutants": [
+    {
+      "mutant": "pass-end-irq-skipped",
+      "file": ".cache/src/qemu-10.2.1/hw/misc/kdc_dma.c",
+      "runs": [
+        {
+          "config": "qtest-asan",
+          "failed": true,
+          "expected": "first and last completion of the pass interrupt",
+          "caught": true
+        }
+      ],
+      "caught": true,
+      "restored_build_ok": true
+    }
+  ],
+  "restored_guest_passed": true,
+  "restored_qtest_passed": true
+}

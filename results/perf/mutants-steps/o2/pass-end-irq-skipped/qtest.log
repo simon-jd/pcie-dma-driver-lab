@@ -1,0 +1,5 @@
+qemu: /home/postedism/Desktop/driver-firnware-runtime/A-kernel-device-contract-lab/.cache/build/qemu-asan/qemu-system-x86_64
+QEMU emulator version 10.2.1
+==1973753==WARNING: ASan doesn't fully support makecontext/swapcontext functions and may produce false positives in some cases!
+FAIL AssertionError: first and last completion of the pass interrupt, nothing in between pass_interrupts (0.1s)
+KDC_QTEST FAIL tests=18 failures=1

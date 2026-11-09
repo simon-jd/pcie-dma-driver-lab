@@ -107,7 +107,13 @@
 #define KDC_QSTATUS_ENABLED 0x01
 #define KDC_QSTATUS_HALTED 0x02
 #define KDC_Q_IRQ_VECTOR 0x1c
-#define KDC_Q_COALESCE 0x20 /* [15:0] completions per interrupt, [31:16] max delay us */
+/*
+ * [15:0] completions per interrupt, [31:16] max delay us. Without coalescing
+ * (count <= 1 or delay 0) the device interrupts for the first completion it
+ * posts in one processing pass and once more after the last completion of
+ * that pass, so a handler that reaps everything posted sees every completion.
+ */
+#define KDC_Q_COALESCE 0x20
 #define KDC_Q_SQ_TAIL 0x24 /* doorbell */
 #define KDC_Q_CQ_HEAD 0x28 /* doorbell */
 #define KDC_Q_SQ_HEAD 0x2c /* RO: next entry the device will fetch */

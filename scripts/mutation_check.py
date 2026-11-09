@@ -30,6 +30,9 @@ Mutants:
                            written to the queues
   cq-head-never-written    the driver counts reaped completions toward the
                            batched CQ head doorbell but never writes the head
+  pass-end-irq-skipped     device model raises the first interrupt of a
+                           processing pass but not the one after its last
+                           completion (qtest suite)
 """
 import argparse
 import json
@@ -125,6 +128,12 @@ MUTANTS = {
         edits=[("\t\twritel(q->cq_head, q->cq_db);\n\t\tq->cq_head_db = q->cq_head;\n",
                 "\t\tq->cq_head_db = q->cq_head; /* deliberate bug: the head never reaches the device */\n")],
         runs=[("tcg-iommu", True, ["FAIL cq_head_batching:"], [])]),
+    "pass-end-irq-skipped": dict(
+        file=QEMU_FILE,
+        edits=[("    if (q->irq_pending && !kdc_coalescing(q)) {\n        kdc_queue_fire(q);\n    }\n"
+                "    q->pass_fired = false;\n",
+                "    q->pass_fired = false; /* deliberate bug: the rest of the pass is never announced */\n")],
+        qtest=("pass_interrupts", "first and last completion of the pass interrupt")),
 }
 
 

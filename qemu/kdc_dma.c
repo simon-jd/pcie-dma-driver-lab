@@ -77,6 +77,7 @@ typedef struct KdcQueue {
     int32_t running; /* slot the engine is servicing, or -1 */
     int64_t engine_free_at;
     uint32_t irq_pending;
+    bool pass_fired; /* this pass has raised its first interrupt */
     QEMUTimer service_timer, coalesce_timer;
     QEMUBH *fetch_bh, *complete_bh;
 } KdcQueue;
@@ -142,6 +143,7 @@ static void kdc_queue_drop(KdcQueue *q)
     q->slot_head = q->slot_count = 0;
     q->running = -1;
     q->irq_pending = 0;
+    q->pass_fired = false;
 }
 
 static void kdc_queue_halt(KdcQueue *q)
@@ -225,18 +227,44 @@ static void kdc_coalesce_timer(void *opaque)
     }
 }
 
+static bool kdc_coalescing(KdcQueue *q)
+{
+    return (q->coalesce & 0xffff) > 1 && (q->coalesce >> 16);
+}
+
+/*
+ * Called for every posted completion. With coalescing, the count or the delay
+ * decides. Without it, the first completion of a pass (one run of
+ * kdc_complete()) interrupts at once and the rest of that pass is announced by
+ * a single interrupt after its last completion (kdc_pass_end()): the first
+ * completion is not delayed, and a burst costs two MSI-X messages, not one per
+ * completion.
+ */
 static void kdc_queue_irq(KdcQueue *q)
 {
     uint32_t count = q->coalesce & 0xffff;
     uint32_t delay_us = q->coalesce >> 16;
 
     q->irq_pending++;
-    if (count <= 1 || delay_us == 0 || q->irq_pending >= count) {
+    if (!kdc_coalescing(q)) {
+        if (!q->pass_fired) {
+            q->pass_fired = true;
+            kdc_queue_fire(q);
+        }
+    } else if (q->irq_pending >= count) {
         kdc_queue_fire(q);
     } else if (!timer_pending(&q->coalesce_timer)) {
         timer_mod(&q->coalesce_timer,
                   qemu_clock_get_ns(QEMU_CLOCK_VIRTUAL) + delay_us * 1000LL);
     }
+}
+
+static void kdc_pass_end(KdcQueue *q)
+{
+    if (q->irq_pending && !kdc_coalescing(q)) {
+        kdc_queue_fire(q);
+    }
+    q->pass_fired = false;
 }
 
 /* ---- CRC32C ---- */
@@ -548,6 +576,7 @@ static void kdc_complete(KdcQueue *q)
             break;
         }
     }
+    kdc_pass_end(q);
     if (!kdc_queue_running(q)) {
         return;
     }

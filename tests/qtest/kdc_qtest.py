@@ -776,6 +776,25 @@ def t_coalescing(t):
     check(len(ring.poll()) == 4 and t.irq_fired(0), "count reached: immediate interrupt")
 
 
+def t_pass_interrupts(t):
+    """Without coalescing, one pass interrupts for its first completion and once after its last."""
+    t.enable()
+    ring = t.queue(1)
+    irqs = t.reg(KDC_REG_STAT_IRQS)
+    ring.put(copy_cmd(t, 1, 32, src=SRC, dst=DST)[0])
+    t.settle()
+    check(len(ring.poll()) == 1 and t.reg(KDC_REG_STAT_IRQS) == irqs + 1, "a lone completion interrupts once")
+    check(t.irq_fired(1), "queue vector fired")
+    for cid in range(8):
+        ring.put(copy_cmd(t, 10 + cid, 32, src=SRC + cid * 4096, dst=DST + cid * 4096)[0], ring=False)
+    ring.doorbell()
+    t.settle()
+    check(len(ring.poll()) == 8, "eight completions in one pass")
+    check(t.reg(KDC_REG_STAT_IRQS) == irqs + 3,
+          "first and last completion of the pass interrupt, nothing in between")
+    check(t.irq_fired(1), "queue vector fired for the pass")
+
+
 def t_counters_and_scratch(t):
     t.enable()
     check(t.reg(KDC_REG_SCRATCH) == 0, "scratch starts at 0")
@@ -863,7 +882,7 @@ def t_fuzz(t, iterations=2000):
 
 TESTS = [t_identity, t_queue_config, t_copy_crc, t_copy_crc_table, t_service_time, t_abort, t_phase_and_backpressure,
          t_malformed, t_doorbell_errors, t_ring_dma_fault, t_dma_into_own_bar, t_reset_paths,
-         t_fault_knobs, t_recovery_knobs, t_coalescing, t_counters_and_scratch, t_fuzz]
+         t_fault_knobs, t_recovery_knobs, t_coalescing, t_pass_interrupts, t_counters_and_scratch, t_fuzz]
 
 
 def main():

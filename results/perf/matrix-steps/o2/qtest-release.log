@@ -1,0 +1,25 @@
+qemu: /home/postedism/.cache/kl-perf/verify/o2/.cache/build/qemu/qemu-system-x86_64
+QEMU emulator version 10.2.1
+PASS identity (0.0s)
+PASS queue_config (0.0s)
+PASS copy_crc (0.6s)
+PASS copy_crc_table (0.8s)
+PASS service_time (0.0s)
+PASS abort (0.0s)
+PASS phase_and_backpressure (0.0s)
+  15 malformed descriptor classes rejected
+PASS malformed (0.1s)
+PASS doorbell_errors (0.0s)
+PASS ring_dma_fault (0.0s)
+qemu-system-x86_64: warning: Blocked re-entrant IO on MemoryRegion: kdc-regs at addr: 0x28
+PASS dma_into_own_bar (0.0s)
+PASS reset_paths (0.0s)
+PASS fault_knobs (0.0s)
+PASS recovery_knobs (0.0s)
+PASS coalescing (0.0s)
+PASS pass_interrupts (0.0s)
+PASS counters_and_scratch (0.0s)
+  fuzz: 2000 iterations, 2000 descriptors queued, 2000 completions read (queues may halt on bad doorbells)
+qemu-system-x86_64: warning: Blocked re-entrant IO on MemoryRegion: kdc-regs at addr: 0x0
+PASS fuzz (0.6s)
+KDC_QTEST PASS tests=18 failures=0
