@@ -1,0 +1,39 @@
+{
+  "mutants": [
+    {
+      "mutant": "shadow-ring-only-idle",
+      "file": "build/linux-6.12.41/drivers/misc/kdc/kdc_pci.c",
+      "runs": [
+        {
+          "config": "tcg-iommu",
+          "failed": true,
+          "first_failed_assertion": "FAIL shadow_doorbell:755:",
+          "allowed": [
+            "FAIL shadow_doorbell:"
+          ],
+          "evidence_required": [],
+          "evidence_seen": [],
+          "caught": true
+        }
+      ],
+      "caught": true,
+      "restored_build_ok": true
+    },
+    {
+      "mutant": "event-index-not-published",
+      "file": ".cache/src/qemu-10.2.1/hw/misc/kdc_dma.c",
+      "runs": [
+        {
+          "config": "qtest-asan",
+          "failed": true,
+          "expected": "event index published after the pass",
+          "caught": true
+        }
+      ],
+      "caught": true,
+      "restored_build_ok": true
+    }
+  ],
+  "restored_guest_passed": true,
+  "restored_qtest_passed": true
+}

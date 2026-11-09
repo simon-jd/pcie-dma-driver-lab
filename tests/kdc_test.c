@@ -726,6 +726,44 @@ static void batch_flush(void)
 }
 
 /*
+ * Shadow doorbells: the driver writes the SQ tail to host memory and rings the
+ * MMIO doorbell only if the device's event index says it has fetched
+ * everything. A stalled device (no completions) still fetches, so it is idle
+ * in fetching terms after every command: each submission must ring the
+ * doorbell and be fetched, whatever is still outstanding.
+ */
+static void shadow_doorbell(void)
+{
+	enum { N = 4 };
+	if (!read_knob(0, "shadow_doorbells")) {
+		say("  shadow_doorbell: the device offers no shadow doorbells; skipped");
+		return;
+	}
+	int fd = open_dev(0);
+	struct kdc_submit s = req(fd, 1, NULL, NULL, 0);
+	s.flags = KDC_SUBMIT_NOP;
+	s.queue = 3;
+	s.timeout_ms = HOLD_MS;
+	knob(0, "fault", FAULT_STALL);
+	unsigned long db = read_knob(0, "device_doorbells"), held = read_knob(0, "device_inflight");
+	for (unsigned i = 0; i < N; i++) {
+		s.id = 1 + i;
+		CHECK(submit(fd, &s) == 0);
+		int ms = 0;
+		while (read_knob(0, "device_inflight") < held + i + 1 && ms++ < 2000)
+			sleep_ms(1);
+		CHECK(read_knob(0, "device_inflight") == held + i + 1); /* fetched */
+		CHECK(read_knob(0, "device_doorbells") == db + i + 1); /* one doorbell each */
+	}
+	knob(0, "fault", 0);
+	for (unsigned i = 0; i < N; i++)
+		CHECK(completion(fd).status == 0);
+	baseline(fd);
+	close(fd);
+	say("  shadow_doorbell: %u commands behind a stalled engine, each fetched after its doorbell", N);
+}
+
+/*
  * The completion-queue head reaches the device only every cq_head_batch reaped
  * entries (default: a quarter of the ring). One command at a time, the device's
  * own count of head writes must be exactly one per batch. Then the largest
@@ -2282,6 +2320,7 @@ int main(void)
 		void (*fn)(void);
 	} cases[] = {
 		{ "device_info", device_info },
+		{ "shadow_doorbell", shadow_doorbell },
 		{ "cq_head_batching", cq_head_batching },
 		{ "abi_validation", abi_validation },
 		{ "data_integrity", data_integrity },

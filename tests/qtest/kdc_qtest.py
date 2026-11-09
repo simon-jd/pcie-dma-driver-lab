@@ -795,6 +795,55 @@ def t_pass_interrupts(t):
     check(t.irq_fired(1), "queue vector fired for the pass")
 
 
+def t_shadow_doorbell(t):
+    """DBBUF: the SQ tail comes from host memory, the doorbell value is ignored, and the
+    device publishes the tail it has fetched up to as the event index."""
+    check(t.reg(KDC_REG_FEATURES) & KDC_FEAT_SHADOW_DB, "feature offered")
+    t.enable()
+    dbbuf = 0x00900000
+    t.zero(dbbuf, 4096)
+    t.set_reg(KDC_REG_DBBUF_HI, 0)
+    t.set_reg(KDC_REG_DBBUF_LO, dbbuf | KDC_DBBUF_ENABLE)
+    ring = t.queue(2)
+    entry = dbbuf + 2 * KDC_DBBUF_SIZE
+    for cid in range(3):
+        ring.put(copy_cmd(t, cid, 32, src=SRC + cid * 4096, dst=DST + cid * 4096)[0], ring=False)
+    t.writel(entry, ring.tail)
+    t.set_qreg(2, KDC_Q_SQ_TAIL, 0)  # a kick; the value is ignored
+    t.settle()
+    check(len(ring.poll()) == 3, "three commands fetched up to the shadow tail")
+    check(t.readl(entry + 4) == 3, "event index published after the pass")
+    ring.put(copy_cmd(t, 3, 32)[0], ring=False)
+    t.writel(entry, ring.tail)
+    t.settle()
+    check(not ring.poll() and t.qreg(2, KDC_Q_INFLIGHT) == 0, "no kick, no fetch")
+    t.set_qreg(2, KDC_Q_SQ_TAIL, 0)
+    t.settle()
+    check(len(ring.poll()) == 1 and t.readl(entry + 4) == 4, "kicked: fetched and index moved")
+    t.writel(entry, 99)
+    t.set_qreg(2, KDC_Q_SQ_TAIL, 0)
+    t.settle()
+    check(t.reg(KDC_REG_ERR_STATUS) & KDC_ERR_DOORBELL, "out-of-range shadow tail reported")
+    check(t.readl(dbbuf + 4) == 0, "other queues' entries untouched")
+    t.set_reg(KDC_REG_RESET, KDC_RESET_MAGIC)
+    check(t.reg(KDC_REG_DBBUF_LO) == 0 and t.reg(KDC_REG_DBBUF_HI) == 0, "reset clears DBBUF")
+
+
+def t_shadow_db_off(t):
+    """With shadow-db=off the feature is not offered and DBBUF ignores writes."""
+    check(not t.reg(KDC_REG_FEATURES) & KDC_FEAT_SHADOW_DB, "feature not offered")
+    t.enable()
+    t.set_reg(KDC_REG_DBBUF_LO, 0x00900000 | KDC_DBBUF_ENABLE)
+    check(t.reg(KDC_REG_DBBUF_LO) == 0, "DBBUF ignores writes")
+    ring = t.queue(0)
+    ring.put(copy_cmd(t, 1, 32)[0])
+    t.settle()
+    check(len(ring.poll()) == 1, "doorbell value used as before")
+
+
+t_shadow_db_off.device_args = ",shadow-db=off"
+
+
 def t_counters_and_scratch(t):
     t.enable()
     check(t.reg(KDC_REG_SCRATCH) == 0, "scratch starts at 0")
@@ -882,7 +931,8 @@ def t_fuzz(t, iterations=2000):
 
 TESTS = [t_identity, t_queue_config, t_copy_crc, t_copy_crc_table, t_service_time, t_abort, t_phase_and_backpressure,
          t_malformed, t_doorbell_errors, t_ring_dma_fault, t_dma_into_own_bar, t_reset_paths,
-         t_fault_knobs, t_recovery_knobs, t_coalescing, t_pass_interrupts, t_counters_and_scratch, t_fuzz]
+         t_fault_knobs, t_recovery_knobs, t_coalescing, t_pass_interrupts, t_shadow_doorbell, t_shadow_db_off,
+         t_counters_and_scratch, t_fuzz]
 
 
 def main():

@@ -260,6 +260,22 @@ static void hw_layout(struct kunit *test)
 	KUNIT_EXPECT_EQ(test, sizeof(struct kdc_submit), 80);
 }
 
+static void shadow_event_index(struct kunit *test)
+{
+	/* the device has fetched up to the old tail: ring */
+	KUNIT_EXPECT_TRUE(test, kdc_need_event(5, 6, 5, 64));
+	KUNIT_EXPECT_TRUE(test, kdc_need_event(5, 9, 5, 64));
+	KUNIT_EXPECT_TRUE(test, kdc_need_event(63, 1, 63, 64));
+	KUNIT_EXPECT_TRUE(test, kdc_need_event(0, 1, 63, 64));
+	/* still behind the old tail: it reads the shadow tail again itself */
+	KUNIT_EXPECT_FALSE(test, kdc_need_event(4, 6, 5, 64));
+	KUNIT_EXPECT_FALSE(test, kdc_need_event(60, 2, 63, 64));
+	/* already saw the new tail */
+	KUNIT_EXPECT_FALSE(test, kdc_need_event(1, 1, 63, 64));
+	KUNIT_EXPECT_EQ(test, sizeof(struct kdc_hw_dbbuf), KDC_DBBUF_SIZE);
+	KUNIT_EXPECT_EQ(test, offsetof(struct kdc_hw_dbbuf, sq_event), 4);
+}
+
 static struct kunit_case kdc_cases[] = {
 	KUNIT_CASE(cid_generation),
 	KUNIT_CASE(ring_math),
@@ -273,6 +289,7 @@ static struct kunit_case kdc_cases[] = {
 	KUNIT_CASE(submit_field_checks),
 	KUNIT_CASE(sgl_from_dma_segments),
 	KUNIT_CASE(hw_layout),
+	KUNIT_CASE(shadow_event_index),
 	{}
 };
 

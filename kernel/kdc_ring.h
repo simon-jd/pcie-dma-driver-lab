@@ -40,6 +40,19 @@ static inline u16 kdc_ring_next(u16 index, u16 depth)
 	return (index + 1) & (depth - 1);
 }
 
+/*
+ * Shadow doorbells: the driver has moved the SQ tail from @old to @new_tail in
+ * host memory. The MMIO doorbell is needed only if the device's event index
+ * lies in [old, new_tail): the device has fetched everything up to the old
+ * tail and may have gone idle. An index behind @old means the device has not
+ * yet finished a pass it was kicked for; it reads the shadow tail again at
+ * the end of that pass.
+ */
+static inline bool kdc_need_event(u16 event, u16 new_tail, u16 old, u16 depth)
+{
+	return ((new_tail - event - 1) & (depth - 1)) < ((new_tail - old) & (depth - 1));
+}
+
 /* A completion entry is new when its phase bit matches the expected phase. */
 static inline bool kdc_cqe_is_new(u16 status, u8 phase)
 {

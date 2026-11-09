@@ -50,6 +50,7 @@ struct kdc_queue {
 	struct kdc_hw_cqe *cq;
 	dma_addr_t sq_dma, cq_dma;
 	void __iomem *sq_db, *cq_db, *abort_reg;
+	struct kdc_hw_dbbuf *db; /* shadow doorbell entry, or NULL */
 	spinlock_t lock;
 	u16 sq_tail, cq_head, outstanding;
 	u16 cq_head_db; /* last value written to the CQ head doorbell */
@@ -79,6 +80,8 @@ struct kdc_dev {
 	struct kdc_queue *queues;
 	unsigned int *cpu_queue;
 	struct dma_pool *sgl_pool, *bounce_pool;
+	struct kdc_hw_dbbuf *dbbuf; /* shadow doorbell page (KDC_FEAT_SHADOW_DB), or NULL */
+	dma_addr_t dbbuf_dma;
 	struct rw_semaphore gone_lock; /* ioctls hold it shared; remove takes it to set dead */
 	bool dead; /* removed */
 	struct mutex files_mutex;

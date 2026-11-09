@@ -28,6 +28,10 @@ MODULE_PARM_DESC(coalesce_count, "Completions per interrupt (0 or 1: one interru
 static unsigned int coalesce_usecs;
 module_param(coalesce_usecs, uint, 0444);
 MODULE_PARM_DESC(coalesce_usecs, "Longest an interrupt is held back while coalescing, us; read at probe");
+static bool shadow_doorbells = true;
+module_param(shadow_doorbells, bool, 0444);
+MODULE_PARM_DESC(shadow_doorbells, "Use the device's shadow doorbells (SQ tail in host memory, event index) "
+		 "when it offers them; read at probe");
 static unsigned int cq_head_batch;
 module_param(cq_head_batch, uint, 0444);
 MODULE_PARM_DESC(cq_head_batch, "Write the completion-queue head to the device after this many reaped entries "
@@ -77,6 +81,7 @@ static void kdc_wr(struct kdc_dev *kdev, u32 off, u32 val)
 void kdc_queue_dispatch_locked(struct kdc_queue *q)
 {
 	struct kdc_cmd *cmd, *tmp;
+	u16 old = q->sq_tail;
 	bool rung = false;
 
 	lockdep_assert_held(&q->lock);
@@ -106,8 +111,19 @@ void kdc_queue_dispatch_locked(struct kdc_queue *q)
 		rung = true;
 	}
 	if (rung) {
+		bool ring = true;
+
+		if (q->db) {
+			/* the entries before the shadow tail, the tail before the event index */
+			wmb();
+			WRITE_ONCE(q->db->sq_tail, cpu_to_le32(q->sq_tail));
+			mb();
+			ring = kdc_need_event(le32_to_cpu(READ_ONCE(q->db->sq_event)),
+					      q->sq_tail, old, q->depth);
+		}
 		/* writel orders the ring stores above before the doorbell. */
-		writel(q->sq_tail, q->sq_db);
+		if (ring)
+			writel(q->sq_tail, q->sq_db);
 		kdc_arm_watchdog(q->kdev);
 	}
 }
@@ -412,6 +428,19 @@ static int kdc_queue_hw_setup(struct kdc_dev *kdev, struct kdc_queue *q)
 	return 0;
 }
 
+/*
+ * The shadow doorbell page, zeroed and programmed after a controller reset and
+ * before any queue is enabled, so the device cannot be writing it.
+ */
+static void kdc_dbbuf_setup(struct kdc_dev *kdev)
+{
+	if (!kdev->dbbuf)
+		return;
+	memset(kdev->dbbuf, 0, PAGE_SIZE);
+	kdc_wr(kdev, KDC_REG_DBBUF_HI, upper_32_bits(kdev->dbbuf_dma));
+	kdc_wr(kdev, KDC_REG_DBBUF_LO, lower_32_bits(kdev->dbbuf_dma) | KDC_DBBUF_ENABLE);
+}
+
 /* Bring a stopped controller back: called by recovery with reset_lock held. */
 int kdc_restart_hw(struct kdc_dev *kdev)
 {
@@ -422,6 +451,7 @@ int kdc_restart_hw(struct kdc_dev *kdev)
 	err = kdc_hw_start(kdev);
 	if (err)
 		return err;
+	kdc_dbbuf_setup(kdev);
 	for (i = 0; i < kdev->nr_queues; i++) {
 		struct kdc_queue *q = &kdev->queues[i];
 
@@ -587,6 +617,13 @@ static int kdc_cq_head_batch_set(void *data, u64 val)
 DEFINE_DEBUGFS_ATTRIBUTE(kdc_cq_head_batch_fops, kdc_cq_head_batch_get,
 			 kdc_cq_head_batch_set, "%llu\n");
 
+static int kdc_shadow_get(void *data, u64 *val)
+{
+	*val = !!((struct kdc_dev *)data)->dbbuf;
+	return 0;
+}
+DEFINE_DEBUGFS_ATTRIBUTE(kdc_shadow_fops, kdc_shadow_get, NULL, "%llu\n");
+
 static void kdc_debugfs_init(struct kdc_dev *kdev)
 {
 	static const struct {
@@ -621,6 +658,8 @@ static void kdc_debugfs_init(struct kdc_dev *kdev)
 				   &kdc_coalesce_fops);
 	debugfs_create_file_unsafe("cq_head_batch", 0600, kdev->debugfs, kdev,
 				   &kdc_cq_head_batch_fops);
+	debugfs_create_file_unsafe("shadow_doorbells", 0400, kdev->debugfs, kdev,
+				   &kdc_shadow_fops);
 }
 
 /* ---- probe / remove ---- */
@@ -646,6 +685,9 @@ static void kdc_teardown(struct kdc_dev *kdev)
 	dma_pool_destroy(kdev->sgl_pool);
 	dma_pool_destroy(kdev->bounce_pool);
 	kdev->sgl_pool = kdev->bounce_pool = NULL;
+	if (kdev->dbbuf)
+		dma_free_coherent(&kdev->pdev->dev, PAGE_SIZE, kdev->dbbuf, kdev->dbbuf_dma);
+	kdev->dbbuf = NULL;
 	pci_free_irq_vectors(kdev->pdev);
 }
 
@@ -661,6 +703,7 @@ static int kdc_probe(struct pci_dev *pdev, const struct pci_device_id *id)
 	BUILD_BUG_ON(L1_CACHE_BYTES > KDC_CACHELINE ||
 		     ARCH_DMA_MINALIGN > KDC_CACHELINE);
 	BUILD_BUG_ON(KDC_SGL_BLOCK > PAGE_SIZE);
+	BUILD_BUG_ON(KDC_MAX_QUEUES * KDC_DBBUF_SIZE > PAGE_SIZE || PAGE_SIZE % KDC_RING_ALIGN);
 	kdev = kzalloc(sizeof(*kdev), GFP_KERNEL);
 	if (!kdev)
 		return -ENOMEM;
@@ -740,9 +783,20 @@ static int kdc_probe(struct pci_dev *pdev, const struct pci_device_id *id)
 		err = -ENOMEM;
 		goto teardown;
 	}
+	if (shadow_doorbells && (kdc_rd(kdev, KDC_REG_FEATURES) & KDC_FEAT_SHADOW_DB)) {
+		kdev->dbbuf = dma_alloc_coherent(dev, PAGE_SIZE, &kdev->dbbuf_dma, GFP_KERNEL);
+		if (!kdev->dbbuf) {
+			err = -ENOMEM;
+			goto teardown;
+		}
+		kdc_dbbuf_setup(kdev);
+	}
 	for (i = 0; i < kdev->nr_queues; i++) {
-		err = kdc_queue_alloc(kdev, &kdev->queues[i], i) ?:
-		      kdc_queue_hw_setup(kdev, &kdev->queues[i]);
+		err = kdc_queue_alloc(kdev, &kdev->queues[i], i);
+		if (err)
+			goto teardown;
+		kdev->queues[i].db = kdev->dbbuf ? &kdev->dbbuf[i] : NULL;
+		err = kdc_queue_hw_setup(kdev, &kdev->queues[i]);
 		if (err)
 			goto teardown;
 	}
@@ -766,9 +820,9 @@ static int kdc_probe(struct pci_dev *pdev, const struct pci_device_id *id)
 	if (err)
 		goto teardown;
 	kdc_debugfs_init(kdev);
-	dev_info(dev, "%s: %u queues x %u entries, bounce <= %u bytes\n",
+	dev_info(dev, "%s: %u queues x %u entries, bounce <= %u bytes%s\n",
 		 dev_name(&kdev->dev), kdev->nr_queues, kdev->depth,
-		 kdev->bounce_max);
+		 kdev->bounce_max, kdev->dbbuf ? ", shadow doorbells" : "");
 	return 0;
 
 teardown:

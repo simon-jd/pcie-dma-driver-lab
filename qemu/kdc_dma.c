@@ -15,6 +15,12 @@
  * Fetch and completion run in bottom halves guarded against re-entrancy, never
  * in the MMIO handler.
  *
+ * With shadow doorbells (DBBUF register) a queue's SQ tail lives in host memory
+ * and the doorbell write only says "look": the device registers an ioeventfd
+ * on the doorbell address, so under KVM the write is handled in the host
+ * kernel and never exits to QEMU, and the device publishes an event index so
+ * the driver can skip doorbells while the device still has entries to fetch.
+ *
  * Fault knobs model a misbehaving device for the driver's recovery paths:
  * a stalled engine, a fatal state, dropped or corrupted completions, DMA to a
  * bad address, a controller that ignores its reset, one that never becomes
@@ -32,6 +38,7 @@
 #include "qemu/main-loop.h"
 #include "qemu/log.h"
 #include "qemu/crc32c.h"
+#include "qemu/event_notifier.h"
 #include "qapi/error.h"
 #include "qapi/visitor.h"
 #include "hw/pci/pci_device.h"
@@ -80,6 +87,10 @@ typedef struct KdcQueue {
     bool pass_fired; /* this pass has raised its first interrupt */
     QEMUTimer service_timer, coalesce_timer;
     QEMUBH *fetch_bh, *complete_bh;
+    bool shadow; /* latched at enable: SQ tail from the DBBUF page */
+    uint64_t db_addr; /* this queue's struct kdc_hw_dbbuf */
+    EventNotifier sq_notifier; /* ioeventfd on the SQ doorbell (shadow queues) */
+    bool notifier_ok, ioeventfd_on;
 } KdcQueue;
 
 struct KdcState {
@@ -88,6 +99,9 @@ struct KdcState {
     uint32_t nqueues;
     bool hw_crc; /* property: SSE4.2 crc32 instruction when the host has it */
     bool use_sse42;
+    bool shadow_db; /* property: offer KDC_FEAT_SHADOW_DB */
+    bool ioeventfd; /* property: doorbells of shadow queues through an ioeventfd */
+    uint64_t dbbuf; /* KDC_REG_DBBUF: page address | KDC_DBBUF_ENABLE */
     uint32_t service_ns;
     uint32_t ctrl, status, err_status, err_info, err_vector;
     uint32_t fault, fault_drop, fault_bad_cid, fault_bad_dma;
@@ -131,6 +145,13 @@ static void kdc_error(KdcState *s, uint32_t bits, uint32_t queue)
 
 static void kdc_queue_drop(KdcQueue *q)
 {
+    if (q->ioeventfd_on) {
+        memory_region_del_eventfd(&q->s->mmio, KDC_QREG(q->id, KDC_Q_SQ_TAIL), 0, false, 0,
+                                  &q->sq_notifier);
+        q->ioeventfd_on = false;
+        event_notifier_test_and_clear(&q->sq_notifier); /* a stale kick */
+    }
+    q->shadow = false;
     timer_del(&q->service_timer);
     timer_del(&q->coalesce_timer);
     qemu_bh_cancel(q->fetch_bh);
@@ -171,6 +192,7 @@ static void kdc_reset_state(KdcState *s)
     s->stat_done = s->stat_aborted = s->stat_errors = 0;
     s->stat_irqs = s->stat_doorbells = s->stat_cq_doorbells = 0;
     s->scratch = 0;
+    s->dbbuf = 0;
 }
 
 static void kdc_kick_all(KdcState *s)
@@ -480,6 +502,25 @@ static bool kdc_post(KdcQueue *q, KdcSlot *slot)
     return true;
 }
 
+/* Shadow doorbell: the driver's SQ tail from the DBBUF page; false if the queue halted. */
+static bool kdc_shadow_tail(KdcQueue *q)
+{
+    uint32_t tail;
+
+    if (pci_dma_read(PCI_DEVICE(q->s), q->db_addr + offsetof(struct kdc_hw_dbbuf, sq_tail),
+                     &tail, sizeof(tail)) != MEMTX_OK) {
+        kdc_queue_halt(q);
+        return false;
+    }
+    tail = le32_to_cpu(tail);
+    if (tail >= q->depth) {
+        kdc_error(q->s, KDC_ERR_DOORBELL, q->id); /* ignored, like a bad doorbell value */
+    } else {
+        q->sq_tail = tail;
+    }
+    return true;
+}
+
 static void kdc_fetch(void *opaque)
 {
     KdcQueue *q = opaque;
@@ -487,9 +528,10 @@ static void kdc_fetch(void *opaque)
     int64_t now = qemu_clock_get_ns(QEMU_CLOCK_VIRTUAL);
     bool fetched = false;
 
-    if (!kdc_queue_running(q)) {
+    if (!kdc_queue_running(q) || (q->shadow && !kdc_shadow_tail(q))) {
         return;
     }
+again:
     while (q->sq_head != q->sq_tail && q->slot_count < q->depth) {
         KdcSlot *slot = kdc_slot(q, q->slot_count);
         uint64_t addr = q->sq_base + (uint64_t)q->sq_head * KDC_SQE_SIZE;
@@ -508,6 +550,28 @@ static void kdc_fetch(void *opaque)
         slot->fetched_at = now;
         slot->state = slot->code == KDC_SC_SUCCESS ? SLOT_BUSY : SLOT_DONE;
         fetched = true;
+    }
+    if (q->shadow && q->sq_head == q->sq_tail) {
+        /*
+         * Everything seen is fetched: publish that tail as the event index,
+         * then read the shadow tail again. A driver that read the old index
+         * skipped its doorbell, but it wrote its tail before that read (full
+         * barrier on both sides), so this second read sees the new tail.
+         */
+        uint32_t seen = q->sq_tail, ev = cpu_to_le32(seen);
+
+        if (pci_dma_write(PCI_DEVICE(s), q->db_addr + offsetof(struct kdc_hw_dbbuf, sq_event),
+                          &ev, sizeof(ev)) != MEMTX_OK) {
+            kdc_queue_halt(q);
+            return;
+        }
+        smp_mb();
+        if (!kdc_shadow_tail(q)) {
+            return;
+        }
+        if (q->sq_tail != seen) {
+            goto again;
+        }
     }
     if (fetched) {
         kdc_complete(q);
@@ -615,9 +679,22 @@ static void kdc_abort(KdcQueue *q, uint16_t cid)
     }
 }
 
+/* A kick for a shadow queue, from its ioeventfd (KVM, in the host kernel). */
+static void kdc_sq_notify(EventNotifier *e)
+{
+    KdcQueue *q = container_of(e, KdcQueue, sq_notifier);
+
+    if (!event_notifier_test_and_clear(e) || q->s->gone || !q->shadow) {
+        return;
+    }
+    q->s->stat_doorbells++;
+    qemu_bh_schedule(q->fetch_bh);
+}
+
 static void kdc_queue_enable(KdcQueue *q, bool enable)
 {
     KdcState *s = q->s;
+    bool shadow = s->dbbuf & KDC_DBBUF_ENABLE;
 
     if (!enable) {
         kdc_queue_drop(q);
@@ -628,7 +705,8 @@ static void kdc_queue_enable(KdcQueue *q, bool enable)
     }
     if (!(s->status & KDC_STATUS_READY) || (s->status & KDC_STATUS_FATAL) ||
         q->size_log2 < KDC_MIN_DEPTH_LOG2 || q->size_log2 > KDC_MAX_DEPTH_LOG2 ||
-        !q->sq_base || !q->cq_base || (q->sq_base | q->cq_base) % KDC_RING_ALIGN) {
+        !q->sq_base || !q->cq_base || (q->sq_base | q->cq_base) % KDC_RING_ALIGN ||
+        (shadow && (s->dbbuf & ~(uint64_t)KDC_DBBUF_ENABLE) % KDC_RING_ALIGN)) {
         kdc_error(s, KDC_ERR_QUEUE_CONFIG, q->id);
         return;
     }
@@ -641,6 +719,15 @@ static void kdc_queue_enable(KdcQueue *q, bool enable)
     q->engine_free_at = 0;
     q->irq_pending = 0;
     q->status = KDC_QSTATUS_ENABLED;
+    q->shadow = shadow;
+    q->db_addr = (s->dbbuf & ~(uint64_t)KDC_DBBUF_ENABLE) + q->id * KDC_DBBUF_SIZE;
+    if (shadow && s->ioeventfd && q->notifier_ok) {
+        /* size 0: any write; KVM handles it in the kernel (fast MMIO). Without
+         * KVM the write reaches kdc_queue_write() as before. */
+        memory_region_add_eventfd(&s->mmio, KDC_QREG(q->id, KDC_Q_SQ_TAIL), 0, false, 0,
+                                  &q->sq_notifier);
+        q->ioeventfd_on = true;
+    }
 }
 
 static uint32_t kdc_inflight(KdcQueue *q)
@@ -716,6 +803,11 @@ static void kdc_queue_write(KdcQueue *q, hwaddr reg, uint32_t val)
         q->coalesce = val;
         break;
     case KDC_Q_SQ_TAIL:
+        if (enabled && q->shadow) { /* only a kick: the tail is in the DBBUF page */
+            s->stat_doorbells++;
+            qemu_bh_schedule(q->fetch_bh);
+            break;
+        }
         if (!enabled || val >= q->depth) {
             kdc_error(s, KDC_ERR_DOORBELL, q->id);
             break;
@@ -766,7 +858,7 @@ static uint64_t kdc_mmio_read(void *opaque, hwaddr addr, unsigned size)
     case KDC_REG_MAX_XFER: return KDC_MAX_XFER;
     case KDC_REG_FEATURES:
         return KDC_FEAT_CRC32C | KDC_FEAT_ABORT | KDC_FEAT_COALESCE |
-               KDC_FEAT_FAULTS | KDC_FEAT_FLR;
+               KDC_FEAT_FAULTS | KDC_FEAT_FLR | (s->shadow_db ? KDC_FEAT_SHADOW_DB : 0);
     case KDC_REG_CTRL: return s->ctrl;
     case KDC_REG_STATUS: return s->status;
     case KDC_REG_ERR_STATUS: return s->err_status;
@@ -784,6 +876,8 @@ static uint64_t kdc_mmio_read(void *opaque, hwaddr addr, unsigned size)
     case KDC_REG_STAT_DOORBELLS: return s->stat_doorbells;
     case KDC_REG_STAT_CQ_DOORBELLS: return s->stat_cq_doorbells;
     case KDC_REG_SCRATCH: return s->scratch;
+    case KDC_REG_DBBUF_LO: return (uint32_t)s->dbbuf;
+    case KDC_REG_DBBUF_HI: return s->dbbuf >> 32;
     default:
         qemu_log_mask(LOG_GUEST_ERROR, "kdc-dma: read of unknown reg 0x%"
                       HWADDR_PRIx "\n", addr);
@@ -853,6 +947,16 @@ static void kdc_mmio_write(void *opaque, hwaddr addr, uint64_t val64,
         break;
     case KDC_REG_SCRATCH:
         s->scratch = val;
+        break;
+    case KDC_REG_DBBUF_LO:
+        if (s->shadow_db) {
+            s->dbbuf = deposit64(s->dbbuf, 0, 32, val);
+        }
+        break;
+    case KDC_REG_DBBUF_HI:
+        if (s->shadow_db) {
+            s->dbbuf = deposit64(s->dbbuf, 32, 32, val);
+        }
         break;
     default:
         qemu_log_mask(LOG_GUEST_ERROR, "kdc-dma: write to RO/unknown reg 0x%"
@@ -1008,6 +1112,10 @@ static void kdc_realize(PCIDevice *pdev, Error **errp)
                                           &DEVICE(s)->mem_reentrancy_guard);
         q->complete_bh = qemu_bh_new_guarded(kdc_complete_bh, q,
                                              &DEVICE(s)->mem_reentrancy_guard);
+        q->notifier_ok = s->ioeventfd && event_notifier_init(&q->sq_notifier, 0) == 0;
+        if (q->notifier_ok) {
+            event_notifier_set_handler(&q->sq_notifier, kdc_sq_notify);
+        }
     }
     kdc_reset_state(s);
 }
@@ -1022,6 +1130,10 @@ static void kdc_exit(PCIDevice *pdev)
         kdc_queue_drop(q);
         qemu_bh_delete(q->fetch_bh);
         qemu_bh_delete(q->complete_bh);
+        if (q->notifier_ok) {
+            event_notifier_set_handler(&q->sq_notifier, NULL);
+            event_notifier_cleanup(&q->sq_notifier);
+        }
     }
     g_free(s->xfer);
     msix_uninit_exclusive_bar(pdev);
@@ -1054,6 +1166,8 @@ static void kdc_device_reset(DeviceState *dev)
 static const Property kdc_props[] = {
     DEFINE_PROP_UINT32("queues", KdcState, nqueues, 4),
     DEFINE_PROP_BOOL("hw-crc", KdcState, hw_crc, true),
+    DEFINE_PROP_BOOL("shadow-db", KdcState, shadow_db, true),
+    DEFINE_PROP_BOOL("ioeventfd", KdcState, ioeventfd, true),
 };
 
 static const VMStateDescription kdc_vmstate = {

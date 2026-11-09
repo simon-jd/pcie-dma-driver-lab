@@ -33,6 +33,12 @@ Mutants:
   pass-end-irq-skipped     device model raises the first interrupt of a
                            processing pass but not the one after its last
                            completion (qtest suite)
+  shadow-ring-only-idle    with shadow doorbells the driver rings only when
+                           the queue had nothing outstanding, assuming a busy
+                           device looks at the shadow tail by itself
+  event-index-not-published  device model never writes the event index, so a
+                           driver would skip doorbells an idle device needs
+                           (qtest suite)
 """
 import argparse
 import json
@@ -134,6 +140,19 @@ MUTANTS = {
                 "    q->pass_fired = false;\n",
                 "    q->pass_fired = false; /* deliberate bug: the rest of the pass is never announced */\n")],
         qtest=("pass_interrupts", "first and last completion of the pass interrupt")),
+    "shadow-ring-only-idle": dict(
+        file=KDC_TREE / "kdc_pci.c",
+        edits=[("\t\t\tring = kdc_need_event(le32_to_cpu(READ_ONCE(q->db->sq_event)),\n"
+                "\t\t\t\t\t      q->sq_tail, old, q->depth);\n",
+                "\t\t\t/* deliberate bug: a busy queue is assumed to be polled */\n"
+                "\t\t\tring = q->outstanding == kdc_ring_used(q->sq_tail, old, q->depth);\n")],
+        runs=[("tcg-iommu", True, ["FAIL shadow_doorbell:"], [])]),
+    "event-index-not-published": dict(
+        file=QEMU_FILE,
+        edits=[("        if (pci_dma_write(PCI_DEVICE(s), q->db_addr + offsetof(struct kdc_hw_dbbuf, sq_event),\n"
+                "                          &ev, sizeof(ev)) != MEMTX_OK) {\n",
+                "        if (0) { /* deliberate bug: the event index is never published */\n")],
+        qtest=("shadow_doorbell", "event index published after the pass")),
 }
 
 

@@ -41,8 +41,8 @@ from build_kernel import KERNELS, inputs
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 QEMU = {"release": ROOT / ".cache/build/qemu/qemu-system-x86_64",
         "asan": ROOT / ".cache/build/qemu-asan/qemu-system-x86_64"}
-KUNIT_CASES = 12
-CLIENT_CASES = 35
+KUNIT_CASES = 13
+CLIENT_CASES = 36
 INIT = b"""#!/bin/sh
 /bin/busybox mount -t proc proc /proc
 /bin/busybox mount -t sysfs sysfs /sys
@@ -90,7 +90,7 @@ FORBIDDEN = re.compile(
 DRIVER_LINE = re.compile(r"\bkdc [0-9a-f]{4}:[0-9a-f]{2}:[0-9a-f]{2}\.\d: (.*)$")
 # Not reports: the driver's probe banner, and two one-time notices the PCI and
 # IOMMU cores print for a hot-added function.
-DRIVER_BANNER = re.compile(r"^(kdc\d+: \d+ queues x \d+ entries, bounce <= \d+ bytes|"
+DRIVER_BANNER = re.compile(r"^(kdc\d+: \d+ queues x \d+ entries, bounce <= \d+ bytes(, shadow doorbells)?|"
                            r"enabling device \(0000 -> 0002\)|Using \d+-bit DMA addresses)$")
 QEMU_FORBIDDEN = re.compile(r"AddressSanitizer|runtime error:|Blocked re-entrant|Assertion")
 HOST_REQUEST = re.compile(r"kdc_test: KDC_HOST (\S+)(?: (.*))?$")

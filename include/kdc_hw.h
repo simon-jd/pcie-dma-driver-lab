@@ -51,6 +51,7 @@
 #define KDC_FEAT_COALESCE 0x04
 #define KDC_FEAT_FAULTS 0x08
 #define KDC_FEAT_FLR 0x10
+#define KDC_FEAT_SHADOW_DB 0x20 /* KDC_REG_DBBUF: shadow SQ tails with an event index */
 
 #define KDC_REG_CTRL 0x020 /* RW */
 #define KDC_CTRL_ENABLE 0x01 /* 1->0 drops all in-flight work without completions */
@@ -90,6 +91,23 @@
 /* RW, no effect on the device; cleared by reset. Lets test code on the host and
  * in the guest hand each other a token (the host writes it as a QOM property). */
 #define KDC_REG_SCRATCH 0x078
+
+/*
+ * Shadow doorbells (KDC_FEAT_SHADOW_DB). DBBUF holds the address of a 4 KiB
+ * aligned page in host memory with one struct kdc_hw_dbbuf per queue, indexed
+ * by queue number, and KDC_DBBUF_ENABLE in bit 0; cleared by reset. A queue
+ * enabled while it is set uses its entry: the driver writes the new SQ tail
+ * to sq_tail and then writes KDC_Q_SQ_TAIL, whose value the device ignores;
+ * the device reads sq_tail instead. Whenever the device has fetched every
+ * entry it has seen, it writes that tail to sq_event, issues a full barrier
+ * and reads sq_tail again, so the driver may skip the doorbell unless
+ * sq_event lies in [old tail, new tail) (it must order its sq_tail write
+ * before its sq_event read with a full barrier). The completion side is
+ * unchanged.
+ */
+#define KDC_REG_DBBUF_LO 0x080 /* RW */
+#define KDC_REG_DBBUF_HI 0x084 /* RW */
+#define KDC_DBBUF_ENABLE 0x1
 
 /* Per-queue registers */
 #define KDC_QUEUE_BASE 0x1000
@@ -150,6 +168,13 @@ struct kdc_hw_sge {
 	KDC_LE32 rsvd; /* must be zero */
 };
 #define KDC_SGE_SIZE 16
+
+struct kdc_hw_dbbuf {
+	KDC_LE32 sq_tail; /* written by the driver */
+	KDC_LE32 sq_event; /* written by the device */
+	KDC_LE32 rsvd[2];
+};
+#define KDC_DBBUF_SIZE 16
 
 /* Completion queue entry; the device writes status (with the phase bit) last. */
 struct kdc_hw_cqe {
