@@ -1,0 +1,9 @@
+--- kdc_pci.c
+-	kdc_teardown(kdev);
+	mutex_unlock(&kdev->files_mutex);
+	mutex_unlock(&kdev->reset_lock);
++	kdc_teardown(kdev);
+	kfree(kdev->queues); /* deliberate bug: open files' commands still point here */
+	kdev->queues = NULL;
+	mutex_unlock(&kdev->files_mutex);
+	mutex_unlock(&kdev->reset_lock);

@@ -1,0 +1,14 @@
+{
+  "mutant": "device-skips-sgl-sum",
+  "file": ".cache/src/qemu-10.2.1/hw/misc/kdc_dma.c",
+  "runs": [
+    {
+      "config": "qtest-asan",
+      "failed": true,
+      "expected": "entries short of length",
+      "caught": true
+    }
+  ],
+  "caught": true,
+  "restored_build_ok": true
+}

@@ -1,0 +1,12 @@
+config KDC_PCI
+    tristate "KDC DMA engine driver (emulated QEMU lab device)"
+    depends on PCI && PCI_MSI
+    select INTERVAL_TREE
+    help
+      Driver for the kdc-dma QEMU device: a PCIe DMA copy + CRC32C engine
+      that exists only in an emulator. Creates /dev/kdcN per function.
+
+config KDC_PCI_KUNIT_TEST
+    bool "KUnit tests for the KDC driver" if !KUNIT_ALL_TESTS
+    depends on KUNIT=y && KDC_PCI=y
+    default KUNIT_ALL_TESTS

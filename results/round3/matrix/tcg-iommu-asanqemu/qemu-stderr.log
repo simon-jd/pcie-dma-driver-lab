@@ -1,0 +1,4 @@
+==2364875==WARNING: ASan doesn't fully support makecontext/swapcontext functions and may produce false positives in some cases!
+qemu-system-x86_64: vtd_iova_to_slpte: detected IOVA overflow (iova=0xfffffffffff00000,pasid=0xffffffff)
+qemu-system-x86_64: vtd_iommu_translate: detected translation failure (dev=01:00:00, iova=0xfffffffffff00000)
+qemu-system-x86_64: New fault is not recorded due to compression of faults

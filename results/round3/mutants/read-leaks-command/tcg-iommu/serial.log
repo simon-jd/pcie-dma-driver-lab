@@ -1,0 +1,822 @@
+[    0.000000] Linux version 6.12.41 (kdc@local) (gcc (Ubuntu 15.2.0-16ubuntu1) 15.2.0, GNU ld (GNU Binutils for Ubuntu) 2.46) #1 SMP 2026-11-06 00:00:00 +0000
+[    0.000000] Command line: console=ttyS0 panic=-1 oops=panic panic_on_warn=1 nokaslr printk.devkmsg=on intel_iommu=on iommu.strict=1
+[    0.000000] BIOS-provided physical RAM map:
+[    0.000000] BIOS-e820: [mem 0x0000000000000000-0x000000000009fbff] usable
+[    0.000000] BIOS-e820: [mem 0x000000000009fc00-0x000000000009ffff] reserved
+[    0.000000] BIOS-e820: [mem 0x00000000000f0000-0x00000000000fffff] reserved
+[    0.000000] BIOS-e820: [mem 0x0000000000100000-0x000000007ffdffff] usable
+[    0.000000] BIOS-e820: [mem 0x000000007ffe0000-0x000000007fffffff] reserved
+[    0.000000] BIOS-e820: [mem 0x00000000b0000000-0x00000000bfffffff] reserved
+[    0.000000] BIOS-e820: [mem 0x00000000fed1c000-0x00000000fed1ffff] reserved
+[    0.000000] BIOS-e820: [mem 0x00000000fffc0000-0x00000000ffffffff] reserved
+[    0.000000] BIOS-e820: [mem 0x000000fd00000000-0x000000ffffffffff] reserved
+[    0.000000] NX (Execute Disable) protection: active
+[    0.000000] APIC: Static calls initialized
+[    0.000000] tsc: Fast TSC calibration using PIT
+[    0.000000] tsc: Detected 2995.192 MHz processor
+[    0.003830] last_pfn = 0x7ffe0 max_arch_pfn = 0x10000000000
+[    0.003870] x86/PAT: PAT support disabled because CONFIG_X86_PAT is disabled in the kernel.
+[    0.004024] x86/PAT: Configuration [0-7]: WB  WT  UC- UC  WB  WT  UC- UC  
+[    0.014939] found SMP MP-table at [mem 0x000f54b0-0x000f54bf]
+[    0.016788] Using GB pages for direct mapping
+[    0.023182] RAMDISK: [mem 0x7fe30000-0x7ffdffff]
+[    0.023545] ACPI: Early table checksum verification disabled
+[    0.024034] ACPI: RSDP 0x00000000000F52D0 000014 (v00 BOCHS )
+[    0.024383] ACPI: RSDT 0x000000007FFE2626 00003C (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+[    0.025354] ACPI: FACP 0x000000007FFE238E 0000F4 (v03 BOCHS  BXPC     00000001 BXPC 00000001)
+[    0.026239] ACPI: DSDT 0x000000007FFE0040 00234E (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+[    0.026416] ACPI: FACS 0x000000007FFE0000 000040
+[    0.026478] ACPI: APIC 0x000000007FFE2482 000090 (v03 BOCHS  BXPC     00000001 BXPC 00000001)
+[    0.026507] ACPI: HPET 0x000000007FFE2512 000038 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+[    0.026533] ACPI: MCFG 0x000000007FFE254A 00003C (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+[    0.026595] ACPI: DMAR 0x000000007FFE2586 000078 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+[    0.026623] ACPI: WAET 0x000000007FFE25FE 000028 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+[    0.026694] ACPI: Reserving FACP table memory at [mem 0x7ffe238e-0x7ffe2481]
+[    0.026718] ACPI: Reserving DSDT table memory at [mem 0x7ffe0040-0x7ffe238d]
+[    0.026728] ACPI: Reserving FACS table memory at [mem 0x7ffe0000-0x7ffe003f]
+[    0.026737] ACPI: Reserving APIC table memory at [mem 0x7ffe2482-0x7ffe2511]
+[    0.026746] ACPI: Reserving HPET table memory at [mem 0x7ffe2512-0x7ffe2549]
+[    0.026755] ACPI: Reserving MCFG table memory at [mem 0x7ffe254a-0x7ffe2585]
+[    0.026763] ACPI: Reserving DMAR table memory at [mem 0x7ffe2586-0x7ffe25fd]
+[    0.026772] ACPI: Reserving WAET table memory at [mem 0x7ffe25fe-0x7ffe2625]
+[    0.030574] Zone ranges:
+[    0.030605]   DMA32    [mem 0x0000000000001000-0x000000007ffdffff]
+[    0.030700]   Normal   empty
+[    0.030721] Movable zone start for each node
+[    0.030745] Early memory node ranges
+[    0.030768]   node   0: [mem 0x0000000000001000-0x000000000009efff]
+[    0.030912]   node   0: [mem 0x0000000000100000-0x000000007ffdffff]
+[    0.031087] Initmem setup node 0 [mem 0x0000000000001000-0x000000007ffdffff]
+[    0.032472] On node 0, zone DMA32: 1 pages in unavailable ranges
+[    0.124398] On node 0, zone DMA32: 97 pages in unavailable ranges
+[    0.124554] On node 0, zone DMA32: 32 pages in unavailable ranges
+[    0.171409] kasan: KernelAddressSanitizer initialized
+[    0.172020] ACPI: PM-Timer IO Port: 0x608
+[    0.172654] ACPI: LAPIC_NMI (acpi_id[0xff] dfl dfl lint[0x1])
+[    0.173529] IOAPIC[0]: apic_id 0, version 32, address 0xfec00000, GSI 0-23
+[    0.173746] ACPI: INT_SRC_OVR (bus 0 bus_irq 0 global_irq 2 dfl dfl)
+[    0.174188] ACPI: INT_SRC_OVR (bus 0 bus_irq 5 global_irq 5 high level)
+[    0.174252] ACPI: INT_SRC_OVR (bus 0 bus_irq 9 global_irq 9 high level)
+[    0.174362] ACPI: INT_SRC_OVR (bus 0 bus_irq 10 global_irq 10 high level)
+[    0.174377] ACPI: INT_SRC_OVR (bus 0 bus_irq 11 global_irq 11 high level)
+[    0.174691] ACPI: Using ACPI (MADT) for SMP configuration information
+[    0.174815] ACPI: HPET id: 0x8086a201 base: 0xfed00000
+[    0.175296] CPU topo: Max. logical packages:   1
+[    0.175314] CPU topo: Max. logical dies:       1
+[    0.175335] CPU topo: Max. dies per package:   1
+[    0.175383] CPU topo: Max. threads per core:   1
+[    0.175585] CPU topo: Num. cores per package:     4
+[    0.175613] CPU topo: Num. threads per package:   4
+[    0.175624] CPU topo: Allowing 4 present CPUs plus 0 hotplug CPUs
+[    0.176480] [mem 0xc0000000-0xfed1bfff] available for PCI devices
+[    0.176970] clocksource: refined-jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 19112604462750000 ns
+[    0.185108] setup_percpu: NR_CPUS:4 nr_cpumask_bits:4 nr_cpu_ids:4 nr_node_ids:1
+[    0.188223] percpu: Embedded 63 pages/cpu s226776 r0 d31272 u524288
+[    0.191134] Kernel command line: console=ttyS0 panic=-1 oops=panic panic_on_warn=1 nokaslr printk.devkmsg=on intel_iommu=on iommu.strict=1
+[    0.192570] DMAR: IOMMU enabled
+[    0.192821] Unknown kernel command line parameters "nokaslr", will be passed to user space.
+[    0.195283] random: crng init done
+[    0.195907] Dentry cache hash table entries: 262144 (order: 9, 2097152 bytes, linear)
+[    0.196323] Inode-cache hash table entries: 131072 (order: 8, 1048576 bytes, linear)
+[    0.199043] Built 1 zonelists, mobility grouping on.  Total pages: 524158
+[    0.199382] mem auto-init: stack:all(zero), heap alloc:off, heap free:off
+[    0.199426] stackdepot: allocating hash table via alloc_large_system_hash
+[    0.199481] stackdepot hash table entries: 1048576 (order: 12, 16777216 bytes, linear)
+[    0.380561] SLUB: HWalign=64, Order=0-3, MinObjects=0, CPUs=4, Nodes=1
+[    0.415395] Running RCU self tests
+[    0.415427] Running RCU synchronous self tests
+[    0.416907] rcu: Hierarchical RCU implementation.
+[    0.416926] rcu: 	RCU lockdep checking is enabled.
+[    0.417167] rcu: RCU calculated value of scheduler-enlistment delay is 10 jiffies.
+[    0.420338] Running RCU synchronous self tests
+[    0.467303] NR_IRQS: 4352, nr_irqs: 456, preallocated irqs: 16
+[    0.482473] rcu: srcu_init: Setting srcu_struct sizes based on contention.
+[    0.495905] Console: colour *CGA 80x25
+[    0.499518] printk: legacy console [ttyS0] enabled
+[    0.508519] Lock dependency validator: Copyright (c) 2006 Red Hat, Inc., Ingo Molnar
+[    0.508689] ... MAX_LOCKDEP_SUBCLASSES:  8
+[    0.508771] ... MAX_LOCK_DEPTH:          48
+[    0.508852] ... MAX_LOCKDEP_KEYS:        8192
+[    0.508933] ... CLASSHASH_SIZE:          4096
+[    0.509013] ... MAX_LOCKDEP_ENTRIES:     32768
+[    0.509093] ... MAX_LOCKDEP_CHAINS:      65536
+[    0.509174] ... CHAINHASH_SIZE:          32768
+[    0.509254]  memory used by lock dependency info: 6429 kB
+[    0.509344]  memory used for stack traces: 4224 kB
+[    0.509429]  per task-struct memory footprint: 1920 bytes
+[    0.510062] ACPI: Core revision 20240827
+[    0.521769] clocksource: hpet: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 19112604467 ns
+[    0.530443] APIC: Switch to symmetric I/O mode setup
+[    0.540423] ..TIMER: vector=0x30 apic1=0 pin1=2 apic2=-1 pin2=-1
+[    0.583756] clocksource: tsc-early: mask: 0xffffffffffffffff max_cycles: 0x2b2c87807df, max_idle_ns: 440795205312 ns
+[    0.584449] Calibrating delay loop (skipped), value calculated using timer frequency.. 5990.38 BogoMIPS (lpj=29951920)
+[    0.587163] Last level iTLB entries: 4KB 0, 2MB 0, 4MB 0
+[    0.592934] Last level dTLB entries: 4KB 0, 2MB 0, 4MB 0, 1GB 0
+[    0.598749] Speculative Store Bypass: Vulnerable
+[    0.605982] x86/fpu: Supporting XSAVE feature 0x001: 'x87 floating point registers'
+[    0.610784] x86/fpu: Supporting XSAVE feature 0x002: 'SSE registers'
+[    0.610946] x86/fpu: Supporting XSAVE feature 0x004: 'AVX registers'
+[    0.611075] x86/fpu: Supporting XSAVE feature 0x008: 'MPX bounds registers'
+[    0.611206] x86/fpu: Supporting XSAVE feature 0x010: 'MPX CSR'
+[    0.614340] x86/fpu: Supporting XSAVE feature 0x200: 'Protection Keys User registers'
+[    0.614652] x86/fpu: xstate_offset[2]:  576, xstate_sizes[2]:  256
+[    0.614884] x86/fpu: xstate_offset[3]:  960, xstate_sizes[3]:   64
+[    0.615010] x86/fpu: xstate_offset[4]: 1024, xstate_sizes[4]:   64
+[    0.615144] x86/fpu: xstate_offset[9]: 2688, xstate_sizes[9]:    8
+[    0.615303] x86/fpu: Enabled xstate features 0x21f, context size is 2696 bytes, using 'standard' format.
+[    0.647908] Freeing SMP alternatives memory: 8K
+[    0.648290] pid_max: default: 32768 minimum: 301
+[    0.661017] Mount-cache hash table entries: 4096 (order: 3, 32768 bytes, linear)
+[    0.661386] Mountpoint-cache hash table entries: 4096 (order: 3, 32768 bytes, linear)
+[    0.697563] Running RCU synchronous self tests
+[    0.697849] Running RCU synchronous self tests
+[    0.839209] smpboot: CPU0: AMD QEMU TCG CPU version 2.5+ (family: 0x6, model: 0x6, stepping: 0x3)
+[    0.864778] Performance Events: PMU not available due to virtualization, using software events only.
+[    0.866304] signal: max sigframe size: 3232
+[    0.869921] rcu: Hierarchical SRCU implementation.
+[    0.870031] rcu: 	Max phase no-delay instances is 1000.
+[    0.886913] smp: Bringing up secondary CPUs ...
+[    0.899378] smpboot: x86: Booting SMP configuration:
+[    0.899646] .... node  #0, CPUs:      #1 #2 #3
+[    1.426223] smp: Brought up 1 node, 4 CPUs
+[    1.426576] smpboot: Total of 4 processors activated (23952.96 BogoMIPS)
+[    1.443960] Memory: 1728952K/2096632K available (10240K kernel code, 3172K rwdata, 3056K rodata, 1280K init, 17868K bss, 362832K reserved, 0K cma-reserved)
+[    1.475651] devtmpfs: initialized
+[    1.515804] Running RCU synchronous self tests
+[    1.516228] Running RCU synchronous self tests
+[    1.544412] DMA-API: preallocated 65536 debug entries
+[    1.544594] DMA-API: debugging enabled by kernel config
+[    1.544917] clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 19112604462750000 ns
+[    1.545666] futex hash table entries: 1024 (order: 5, 131072 bytes, linear)
+[    1.584601] thermal_sys: Registered thermal governor 'step_wise'
+[    1.584694] thermal_sys: Registered thermal governor 'user_space'
+[    1.586266] cpuidle: using governor ladder
+[    1.588305] acpiphp: ACPI Hot Plug PCI Controller Driver version: 0.5
+[    1.593888] PCI: ECAM [mem 0xb0000000-0xbfffffff] (base 0xb0000000) for domain 0000 [bus 00-ff]
+[    1.594994] PCI: ECAM [mem 0xb0000000-0xbfffffff] reserved as E820 entry
+[    1.597755] PCI: Using configuration type 1 for base access
+[    1.615368] ACPI: Added _OSI(Module Device)
+[    1.615483] ACPI: Added _OSI(Processor Device)
+[    1.615556] ACPI: Added _OSI(Processor Aggregator Device)
+[    2.416865] ACPI: 1 ACPI AML tables successfully acquired and loaded
+[    2.623330] ACPI: Interpreter enabled
+[    2.625405] ACPI: PM: (supports S0 S5)
+[    2.625631] ACPI: Using IOAPIC for interrupt routing
+[    2.630931] PCI: Using host bridge windows from ACPI; if necessary, use "pci=nocrs" and report a bug
+[    2.631078] PCI: Using E820 reservations for host bridge windows
+[    2.659099] ACPI: Enabled 2 GPEs in block 00 to 3F
+[    3.472168] ACPI: PCI Root Bridge [PCI0] (domain 0000 [bus 00-ff])
+[    3.473415] acpi PNP0A08:00: _OSC: OS supports [ExtendedConfig ASPM ClockPM Segments MSI HPX-Type3]
+[    3.503667] acpi PNP0A08:00: _OSC: platform does not support [PCIeHotplug LTR]
+[    3.556694] acpi PNP0A08:00: _OSC: OS now controls [PME PCIeCapability]
+[    3.586485] PCI host bridge to bus 0000:00
+[    3.588757] pci_bus 0000:00: root bus resource [io  0x0000-0x0cf7 window]
+[    3.589012] pci_bus 0000:00: root bus resource [io  0x0d00-0xffff window]
+[    3.589198] pci_bus 0000:00: root bus resource [mem 0x000a0000-0x000bffff window]
+[    3.589381] pci_bus 0000:00: root bus resource [mem 0x80000000-0xafffffff window]
+[    3.589565] pci_bus 0000:00: root bus resource [mem 0xc0000000-0xfebfffff window]
+[    3.589749] pci_bus 0000:00: root bus resource [mem 0x100000000-0x8ffffffff window]
+[    3.590104] pci_bus 0000:00: root bus resource [bus 00-ff]
+[    3.593015] pci 0000:00:00.0: [8086:29c0] type 00 class 0x060000 conventional PCI endpoint
+[    3.612079] pci 0000:00:02.0: [1b36:000c] type 01 class 0x060400 PCIe Root Port
+[    3.615371] pci 0000:00:02.0: BAR 0 [mem 0xfe600000-0xfe600fff]
+[    3.617818] pci 0000:00:02.0: PCI bridge to [bus 01]
+[    3.618148] pci 0000:00:02.0:   bridge window [mem 0xfe400000-0xfe5fffff]
+[    3.619026] pci 0000:00:02.0:   bridge window [mem 0xfea00000-0xfebfffff 64bit pref]
+[    3.619412] pci 0000:00:02.0: enabling Extended Tags
+[    3.631671] pci 0000:00:03.0: [1b36:000c] type 01 class 0x060400 PCIe Root Port
+[    3.632876] pci 0000:00:03.0: BAR 0 [mem 0xfe601000-0xfe601fff]
+[    3.635008] pci 0000:00:03.0: PCI bridge to [bus 02]
+[    3.635139] pci 0000:00:03.0:   bridge window [mem 0xfe200000-0xfe3fffff]
+[    3.635613] pci 0000:00:03.0:   bridge window [mem 0xfe800000-0xfe9fffff 64bit pref]
+[    3.635765] pci 0000:00:03.0: enabling Extended Tags
+[    3.645913] pci 0000:00:1f.0: [8086:2918] type 00 class 0x060100 conventional PCI endpoint
+[    3.647205] pci 0000:00:1f.0: quirk: [io  0x0600-0x067f] claimed by ICH6 ACPI/GPIO/TCO
+[    3.655915] pci 0000:00:1f.2: [8086:2922] type 00 class 0x010601 conventional PCI endpoint
+[    3.659599] pci 0000:00:1f.2: BAR 4 [io  0xc040-0xc05f]
+[    3.660768] pci 0000:00:1f.2: BAR 5 [mem 0xfe602000-0xfe602fff]
+[    3.670867] pci 0000:00:1f.3: [8086:2930] type 00 class 0x0c0500 conventional PCI endpoint
+[    3.672551] pci 0000:00:1f.3: BAR 4 [io  0x0700-0x073f]
+[    3.690976] acpiphp: Slot [0] registered
+[    3.691787] pci 0000:01:00.0: [1234:4b44] type 00 class 0x088000 PCIe Endpoint
+[    3.692551] pci 0000:01:00.0: BAR 0 [mem 0xfe400000-0xfe403fff 64bit]
+[    3.693501] pci 0000:01:00.0: BAR 2 [mem 0xfe404000-0xfe404fff]
+[    3.697590] pci 0000:01:00.0: enabling Extended Tags
+[    3.836138] pci 0000:00:02.0: PCI bridge to [bus 01]
+[    3.841973] acpiphp: Slot [0-1] registered
+[    3.842383] pci 0000:02:00.0: [1234:4b44] type 00 class 0x088000 PCIe Endpoint
+[    3.843076] pci 0000:02:00.0: BAR 0 [mem 0xfe200000-0xfe203fff 64bit]
+[    3.843712] pci 0000:02:00.0: BAR 2 [mem 0xfe204000-0xfe204fff]
+[    3.847935] pci 0000:02:00.0: enabling Extended Tags
+[    3.980004] pci 0000:00:03.0: PCI bridge to [bus 02]
+[    4.021607] ACPI: PCI: Interrupt link LNKA configured for IRQ 10
+[    4.041790] ACPI: PCI: Interrupt link LNKB configured for IRQ 10
+[    4.060841] ACPI: PCI: Interrupt link LNKC configured for IRQ 11
+[    4.079956] ACPI: PCI: Interrupt link LNKD configured for IRQ 11
+[    4.099319] ACPI: PCI: Interrupt link LNKE configured for IRQ 10
+[    4.118455] ACPI: PCI: Interrupt link LNKF configured for IRQ 10
+[    4.137454] ACPI: PCI: Interrupt link LNKG configured for IRQ 11
+[    4.156883] ACPI: PCI: Interrupt link LNKH configured for IRQ 11
+[    4.161002] ACPI: PCI: Interrupt link GSIA configured for IRQ 16
+[    4.163541] ACPI: PCI: Interrupt link GSIB configured for IRQ 17
+[    4.167182] ACPI: PCI: Interrupt link GSIC configured for IRQ 18
+[    4.169674] ACPI: PCI: Interrupt link GSID configured for IRQ 19
+[    4.172159] ACPI: PCI: Interrupt link GSIE configured for IRQ 20
+[    4.175762] ACPI: PCI: Interrupt link GSIF configured for IRQ 21
+[    4.178267] ACPI: PCI: Interrupt link GSIG configured for IRQ 22
+[    4.180752] ACPI: PCI: Interrupt link GSIH configured for IRQ 23
+[    4.258836] iommu: Default domain type: Translated
+[    4.258981] iommu: DMA domain TLB invalidation policy: strict mode (set via kernel command line)
+[    4.261099] PCI: Using ACPI for IRQ routing
+[    4.289823] vgaarb: loaded
+[    4.297814] clocksource: Switched to clocksource tsc-early
+[    4.313721] ACPI: Failed to create genetlink family for ACPI event
+[    4.315458] pnp: PnP ACPI init
+[    4.356050] system 00:04: [mem 0xb0000000-0xbfffffff window] has been reserved
+[    4.415086] pnp: PnP ACPI: found 5 devices
+[    4.643669] clocksource: acpi_pm: mask: 0xffffff max_cycles: 0xffffff, max_idle_ns: 2085701024 ns
+[    4.644803] pci 0000:00:02.0: bridge window [io  0x1000-0x0fff] to [bus 01] add_size 1000
+[    4.645190] pci 0000:00:03.0: bridge window [io  0x1000-0x0fff] to [bus 02] add_size 1000
+[    4.647057] pci 0000:00:02.0: bridge window [io  0x1000-0x1fff]: assigned
+[    4.647228] pci 0000:00:03.0: bridge window [io  0x2000-0x2fff]: assigned
+[    4.647951] pci 0000:00:02.0: PCI bridge to [bus 01]
+[    4.648148] pci 0000:00:02.0:   bridge window [io  0x1000-0x1fff]
+[    4.649040] pci 0000:00:02.0:   bridge window [mem 0xfe400000-0xfe5fffff]
+[    4.649691] pci 0000:00:02.0:   bridge window [mem 0xfea00000-0xfebfffff 64bit pref]
+[    4.650678] pci 0000:00:03.0: PCI bridge to [bus 02]
+[    4.650814] pci 0000:00:03.0:   bridge window [io  0x2000-0x2fff]
+[    4.651508] pci 0000:00:03.0:   bridge window [mem 0xfe200000-0xfe3fffff]
+[    4.651834] pci 0000:00:03.0:   bridge window [mem 0xfe800000-0xfe9fffff 64bit pref]
+[    4.653580] pci_bus 0000:00: resource 4 [io  0x0000-0x0cf7 window]
+[    4.653720] pci_bus 0000:00: resource 5 [io  0x0d00-0xffff window]
+[    4.653821] pci_bus 0000:00: resource 6 [mem 0x000a0000-0x000bffff window]
+[    4.653921] pci_bus 0000:00: resource 7 [mem 0x80000000-0xafffffff window]
+[    4.654017] pci_bus 0000:00: resource 8 [mem 0xc0000000-0xfebfffff window]
+[    4.654113] pci_bus 0000:00: resource 9 [mem 0x100000000-0x8ffffffff window]
+[    4.654265] pci_bus 0000:01: resource 0 [io  0x1000-0x1fff]
+[    4.654361] pci_bus 0000:01: resource 1 [mem 0xfe400000-0xfe5fffff]
+[    4.654457] pci_bus 0000:01: resource 2 [mem 0xfea00000-0xfebfffff 64bit pref]
+[    4.654562] pci_bus 0000:02: resource 0 [io  0x2000-0x2fff]
+[    4.654647] pci_bus 0000:02: resource 1 [mem 0xfe200000-0xfe3fffff]
+[    4.654735] pci_bus 0000:02: resource 2 [mem 0xfe800000-0xfe9fffff 64bit pref]
+[    4.657242] PCI: CLS 0 bytes, default 64
+[    4.659900] DMAR: Host address width 48
+[    4.660499] DMAR: DRHD base: 0x000000fed90000 flags: 0x0
+[    4.664344] DMAR: dmar0: reg_base_addr fed90000 ver 1:0 cap 80d2008c222f0606 ecap f00f4a
+[    4.667084] DMAR: No RMRR found
+[    4.667253] DMAR: No ATSR found
+[    4.667403] DMAR: No SATC found
+[    4.669322] DMAR: dmar0: Using Queued invalidation
+[    4.672871] Unpacking initramfs...
+[    4.699699] pci 0000:00:00.0: Adding to iommu group 0
+[    4.703382] pci 0000:00:02.0: Adding to iommu group 1
+[    4.705915] pci 0000:00:03.0: Adding to iommu group 2
+[    4.708937] pci 0000:00:1f.0: Adding to iommu group 3
+[    4.710500] pci 0000:00:1f.2: Adding to iommu group 3
+[    4.712190] pci 0000:00:1f.3: Adding to iommu group 3
+[    4.715202] pci 0000:01:00.0: Adding to iommu group 4
+[    4.717532] pci 0000:02:00.0: Adding to iommu group 5
+[    4.872198] DMAR: Intel(R) Virtualization Technology for Directed I/O
+[    4.892880] workingset: timestamp_bits=62 max_order=19 bucket_order=0
+[    4.900553] Freeing initrd memory: 1728K
+[    5.048973] ACPI: \_SB_.GSIG: Enabled at IRQ 22
+[    5.193149] ACPI: \_SB_.GSIH: Enabled at IRQ 23
+[    5.209794] input: Power Button as /devices/LNXSYSTM:00/LNXPWRBN:00/input/input0
+[    5.211182] ACPI: button: Power Button [PWRF]
+[    5.952856] tsc: Refined TSC clocksource calibration: 2995.222 MHz
+[    5.954213] clocksource: tsc: mask: 0xffffffffffffffff max_cycles: 0x2b2ca42c063, max_idle_ns: 440795339139 ns
+[    5.956860] clocksource: Switched to clocksource tsc
+[    6.272827] Serial: 8250/16550 driver, 1 ports, IRQ sharing disabled
+[    6.289283] 00:02: ttyS0 at I/O 0x3f8 (irq = 4, base_baud = 115200) is a 16550A
+[    6.416632] kdc 0000:01:00.0: kdc0: 4 queues x 64 entries, bounce <= 65536 bytes
+[    6.448072] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes
+[    6.453369] i8042: PNP: PS/2 Controller [PNP0303:KBD,PNP0f13:MOU] at 0x60,0x64 irq 1,12
+[    6.460050] serio: i8042 KBD port at 0x60,0x64 irq 1
+[    6.460924] serio: i8042 AUX port at 0x60,0x64 irq 12
+[    6.464905] amd_pstate: the _CPC object is not present in SBIOS or ACPI disabled
+[    6.468606] IPI shorthand broadcast: enabled
+[    6.593054] sched_clock: Marking stable (6560878802, 30758963)->(6598292882, -6655117)
+[    6.647333] input: AT Translated Set 2 keyboard as /devices/platform/i8042/serio0/input/input1
+[    6.746643] kmemleak: Kernel memory leak detector initialized (mem pool available: 14998)
+[    6.754546] KTAP version 1
+[    6.754730] 1..1
+[    6.755421]     KTAP version 1
+[    6.756991]     # Subtest: kdc
+[    6.757762]     # module: kdc_kunit
+[    6.757957]     1..12
+[    6.766937]     ok 1 cid_generation
+[    6.770953]     ok 2 ring_math
+[    6.774885]     ok 3 phase_flips_on_wrap
+[    6.778467]     ok 4 page_span_and_overlap
+[    6.781538]     ok 5 cancel_by_ownership
+[    6.784853]     ok 6 status_mapping
+[    6.787946]     ok 7 watchdog_and_reclaim
+[    6.791527]     ok 8 dst_split
+[    6.794827]     ok 9 admission_and_quota
+[    6.799387]     ok 10 submit_field_checks
+[    6.803400]     ok 11 sgl_from_dma_segments
+[    6.805755]     ok 12 hw_layout
+[    6.805880] # kdc: pass:12 fail:0 skip:0 total:12
+[    6.805976] # Totals: pass:12 fail:0 skip:0 total:12
+[    6.806151] ok 1 kdc
+[    7.087434] Freeing unused kernel image (initmem) memory: 1280K
+[    7.087982] Write protecting the kernel read-only data: 14336k
+[    7.100295] Freeing unused kernel image (rodata/data gap) memory: 1040K
+[    7.101065] Run /init as init process
+[    7.335426] input: ImExPS/2 Generic Explorer Mouse as /devices/platform/i8042/serio1/input/input3
+[    7.353379] kdc_init: KDC_GUEST_START
+[    7.393486] kdc_test: PASS device_info (3 ms)
+[    7.473679] kdc_test: PASS abi_validation (80 ms)
+[    7.851593] kdc_test:   data_integrity: 84 copies verified (dst bytes, guard bytes, CRC32C)
+[    7.851873] kdc_test: PASS data_integrity (378 ms)
+[    7.854788] kdc_test: PASS nop_and_batch_read (2 ms)
+[    7.863503] kdc_test: PASS queue_selection (8 ms)
+[    7.943826] kdc_test: PASS batch_flush (80 ms)
+[    8.021549] kdc_test:   coalescing: batch of 8 in 1 interrupt, single command waited 53 ms
+[    8.022750] kdc_test: PASS coalescing (78 ms)
+[    8.679395] kdc_test: PASS pinned_page_not_recycled (656 ms)
+[    8.814641] kdc_test: PASS cancel_driver_owned (135 ms)
+[    8.897642] kdc_test: PASS cancel_device_owned (82 ms)
+[   11.049744] kdc_test:   cancel_race: 1 cancelled before the doorbell, 516 aborted by the device, 983 completed first; 40 more aborted while held device-owned
+[   11.050531] kdc_test: PASS cancel_race (2152 ms)
+[   11.298923] kdc_test: PASS close_with_inflight (248 ms)
+[   11.336925] kdc_test: PASS reset_semantics (37 ms)
+[   11.393704] kdc_test: PASS quotas (56 ms)
+[   11.396362] kdc_test: PASS file_isolation (2 ms)
+[   11.785538] kdc_test:   concurrency: 4 threads x 250 verified copies, own files
+[   11.785795] kdc_test: PASS concurrency (389 ms)
+[   11.926928] kdc_test: PASS shared_file (141 ms)
+[   12.158077] kdc_test: PASS ring_overflow_all_queues (231 ms)
+[   12.168722] kdc_test: PASS second_device (10 ms)
+[   12.380227] kdc 0000:01:00.0: kdc0: 4 queues x 64 entries, bounce <= 65536 bytes
+[   12.396939] kdc_test: PASS unbind_rebind (228 ms)
+[   12.399589] kdc_test: EXPECT_BEGIN timeout-abort timed out after
+[   12.606124] kdc 0000:01:00.0: queue 1 cid 0x3000 timed out after 200 ms; aborting
+[   12.618511] kdc_test: EXPECT_END timeout-abort
+[   12.622904] kdc_test:   timeout_abort: answered after 212 ms
+[   12.623513] kdc_test: PASS timeout_abort (226 ms)
+[   12.629224] kdc_test: EXPECT_BEGIN timeout-reset timed out after|resetting controller
+[   12.822994] kdc 0000:01:00.0: queue 0 cid 0x1000 timed out after 200 ms; aborting
+[   13.379028] kdc 0000:01:00.0: resetting controller
+[   13.393052] kdc_test: EXPECT_END timeout-reset
+[   13.418997] kdc_test:   timeout_reset: ended after 762 ms, 1 command reissued
+[   13.419417] kdc_test: PASS timeout_reset (795 ms)
+[   13.422459] kdc_test: EXPECT_BEGIN escalation timed out after|resetting controller|controller reset failed
+[   13.713699] kdc 0000:01:00.0: queue 2 cid 0x1000 timed out after 200 ms; aborting
+[   14.263311] kdc 0000:01:00.0: resetting controller
+[   15.273658] kdc 0000:01:00.0: controller reset failed; trying a function reset
+[   15.387326] kdc_test: EXPECT_END escalation
+[   15.401907] kdc_test: PASS timeout_escalation (1983 ms)
+[   15.411233] kdc_test: EXPECT_BEGIN failure timed out after|resetting controller|controller reset failed|recovery failed
+[   15.632279] kdc 0000:02:00.0: queue 0 cid 0x1000 timed out after 200 ms; aborting
+[   16.182629] kdc 0000:02:00.0: resetting controller
+[   17.192314] kdc 0000:02:00.0: controller reset failed; trying a function reset
+[   18.314065] kdc 0000:02:00.0: recovery failed; device disabled until reset or rebind
+[   18.321130] kdc_test: EXPECT_END failure
+[   18.330070] kdc_test: EXPECT_BEGIN revive working again
+[   18.447995] kdc 0000:02:00.0: device working again after reset
+[   18.449859] kdc_test: EXPECT_END revive
+[   18.461511] kdc_test: PASS recovery_failure (3059 ms)
+[   18.931607] kdc_test:   sysfs_reset_under_load: 3 resets, 212 verified copies, 20 reissued
+[   18.932180] kdc_test: PASS sysfs_reset_under_load (471 ms)
+[   18.939287] kdc_test: EXPECT_BEGIN fatal device error|resetting controller
+[   18.949100] kdc 0000:01:00.0: device error 0x8 (queue 0, status 0x3)
+[   18.949782] kdc 0000:01:00.0: resetting controller
+[   18.977585] kdc_test: EXPECT_END fatal
+[   18.981740] kdc_test:   fatal_recovery: 16 commands completed, 16 reissued after the reset
+[   18.982489] kdc_test: PASS fatal_recovery (50 ms)
+[   18.986682] kdc_test: EXPECT_BEGIN lost timed out after|resetting controller|completion for unknown cid
+[   19.294017] kdc 0000:01:00.0: queue 0 cid 0x4000 timed out after 300 ms; aborting
+[   19.844527] kdc 0000:01:00.0: resetting controller
+[   19.854336] kdc 0000:01:00.0: queue 0: completion for unknown cid 0x5fff
+[   20.173592] kdc 0000:01:00.0: queue 0 cid 0x5000 timed out after 300 ms; aborting
+[   20.722415] kdc 0000:01:00.0: resetting controller
+[   20.734305] kdc_test: EXPECT_END lost
+[   20.734839] kdc_test: PASS lost_completions (1752 ms)
+[   20.741054] kdc_test: EXPECT_BEGIN bounded resetting controller
+[   21.293234] kdc 0000:01:00.0: resetting controller
+[   21.874515] kdc 0000:01:00.0: resetting controller
+[   21.879423] kdc_test: EXPECT_END bounded
+[   21.882239] kdc_test:   bounded_close_and_reset: close returned after 571 ms, reset after 552 ms
+[   21.883275] kdc_test: PASS bounded_close_and_reset (1148 ms)
+[   21.895484] kdc_test: EXPECT_BEGIN dmar-zerocopy DMAR: (\[DMA Write|DRHD: handling fault)
+[   21.999849] DMAR: DRHD: handling fault status reg 2
+[   22.003485] DMAR: [DMA Write NO_PASID] Request device [01:00.0] fault addr 0xfffffffffff00000 [fault reason 0x04] Access beyond MGAW
+[   22.009692] kdc_test: EXPECT_END dmar-zerocopy
+[   22.013486] kdc_test: EXPECT_BEGIN dmar-bounce DMAR: (\[DMA Write|DRHD: handling fault)
+[   22.117492] DMAR: DRHD: handling fault status reg 2
+[   22.118029] DMAR: [DMA Write NO_PASID] Request device [01:00.0] fault addr 0xfffffffffff00000 [fault reason 0x04] Access beyond MGAW
+[   22.121451] kdc_test: EXPECT_END dmar-bounce
+[   22.148080] kdc_test:   dma_fault: 2 faulting copies ended with -EIO (IOMMU fault reported)
+[   22.148469] kdc_test: PASS dma_fault (264 ms)
+[   22.179991] kdc_test: FAIL globals_idle:360: g.cmds == 0 && g.pinned == 0 && g.mapped == 0 && g.ranges == 0 (errno=98 Address already in use)
+FAIL globals_idle:360: g.cmds == 0 && g.pinned == 0 && g.mapped == 0 && g.ranges == 0 (errno=98 Address already in use)
+[   38.045140] kmemleak: 4123 new suspected memory leaks (see /sys/kernel/debug/kmemleak)
+[   38.046478] kdc_init: KMEMLEAK_BEGIN
+[   38.108078] kmemleak_dump: unreferenced object 0xff11000006282400 (size 512):
+[   38.109253] kmemleak_dump:   comm "kdc_test", pid 82, jiffies 4294937985
+[   38.110133] kmemleak_dump:   hex dump (first 32 bytes):
+[   38.111540] kmemleak_dump:     00 24 28 06 00 00 11 ff 00 24 28 06 00 00 11 ff  .$(......$(.....
+[   38.112896] kmemleak_dump:     00 01 00 00 00 00 ad de 22 01 00 00 00 00 ad de  ........".......
+[   38.113705] kmemleak_dump:   backtrace (crc f04b8bc):
+[   38.114642] kmemleak_dump:     __kmalloc_cache_noprof+0x142/0x180
+[   38.115513] kmemleak_dump:     kdc_cmd_prepare+0x59/0x12a0
+[   38.116307] kmemleak_dump:     kdc_ioctl+0x55b/0x1350
+[   38.117058] kmemleak_dump:     vfs_ioctl+0x72/0x90
+[   38.117916] kmemleak_dump:     __x64_sys_ioctl+0xeb9/0xf10
+[   38.118806] kmemleak_dump:     do_syscall_64+0x6b/0xd0
+[   38.120611] kmemleak_dump:     entry_SYSCALL_64_after_hwframe+0x4b/0x53
+[   38.121794] kmemleak_dump: unreferenced object 0xff11000006282c00 (size 512):
+[   38.122789] kmemleak_dump:   comm "kdc_test", pid 82, jiffies 4294937992
+[   38.123627] kmemleak_dump:   hex dump (first 32 bytes):
+[   38.124852] kmemleak_dump:     00 2c 28 06 00 00 11 ff 00 2c 28 06 00 00 11 ff  .,(......,(.....
+[   38.126094] kmemleak_dump:     00 01 00 00 00 00 ad de 22 01 00 00 00 00 ad de  ........".......
+[   38.127015] kmemleak_dump:   backtrace (crc f72f951a):
+[   38.127991] kmemleak_dump:     __kmalloc_cache_noprof+0x142/0x180
+[   38.128837] kmemleak_dump:     kdc_cmd_prepare+0x59/0x12a0
+[   38.129628] kmemleak_dump:     kdc_ioctl+0x55b/0x1350
+[   38.130394] kmemleak_dump:     vfs_ioctl+0x72/0x90
+[   38.131308] kmemleak_dump:     __x64_sys_ioctl+0xeb9/0xf10
+[   38.132172] kmemleak_dump:     do_syscall_64+0x6b/0xd0
+[   38.133973] kmemleak_dump:     entry_SYSCALL_64_after_hwframe+0x4b/0x53
+[   38.135046] kmemleak_dump: unreferenced object 0xff11000006283000 (size 512):
+[   38.136051] kmemleak_dump:   comm "kdc_test", pid 82, jiffies 4294937992
+[   38.136872] kmemleak_dump:   hex dump (first 32 bytes):
+[   38.138057] kmemleak_dump:     00 30 28 06 00 00 11 ff 00 30 28 06 00 00 11 ff  .0(......0(.....
+[   38.139264] kmemleak_dump:     00 01 00 00 00 00 ad de 22 01 00 00 00 00 ad de  ........".......
+[   38.140091] kmemleak_dump:   backtrace (crc 23eaa61d):
+[   38.141007] kmemleak_dump:     __kmalloc_cache_noprof+0x142/0x180
+[   38.142990] kmemleak_dump:     kdc_cmd_prepare+0x59/0x12a0
+[   38.143848] kmemleak_dump:     kdc_ioctl+0x55b/0x1350
+[   38.144664] kmemleak_dump:     vfs_ioctl+0x72/0x90
+[   38.145528] kmemleak_dump:     __x64_sys_ioctl+0xeb9/0xf10
+[   38.146351] kmemleak_dump:     do_syscall_64+0x6b/0xd0
+[   38.147910] kmemleak_dump:     entry_SYSCALL_64_after_hwframe+0x4b/0x53
+[   38.149002] kmemleak_dump: unreferenced object 0xff11000006283400 (size 512):
+[   38.150007] kmemleak_dump:   comm "kdc_test", pid 82, jiffies 4294937993
+[   38.150934] kmemleak_dump:   hex dump (first 32 bytes):
+[   38.152261] kmemleak_dump:     00 34 28 06 00 00 11 ff 00 34 28 06 00 00 11 ff  .4(......4(.....
+[   38.153511] kmemleak_dump:     00 01 00 00 00 00 ad de 22 01 00 00 00 00 ad de  ........".......
+[   38.154390] kmemleak_dump:   backtrace (crc 58f0bfdf):
+[   38.155399] kmemleak_dump:     __kmalloc_cache_noprof+0x142/0x180
+[   38.156324] kmemleak_dump:     kdc_cmd_prepare+0x59/0x12a0
+[   38.157152] kmemleak_dump:     kdc_ioctl+0x55b/0x1350
+[   38.157942] kmemleak_dump:     vfs_ioctl+0x72/0x90
+[   38.158773] kmemleak_dump:     __x64_sys_ioctl+0xeb9/0xf10
+[   38.159575] kmemleak_dump:     do_syscall_64+0x6b/0xd0
+[   38.161095] kmemleak_dump:     entry_SYSCALL_64_after_hwframe+0x4b/0x53
+[   38.163643] kmemleak_dump: unreferenced object 0xff11000006283800 (size 512):
+[   38.164697] kmemleak_dump:   comm "kdc_test", pid 82, jiffies 4294937993
+[   38.165517] kmemleak_dump:   hex dump (first 32 bytes):
+[   38.166732] kmemleak_dump:     00 38 28 06 00 00 11 ff 00 38 28 06 00 00 11 ff  .8(......8(.....
+[   38.167958] kmemleak_dump:     00 01 00 00 00 00 ad de 22 01 00 00 00 00 ad de  ........".......
+[   38.168785] kmemleak_dump:   backtrace (crc 67e8cf3c):
+[   38.169773] kmemleak_dump:     __kmalloc_cache_noprof+0x142/0x180
+[   38.170659] kmemleak_dump:     kdc_cmd_prepare+0x59/0x12a0
+[   38.171566] kmemleak_dump:     kdc_ioctl+0x55b/0x1350
+[   38.172388] kmemleak_dump:     vfs_ioctl+0x72/0x90
+[   38.173238] kmemleak_dump:     __x64_sys_ioctl+0xeb9/0xf10
+[   38.174046] kmemleak_dump:     do_syscall_64+0x6b/0xd0
+[   38.175585] kmemleak_dump:     entry_SYSCALL_64_after_hwframe+0x4b/0x53
+[   38.176652] kmemleak_dump: unreferenced object 0xff11000006283c00 (size 512):
+[   38.177677] kmemleak_dump:   comm "kdc_test", pid 82, jiffies 4294937993
+[   38.178602] kmemleak_dump:   hex dump (first 32 bytes):
+[   38.179861] kmemleak_dump:     00 3c 28 06 00 00 11 ff 00 3c 28 06 00 00 11 ff  .<(......<(.....
+[   38.181151] kmemleak_dump:     00 01 00 00 00 00 ad de 22 01 00 00 00 00 ad de  ........".......
+[   38.185316] kmemleak_dump:   backtrace (crc 4ccb4945):
+[   38.186254] kmemleak_dump:     __kmalloc_cache_noprof+0x142/0x180
+[   38.187103] kmemleak_dump:     kdc_cmd_prepare+0x59/0x12a0
+[   38.187922] kmemleak_dump:     kdc_ioctl+0x55b/0x1350
+[   38.188720] kmemleak_dump:     vfs_ioctl+0x72/0x90
+[   38.189559] kmemleak_dump:     __x64_sys_ioctl+0xeb9/0xf10
+[   38.190362] kmemleak_dump:     do_syscall_64+0x6b/0xd0
+[   38.192064] kmemleak_dump:     entry_SYSCALL_64_after_hwframe+0x4b/0x53
+[   38.193115] kmemleak_dump: unreferenced object 0xff1100000628c000 (size 512):
+[   38.194107] kmemleak_dump:   comm "kdc_test", pid 82, jiffies 4294937994
+[   38.194907] kmemleak_dump:   hex dump (first 32 bytes):
+[   38.196205] kmemleak_dump:     00 c0 28 06 00 00 11 ff 00 c0 28 06 00 00 11 ff  ..(.......(.....
+[   38.197507] kmemleak_dump:     00 01 00 00 00 00 ad de 22 01 00 00 00 00 ad de  ........".......
+[   38.198320] kmemleak_dump:   backtrace (crc a82df832):
+[   38.199210] kmemleak_dump:     __kmalloc_cache_noprof+0x142/0x180
+[   38.200061] kmemleak_dump:     kdc_cmd_prepare+0x59/0x12a0
+[   38.200881] kmemleak_dump:     kdc_ioctl+0x55b/0x1350
+[   38.201720] kmemleak_dump:     vfs_ioctl+0x72/0x90
+[   38.202614] kmemleak_dump:     __x64_sys_ioctl+0xeb9/0xf10
+[   38.203429] kmemleak_dump:     do_syscall_64+0x6b/0xd0
+[   38.204901] kmemleak_dump:     entry_SYSCALL_64_after_hwframe+0x4b/0x53
+[   38.205924] kmemleak_dump: unreferenced object 0xff1100000628c400 (size 512):
+[   38.206946] kmemleak_dump:   comm "kdc_test", pid 82, jiffies 4294937994
+[   38.207856] kmemleak_dump:   hex dump (first 32 bytes):
+[   38.209112] kmemleak_dump:     00 c4 28 06 00 00 11 ff 00 c4 28 06 00 00 11 ff  ..(.......(.....
+[   38.210374] kmemleak_dump:     00 01 00 00 00 00 ad de 22 01 00 00 00 00 ad de  ........".......
+[   38.211194] kmemleak_dump:   backtrace (crc 6f072955):
+[   38.214737] kmemleak_dump:     __kmalloc_cache_noprof+0x142/0x180
+[   38.215614] kmemleak_dump:     kdc_cmd_prepare+0x59/0x12a0
+[   38.216404] kmemleak_dump:     kdc_ioctl+0x55b/0x1350
+[   38.217151] kmemleak_dump:     vfs_ioctl+0x72/0x90
+[   38.218005] kmemleak_dump:     __x64_sys_ioctl+0xeb9/0xf10
+[   38.218867] kmemleak_dump:     do_syscall_64+0x6b/0xd0
+[   38.220486] kmemleak_dump:     entry_SYSCALL_64_after_hwframe+0x4b/0x53
+[   38.222831] kmemleak_dump: unreferenced object 0xff1100000628c800 (size 512):
+[   38.224947] kmemleak_dump:   comm "kdc_test", pid 82, jiffies 4294937994
+[   38.225835] kmemleak_dump:   hex dump (first 32 bytes):
+[   38.227045] kmemleak_dump:     00 c8 28 06 00 00 11 ff 00 c8 28 06 00 00 11 ff  ..(.......(.....
+[   38.228310] kmemleak_dump:     00 01 00 00 00 00 ad de 22 01 00 00 00 00 ad de  ........".......
+[   38.229253] kmemleak_dump:   backtrace (crc 833d8fdd):
+[   38.230191] kmemleak_dump:     __kmalloc_cache_noprof+0x142/0x180
+[   38.231022] kmemleak_dump:     kdc_cmd_prepare+0x59/0x12a0
+[   38.231882] kmemleak_dump:     kdc_ioctl+0x55b/0x1350
+[   38.232659] kmemleak_dump:     vfs_ioctl+0x72/0x90
+[   38.233486] kmemleak_dump:     __x64_sys_ioctl+0xeb9/0xf10
+[   38.234325] kmemleak_dump:     do_syscall_64+0x6b/0xd0
+[   38.235934] kmemleak_dump:     entry_SYSCALL_64_after_hwframe+0x4b/0x53
+[   38.237052] kmemleak_dump: unreferenced object 0xff1100000628cc00 (size 512):
+[   38.238039] kmemleak_dump:   comm "kdc_test", pid 82, jiffies 4294937994
+[   38.238867] kmemleak_dump:   hex dump (first 32 bytes):
+[   38.240061] kmemleak_dump:     00 cc 28 06 00 00 11 ff 00 cc 28 06 00 00 11 ff  ..(.......(.....
+[   38.241309] kmemleak_dump:     00 01 00 00 00 00 ad de 22 01 00 00 00 00 ad de  ........".......
+[   38.245516] kmemleak_dump:   backtrace (crc ce78e02c):
+[   38.246457] kmemleak_dump:     __kmalloc_cache_noprof+0x142/0x180
+[   38.247333] kmemleak_dump:     kdc_cmd_prepare+0x59/0x12a0
+[   38.248144] kmemleak_dump:     kdc_ioctl+0x55b/0x1350
+[   38.248910] kmemleak_dump:     vfs_ioctl+0x72/0x90
+[   38.249740] kmemleak_dump:     __x64_sys_ioctl+0xeb9/0xf10
+[   38.250611] kmemleak_dump:     do_syscall_64+0x6b/0xd0
+[   38.252249] kmemleak_dump:     entry_SYSCALL_64_after_hwframe+0x4b/0x53
+[   38.253326] kmemleak_dump: unreferenced object 0xff1100000628d000 (size 512):
+[   38.254300] kmemleak_dump:   comm "kdc_test", pid 82, jiffies 4294937995
+[   38.255145] kmemleak_dump:   hex dump (first 32 bytes):
+[   38.256362] kmemleak_dump:     00 d0 28 06 00 00 11 ff 00 d0 28 06 00 00 11 ff  ..(.......(.....
+[   38.257570] kmemleak_dump:     00 01 00 00 00 00 ad de 22 01 00 00 00 00 ad de  ........".......
+[   38.258377] kmemleak_dump:   backtrace (crc 16b7887d):
+[   38.259274] kmemleak_dump:     __kmalloc_cache_noprof+0x142/0x180
+[   38.260141] kmemleak_dump:     kdc_cmd_prepare+0x59/0x12a0
+[   38.260922] kmemleak_dump:     kdc_ioctl+0x55b/0x1350
+[   38.262537] kmemleak_dump:     vfs_ioctl+0x72/0x90
+[   38.263380] kmemleak_dump:     __x64_sys_ioctl+0xeb9/0xf10
+[   38.264200] kmemleak_dump:     do_syscall_64+0x6b/0xd0
+[   38.265649] kmemleak_dump:     entry_SYSCALL_64_after_hwframe+0x4b/0x53
+[   38.266698] kmemleak_dump: unreferenced object 0xff1100000628d400 (size 512):
+[   38.267715] kmemleak_dump:   comm "kdc_test", pid 82, jiffies 4294937995
+[   38.268605] kmemleak_dump:   hex dump (first 32 bytes):
+[   38.269868] kmemleak_dump:     00 d4 28 06 00 00 11 ff 00 d4 28 06 00 00 11 ff  ..(.......(.....
+[   38.271093] kmemleak_dump:     00 01 00 00 00 00 ad de 22 01 00 00 00 00 ad de  ........".......
+[   38.272058] kmemleak_dump:   backtrace (crc 8928a82):
+[   38.273031] kmemleak_dump:     __kmalloc_cache_noprof+0x142/0x180
+[   38.273865] kmemleak_dump:     kdc_cmd_prepare+0x59/0x12a0
+[   38.274684] kmemleak_dump:     kdc_ioctl+0x55b/0x1350
+[   38.275435] kmemleak_dump:     vfs_ioctl+0x72/0x90
+[   38.276298] kmemleak_dump:     __x64_sys_ioctl+0xeb9/0xf10
+[   38.277091] kmemleak_dump:     do_syscall_64+0x6b/0xd0
+[   38.278559] kmemleak_dump:     entry_SYSCALL_64_after_hwframe+0x4b/0x53
+[   38.279602] kmemleak_dump: unreferenced object 0xff1100000628d800 (size 512):
+[   38.280615] kmemleak_dump:   comm "kdc_test", pid 82, jiffies 4294937995
+[   38.281446] kmemleak_dump:   hex dump (first 32 bytes):
+[   38.285132] kmemleak_dump:     00 d8 28 06 00 00 11 ff 00 d8 28 06 00 00 11 ff  ..(.......(.....
+[   38.286398] kmemleak_dump:     00 01 00 00 00 00 ad de 22 01 00 00 00 00 ad de  ........".......
+[   38.287237] kmemleak_dump:   backtrace (crc cfc6c54):
+[   38.288196] kmemleak_dump:     __kmalloc_cache_noprof+0x142/0x180
+[   38.289070] kmemleak_dump:     kdc_cmd_prepare+0x59/0x12a0
+[   38.289865] kmemleak_dump:     kdc_ioctl+0x55b/0x1350
+[   38.290694] kmemleak_dump:     vfs_ioctl+0x72/0x90
+[   38.291608] kmemleak_dump:     __x64_sys_ioctl+0xeb9/0xf10
+[   38.292415] kmemleak_dump:     do_syscall_64+0x6b/0xd0
+[   38.293952] kmemleak_dump:     entry_SYSCALL_64_after_hwframe+0x4b/0x53
+[   38.295013] kmemleak_dump: unreferenced object 0xff1100000628dc00 (size 512):
+[   38.296005] kmemleak_dump:   comm "kdc_test", pid 82, jiffies 4294937995
+[   38.296829] kmemleak_dump:   hex dump (first 32 bytes):
+[   38.298052] kmemleak_dump:     00 dc 28 06 00 00 11 ff 00 dc 28 06 00 00 11 ff  ..(.......(.....
+[   38.299290] kmemleak_dump:     00 01 00 00 00 00 ad de 22 01 00 00 00 00 ad de  ........".......
+[   38.300095] kmemleak_dump:   backtrace (crc f0553ddc):
+[   38.300983] kmemleak_dump:     __kmalloc_cache_noprof+0x142/0x180
+[   38.306963] kmemleak_dump:     kdc_cmd_prepare+0x59/0x12a0
+[   38.307803] kmemleak_dump:     kdc_ioctl+0x55b/0x1350
+[   38.308586] kmemleak_dump:     vfs_ioctl+0x72/0x90
+[   38.309437] kmemleak_dump:     __x64_sys_ioctl+0xeb9/0xf10
+[   38.310225] kmemleak_dump:     do_syscall_64+0x6b/0xd0
+[   38.312222] kmemleak_dump:     entry_SYSCALL_64_after_hwframe+0x4b/0x53
+[   38.313300] kmemleak_dump: unreferenced object 0xff1100000628e000 (size 512):
+[   38.314288] kmemleak_dump:   comm "kdc_test", pid 82, jiffies 4294937995
+[   38.315116] kmemleak_dump:   hex dump (first 32 bytes):
+[   38.316332] kmemleak_dump:     00 e0 28 06 00 00 11 ff 00 e0 28 06 00 00 11 ff  ..(.......(.....
+[   38.317599] kmemleak_dump:     00 01 00 00 00 00 ad de 22 01 00 00 00 00 ad de  ........".......
+[   38.318484] kmemleak_dump:   backtrace (crc 65eb3d38):
+[   38.319419] kmemleak_dump:     __kmalloc_cache_noprof+0x142/0x180
+[   38.320280] kmemleak_dump:     kdc_cmd_prepare+0x59/0x12a0
+[   38.321064] kmemleak_dump:     kdc_ioctl+0x55b/0x1350
+[   38.323121] kmemleak_dump:     vfs_ioctl+0x72/0x90
+[   38.323972] kmemleak_dump:     __x64_sys_ioctl+0xeb9/0xf10
+[   38.324797] kmemleak_dump:     do_syscall_64+0x6b/0xd0
+[   38.326371] kmemleak_dump:     entry_SYSCALL_64_after_hwframe+0x4b/0x53
+[   38.327429] kmemleak_dump: unreferenced object 0xff1100000628e400 (size 512):
+[   38.328447] kmemleak_dump:   comm "kdc_test", pid 82, jiffies 4294937996
+[   38.329340] kmemleak_dump:   hex dump (first 32 bytes):
+[   38.330553] kmemleak_dump:     00 e4 28 06 00 00 11 ff 00 e4 28 06 00 00 11 ff  ..(.......(.....
+[   38.332075] kmemleak_dump:     00 01 00 00 00 00 ad de 22 01 00 00 00 00 ad de  ........".......
+[   38.332966] kmemleak_dump:   backtrace (crc d0807ad):
+[   38.333864] kmemleak_dump:     __kmalloc_cache_noprof+0x142/0x180
+[   38.334701] kmemleak_dump:     kdc_cmd_prepare+0x59/0x12a0
+[   38.335476] kmemleak_dump:     kdc_ioctl+0x55b/0x1350
+[   38.336242] kmemleak_dump:     vfs_ioctl+0x72/0x90
+[   38.337070] kmemleak_dump:     __x64_sys_ioctl+0xeb9/0xf10
+[   38.337857] kmemleak_dump:     do_syscall_64+0x6b/0xd0
+[   38.339402] kmemleak_dump:     entry_SYSCALL_64_after_hwframe+0x4b/0x53
+[   38.340462] kmemleak_dump: unreferenced object 0xff1100000628e800 (size 512):
+[   38.341434] kmemleak_dump:   comm "kdc_test", pid 82, jiffies 4294937996
+[   38.344695] kmemleak_dump:   hex dump (first 32 bytes):
+[   38.345904] kmemleak_dump:     00 e8 28 06 00 00 11 ff 00 e8 28 06 00 00 11 ff  ..(.......(.....
+[   38.347150] kmemleak_dump:     00 01 00 00 00 00 ad de 22 01 00 00 00 00 ad de  ........".......
+[   38.347962] kmemleak_dump:   backtrace (crc 57fdce4e):
+[   38.348906] kmemleak_dump:     __kmalloc_cache_noprof+0x142/0x180
+[   38.349742] kmemleak_dump:     kdc_cmd_prepare+0x59/0x12a0
+[   38.350608] kmemleak_dump:     kdc_ioctl+0x55b/0x1350
+[   38.351431] kmemleak_dump:     vfs_ioctl+0x72/0x90
+[   38.352355] kmemleak_dump:     __x64_sys_ioctl+0xeb9/0xf10
+[   38.353134] kmemleak_dump:     do_syscall_64+0x6b/0xd0
+[   38.354646] kmemleak_dump:     entry_SYSCALL_64_after_hwframe+0x4b/0x53
+[   38.355727] kmemleak_dump: unreferenced object 0xff1100000628ec00 (size 512):
+[   38.356710] kmemleak_dump:   comm "kdc_test", pid 82, jiffies 4294937996
+[   38.357522] kmemleak_dump:   hex dump (first 32 bytes):
+[   38.358782] kmemleak_dump:     00 ec 28 06 00 00 11 ff 00 ec 28 06 00 00 11 ff  ..(.......(.....
+[   38.360078] kmemleak_dump:     00 01 00 00 00 00 ad de 22 01 00 00 00 00 ad de  ........".......
+[   38.360923] kmemleak_dump:   backtrace (crc a3daa983):
+[   38.361916] kmemleak_dump:     __kmalloc_cache_noprof+0x142/0x180
+[   38.362829] kmemleak_dump:     kdc_cmd_prepare+0x59/0x12a0
+[   38.363623] kmemleak_dump:     kdc_ioctl+0x55b/0x1350
+[   38.364378] kmemleak_dump:     vfs_ioctl+0x72/0x90
+[   38.365198] kmemleak_dump:     __x64_sys_ioctl+0xeb9/0xf10
+[   38.366021] kmemleak_dump:     do_syscall_64+0x6b/0xd0
+[   38.367498] kmemleak_dump:     entry_SYSCALL_64_after_hwframe+0x4b/0x53
+[   38.368586] kmemleak_dump: unreferenced object 0xff1100000628f000 (size 512):
+[   38.369642] kmemleak_dump:   comm "kdc_test", pid 82, jiffies 4294937997
+[   38.370490] kmemleak_dump:   hex dump (first 32 bytes):
+[   38.371769] kmemleak_dump:     00 f0 28 06 00 00 11 ff 00 f0 28 06 00 00 11 ff  ..(.......(.....
+[   38.373005] kmemleak_dump:     00 01 00 00 00 00 ad de 22 01 00 00 00 00 ad de  ........".......
+[   38.373823] kmemleak_dump:   backtrace (crc 2b28878c):
+[   38.374741] kmemleak_dump:     __kmalloc_cache_noprof+0x142/0x180
+[   38.375575] kmemleak_dump:     kdc_cmd_prepare+0x59/0x12a0
+[   38.376378] kmemleak_dump:     kdc_ioctl+0x55b/0x1350
+[   38.377127] kmemleak_dump:     vfs_ioctl+0x72/0x90
+[   38.378019] kmemleak_dump:     __x64_sys_ioctl+0xeb9/0xf10
+[   38.378852] kmemleak_dump:     do_syscall_64+0x6b/0xd0
+[   38.380388] kmemleak_dump:     entry_SYSCALL_64_after_hwframe+0x4b/0x53
+[   38.381463] kmemleak_dump: unreferenced object 0xff1100000628f400 (size 512):
+[   38.384591] kmemleak_dump:   comm "kdc_test", pid 82, jiffies 4294937997
+[   38.385478] kmemleak_dump:   hex dump (first 32 bytes):
+[   38.386781] kmemleak_dump:     00 f4 28 06 00 00 11 ff 00 f4 28 06 00 00 11 ff  ..(.......(.....
+[   38.388033] kmemleak_dump:     00 01 00 00 00 00 ad de 22 01 00 00 00 00 ad de  ........".......
+[   38.390925] kmemleak_dump:   backtrace (crc a4fb3859):
+[   38.393820] kmemleak_dump:     __kmalloc_cache_noprof+0x142/0x180
+[   38.394719] kmemleak_dump:     kdc_cmd_prepare+0x59/0x12a0
+[   38.395532] kmemleak_dump:     kdc_ioctl+0x55b/0x1350
+[   38.396348] kmemleak_dump:     vfs_ioctl+0x72/0x90
+[   38.397193] kmemleak_dump:     __x64_sys_ioctl+0xeb9/0xf10
+[   38.397994] kmemleak_dump:     do_syscall_64+0x6b/0xd0
+[   38.399719] kmemleak_dump:     entry_SYSCALL_64_after_hwframe+0x4b/0x53
+[   38.400796] kmemleak_dump: unreferenced object 0xff1100000628f800 (size 512):
+[   38.401874] kmemleak_dump:   comm "kdc_test", pid 82, jiffies 4294937997
+[   38.402698] kmemleak_dump:   hex dump (first 32 bytes):
+[   38.403953] kmemleak_dump:     00 f8 28 06 00 00 11 ff 00 f8 28 06 00 00 11 ff  ..(.......(.....
+[   38.405197] kmemleak_dump:     00 01 00 00 00 00 ad de 22 01 00 00 00 00 ad de  ........".......
+[   38.406004] kmemleak_dump:   backtrace (crc 3b85b8b0):
+[   38.406893] kmemleak_dump:     __kmalloc_cache_noprof+0x142/0x180
+[   38.407717] kmemleak_dump:     kdc_cmd_prepare+0x59/0x12a0
+[   38.408528] kmemleak_dump:     kdc_ioctl+0x55b/0x1350
+[   38.409288] kmemleak_dump:     vfs_ioctl+0x72/0x90
+[   38.410134] kmemleak_dump:     __x64_sys_ioctl+0xeb9/0xf10
+[   38.410925] kmemleak_dump:     do_syscall_64+0x6b/0xd0
+[   38.412640] kmemleak_dump:     entry_SYSCALL_64_after_hwframe+0x4b/0x53
+[   38.413688] kmemleak_dump: unreferenced object 0xff1100000628fc00 (size 512):
+[   38.414665] kmemleak_dump:   comm "kdc_test", pid 82, jiffies 4294937997
+[   38.415475] kmemleak_dump:   hex dump (first 32 bytes):
+[   38.416660] kmemleak_dump:     00 fc 28 06 00 00 11 ff 00 fc 28 06 00 00 11 ff  ..(.......(.....
+[   38.417923] kmemleak_dump:     00 01 00 00 00 00 ad de 22 01 00 00 00 00 ad de  ........".......
+[   38.418749] kmemleak_dump:   backtrace (crc 1ac6f8ac):
+[   38.419639] kmemleak_dump:     __kmalloc_cache_noprof+0x142/0x180
+[   38.420459] kmemleak_dump:     kdc_cmd_prepare+0x59/0x12a0
+[   38.421252] kmemleak_dump:     kdc_ioctl+0x55b/0x1350
+[   38.426921] kmemleak_dump:     vfs_ioctl+0x72/0x90
+[   38.427779] kmemleak_dump:     __x64_sys_ioctl+0xeb9/0xf10
+[   38.428608] kmemleak_dump:     do_syscall_64+0x6b/0xd0
+[   38.430210] kmemleak_dump:     entry_SYSCALL_64_after_hwframe+0x4b/0x53
+[   38.431265] kmemleak_dump: unreferenced object 0xff11000006290000 (size 512):
+[   38.432322] kmemleak_dump:   comm "kdc_test", pid 82, jiffies 4294937998
+[   38.433130] kmemleak_dump:   hex dump (first 32 bytes):
+[   38.434361] kmemleak_dump:     00 00 29 06 00 00 11 ff 00 00 29 06 00 00 11 ff  ..).......).....
+[   38.435579] kmemleak_dump:     00 01 00 00 00 00 ad de 22 01 00 00 00 00 ad de  ........".......
+[   38.436412] kmemleak_dump:   backtrace (crc bf01ff3):
+[   38.437297] kmemleak_dump:     __kmalloc_cache_noprof+0x142/0x180
+[   38.438134] kmemleak_dump:     kdc_cmd_prepare+0x59/0x12a0
+[   38.438911] kmemleak_dump:     kdc_ioctl+0x55b/0x1350
+[   38.439654] kmemleak_dump:     vfs_ioctl+0x72/0x90
+[   38.440469] kmemleak_dump:     __x64_sys_ioctl+0xeb9/0xf10
+[   38.441270] kmemleak_dump:     do_syscall_64+0x6b/0xd0
+[   38.442962] kmemleak_dump:     entry_SYSCALL_64_after_hwframe+0x4b/0x53
+[   38.444000] kmemleak_dump: unreferenced object 0xff11000006290400 (size 512):
+[   38.444980] kmemleak_dump:   comm "kdc_test", pid 82, jiffies 4294937998
+[   38.445804] kmemleak_dump:   hex dump (first 32 bytes):
+[   38.446996] kmemleak_dump:     00 04 29 06 00 00 11 ff 00 04 29 06 00 00 11 ff  ..).......).....
+[   38.448212] kmemleak_dump:     00 01 00 00 00 00 ad de 22 01 00 00 00 00 ad de  ........".......
+[   38.449038] kmemleak_dump:   backtrace (crc 3a984d4c):
+[   38.449982] kmemleak_dump:     __kmalloc_cache_noprof+0x142/0x180
+[   38.450809] kmemleak_dump:     kdc_cmd_prepare+0x59/0x12a0
+[   38.451633] kmemleak_dump:     kdc_ioctl+0x55b/0x1350
+[   38.452382] kmemleak_dump:     vfs_ioctl+0x72/0x90
+[   38.453227] kmemleak_dump:     __x64_sys_ioctl+0xeb9/0xf10
+[   38.454012] kmemleak_dump:     do_syscall_64+0x6b/0xd0
+[   38.455508] kmemleak_dump:     entry_SYSCALL_64_after_hwframe+0x4b/0x53
+[   38.456563] kmemleak_dump: unreferenced object 0xff11000006290800 (size 512):
+[   38.457569] kmemleak_dump:   comm "kdc_test", pid 82, jiffies 4294937999
+[   38.458371] kmemleak_dump:   hex dump (first 32 bytes):
+[   38.459565] kmemleak_dump:     00 08 29 06 00 00 11 ff 00 08 29 06 00 00 11 ff  ..).......).....
+[   38.460788] kmemleak_dump:     00 01 00 00 00 00 ad de 22 01 00 00 00 00 ad de  ........".......
+[   38.461702] kmemleak_dump:   backtrace (crc 4b7801cf):
+[   38.462617] kmemleak_dump:     __kmalloc_cache_noprof+0x142/0x180
+[   38.463506] kmemleak_dump:     kdc_cmd_prepare+0x59/0x12a0
+[   38.464303] kmemleak_dump:     kdc_ioctl+0x55b/0x1350
+[   38.465068] kmemleak_dump:     vfs_ioctl+0x72/0x90
+[   38.465940] kmemleak_dump:     __x64_sys_ioctl+0xeb9/0xf10
+[   38.466731] kmemleak_dump:     do_syscall_64+0x6b/0xd0
+[   38.468314] kmemleak_dump:     entry_SYSCALL_64_after_hwframe+0x4b/0x53
+[   38.469468] kmemleak_dump: unreferenced object 0xff11000006290c00 (size 512):
+[   38.474614] kmemleak_dump:   comm "kdc_test", pid 82, jiffies 4294937999
+[   38.476150] kmemleak_dump:   hex dump (first 32 bytes):
+[   38.478448] kmemleak_dump:     00 0c 29 06 00 00 11 ff 00 0c 29 06 00 00 11 ff  ..).......).....
+[   38.480797] kmemleak_dump:     00 01 00 00 00 00 ad de 22 01 00 00 00 00 ad de  ........".......
+[   38.487772] kmemleak_dump:   backtrace (crc d76e4cc0):
+[   38.489470] kmemleak_dump:     __kmalloc_cache_noprof+0x142/0x180
+[   38.491047] kmemleak_dump:     kdc_cmd_prepare+0x59/0x12a0
+[   38.492663] kmemleak_dump:     kdc_ioctl+0x55b/0x1350
+[   38.494067] kmemleak_dump:     vfs_ioctl+0x72/0x90
+[   38.495612] kmemleak_dump:     __x64_sys_ioctl+0xeb9/0xf10
+[   38.497063] kmemleak_dump:     do_syscall_64+0x6b/0xd0
+[   38.500800] kmemleak_dump:     entry_SYSCALL_64_after_hwframe+0x4b/0x53
+[   38.510199] kmemleak_dump: unreferenced object 0xff1100000563ac00 (size 512):
+[   38.512467] kmemleak_dump:   comm "kdc_test", pid 82, jiffies 4294937999
+[   38.514091] kmemleak_dump:   hex dump (first 32 bytes):
+[   38.516378] kmemleak_dump:     00 ac 63 05 00 00 11 ff 00 ac 63 05 00 00 11 ff  ..c.......c.....
+[   38.518655] kmemleak_dump:     00 01 00 00 00 00 ad de 22 01 00 00 00 00 ad de  ........".......
+[   38.520110] kmemleak_dump:   backtrace (crc 52082be9):
+[   38.523281] kmemleak_dump:     __kmalloc_cache_noprof+0x142/0x180
+[   38.524873] kmemleak_dump:     kdc_cmd_prepare+0x59/0x12a0
+[   38.526291] kmemleak_dump:     kdc_ioctl+0x55b/0x1350
+[   38.527696] kmemleak_dump:     vfs_ioctl+0x72/0x90
+[   38.529271] kmemleak_dump:     __x64_sys_ioctl+0xeb9/0xf10
+[   38.530785] kmemleak_dump:     do_syscall_64+0x6b/0xd0
+[   38.534817] kmemleak_dump:     entry_SYSCALL_64_after_hwframe+0x4b/0x53
+[   38.535910] kmemleak_dump: unreferenced object 0xff1100000563b000 (size 512):
+[   38.536945] kmemleak_dump:   comm "kdc_test", pid 82, jiffies 4294938000
+[   38.537770] kmemleak_dump:   hex dump (first 32 bytes):
+[   38.539012] kmemleak_dump:     00 b0 63 05 00 00 11 ff 00 b0 63 05 00 00 11 ff  ..c.......c.....
+[   38.540234] kmemleak_dump:     00 01 00 00 00 00 ad de 22 01 00 00 00 00 ad de  ........".......
+[   38.541072] kmemleak_dump:   backtrace (crc 4f63dab):
+[   38.542082] kmemleak_dump:     __kmalloc_cache_noprof+0x142/0x180
+[   38.542946] kmemleak_dump:     kdc_cmd_prepare+0x59/0x12a0
+[   38.543725] kmemleak_dump:     kdc_ioctl+0x55b/0x1350
+[   38.544481] kmemleak_dump:     vfs_ioctl+0x72/0x90
+[   38.545335] kmemleak_dump:     __x64_sys_ioctl+0xeb9/0xf10
+[   38.546115] kmemleak_dump:     do_syscall_64+0x6b/0xd0
+[   38.547733] kmemleak_dump:     entry_SYSCALL_64_after_hwframe+0x4b/0x53
+[   38.548810] kmemleak_dump: unreferenced object 0xff1100000563b400 (size 512):
+[   38.549786] kmemleak_dump:   comm "kdc_test", pid 82, jiffies 4294938000
+[   38.550599] kmemleak_dump:   hex dump (first 32 bytes):
+[   38.551847] kmemleak_dump:     00 b4 63 05 00 00 11 ff 00 b4 63 05 00 00 11 ff  ..c.......c.....
+[   38.553137] kmemleak_dump:     00 01 00 00 00 00 ad de 22 01 00 00 00 00 ad de  ........".......
+[   38.553945] kmemleak_dump:   backtrace (crc 65ab6434):
+[   38.554835] kmemleak_dump:     __kmalloc_cache_noprof+0x142/0x180
+[   38.555666] kmemleak_dump:     kdc_cmd_prepare+0x59/0x12a0
+[   38.556472] kmemleak_dump:     kdc_ioctl+0x55b/0x1350
+[   38.557215] kmemleak_dump:     vfs_ioctl+0x72/0x90
+[   38.558026] kmemleak_dump:     __x64_sys_ioctl+0xeb9/0xf10
+[   38.558851] kmemleak_dump:     do_syscall_64+0x6b/0xd0
+[   38.560507] kmemleak_dump:     entry_SYSCALL_64_after_hwframe+0x4b/0x53
+[   38.561602] kmemleak_dump: unreferenced object 0xff1100000563b800 (size 512):
+[   38.562584] kmemleak_dump:   comm "kdc_test", pid 82, jiffies 4294938000
+[   38.563385] kmemleak_dump:   hex dump (first 32 bytes):
+[   38.564596] kmemleak_dump:     00 b8 63 05 00 00 11 ff 00 b8 63 05 00 00 11 ff  ..c.......c.....
+[   38.565804] kmemleak_dump:     00 01 00 00 00 00 ad de 22 01 00 00 00 00 ad de  ........".......
+[   38.566692] kmemleak_dump:   backtrace (crc c20792b3):
+[   38.567627] kmemleak_dump:     __kmalloc_cache_noprof+0x142/0x180
+[   38.568489] kmemleak_dump:     kdc_cmd_prepare+0x59/0x12a0
+[   38.569278] kmemleak_dump:     kdc_ioctl+0x55b/0x1350
+[   38.570025] kmemleak_dump:     vfs_ioctl+0x72/0x90
+[   38.570857] kmemleak_dump:     __x64_sys_ioctl+0xeb9/0xf10
+[   38.571823] kmemleak_dump:     do_syscall_64+0x6b/0xd0
+[   38.573526] kmemleak_dump:     entry_SYSCALL_64_after_hwframe+0x4b/0x53
+[   38.574558] kmemleak_dump: unreferenced object 0xff1100000563bc00 (size 512):
+[   38.575525] kmemleak_dump:   comm "kdc_test", pid 82, jiffies 4294938001
+[   38.576396] kmemleak_dump:   hex dump (first 32 bytes):
+[   38.577628] kmemleak_dump:     00 bc 63 05 00 00 11 ff 00 bc 63 05 00 00 11 ff  ..c.......c.....
+[   38.578859] kmemleak_dump:     00 01 00 00 00 00 ad de 22 01 00 00 00 00 ad de  ........".......
+[   38.579674] kmemleak_dump:   backtrace (crc 2c92496c):
+[   38.580652] kmemleak_dump:     __kmalloc_cache_noprof+0x142/0x180
+[   38.584672] kmemleak_dump:     kdc_cmd_prepare+0x59/0x12a0
+[   38.585489] kmemleak_dump:     kdc_ioctl+0x55b/0x1350
+[   38.586268] kmemleak_dump:     vfs_ioctl+0x72/0x90
+[cut: the remaining kmemleak_dump lines are in .cache/results-raw/round3/mutants/read-leaks-command/tcg-iommu/serial.log on the build host]
+[  195.554473] kdc_init: KMEMLEAK_END
+[  195.599068] kdc_init: DMA_API_ERRORS 0
+[  195.722280] kdc_init: KDC_COUNTERS cmds=4123 pinned=0 mapped=0 dst_ranges=0
+[  195.725097] kdc_init: KDC_GUEST_FAILURE exit=1
+[  195.797690] ACPI: PM: Preparing to enter system sleep state S5
+[  195.800733] reboot: Power down

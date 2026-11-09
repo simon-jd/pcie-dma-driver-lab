@@ -1,0 +1,2361 @@
+===== boot 0 (noiommu) =====
+Linux version 6.12.41 (kdc@local) (gcc (Ubuntu 15.2.0-16ubuntu1) 15.2.0, GNU ld (GNU Binutils for Ubuntu) 2.46) #1 SMP 2026-11-06 00:00:00 +0000
+Command line: console=ttyS0 panic=-1 nokaslr printk.devkmsg=on printk.time=0 kdc.bounce_max=65536
+BIOS-provided physical RAM map:
+BIOS-e820: [mem 0x0000000000000000-0x000000000009fbff] usable
+BIOS-e820: [mem 0x000000000009fc00-0x000000000009ffff] reserved
+BIOS-e820: [mem 0x00000000000f0000-0x00000000000fffff] reserved
+BIOS-e820: [mem 0x0000000000100000-0x000000007ffdffff] usable
+BIOS-e820: [mem 0x000000007ffe0000-0x000000007fffffff] reserved
+BIOS-e820: [mem 0x00000000b0000000-0x00000000bfffffff] reserved
+BIOS-e820: [mem 0x00000000fed1c000-0x00000000fed1ffff] reserved
+BIOS-e820: [mem 0x00000000feffc000-0x00000000feffffff] reserved
+BIOS-e820: [mem 0x00000000fffc0000-0x00000000ffffffff] reserved
+NX (Execute Disable) protection: active
+APIC: Static calls initialized
+Hypervisor detected: KVM
+kvm-clock: Using msrs 4b564d01 and 4b564d00
+kvm-clock: using sched offset of 134032551 cycles
+clocksource: kvm-clock: mask: 0xffffffffffffffff max_cycles: 0x1cd42e4dffb, max_idle_ns: 881590591483 ns
+tsc: Detected 2995.200 MHz processor
+last_pfn = 0x7ffe0 max_arch_pfn = 0x400000000
+x86/PAT: PAT support disabled because CONFIG_X86_PAT is disabled in the kernel.
+x86/PAT: Configuration [0-7]: WB  WT  UC- UC  WB  WT  UC- UC  
+found SMP MP-table at [mem 0x000f54c0-0x000f54cf]
+Using GB pages for direct mapping
+RAMDISK: [mem 0x7fe5e000-0x7ffdffff]
+ACPI: Early table checksum verification disabled
+ACPI: RSDP 0x00000000000F52E0 000014 (v00 BOCHS )
+ACPI: RSDT 0x000000007FFE2498 000038 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+ACPI: FACP 0x000000007FFE2280 0000F4 (v03 BOCHS  BXPC     00000001 BXPC 00000001)
+ACPI: DSDT 0x000000007FFE0040 002240 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+ACPI: FACS 0x000000007FFE0000 000040
+ACPI: APIC 0x000000007FFE2374 000088 (v03 BOCHS  BXPC     00000001 BXPC 00000001)
+ACPI: HPET 0x000000007FFE23FC 000038 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+ACPI: MCFG 0x000000007FFE2434 00003C (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+ACPI: WAET 0x000000007FFE2470 000028 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+ACPI: Reserving FACP table memory at [mem 0x7ffe2280-0x7ffe2373]
+ACPI: Reserving DSDT table memory at [mem 0x7ffe0040-0x7ffe227f]
+ACPI: Reserving FACS table memory at [mem 0x7ffe0000-0x7ffe003f]
+ACPI: Reserving APIC table memory at [mem 0x7ffe2374-0x7ffe23fb]
+ACPI: Reserving HPET table memory at [mem 0x7ffe23fc-0x7ffe2433]
+ACPI: Reserving MCFG table memory at [mem 0x7ffe2434-0x7ffe246f]
+ACPI: Reserving WAET table memory at [mem 0x7ffe2470-0x7ffe2497]
+Zone ranges:
+  DMA32    [mem 0x0000000000001000-0x000000007ffdffff]
+  Normal   empty
+Movable zone start for each node
+Early memory node ranges
+  node   0: [mem 0x0000000000001000-0x000000000009efff]
+  node   0: [mem 0x0000000000100000-0x000000007ffdffff]
+Initmem setup node 0 [mem 0x0000000000001000-0x000000007ffdffff]
+On node 0, zone DMA32: 1 pages in unavailable ranges
+On node 0, zone DMA32: 97 pages in unavailable ranges
+On node 0, zone DMA32: 32 pages in unavailable ranges
+ACPI: PM-Timer IO Port: 0x608
+ACPI: LAPIC_NMI (acpi_id[0xff] dfl dfl lint[0x1])
+IOAPIC[0]: apic_id 0, version 17, address 0xfec00000, GSI 0-23
+ACPI: INT_SRC_OVR (bus 0 bus_irq 0 global_irq 2 dfl dfl)
+ACPI: INT_SRC_OVR (bus 0 bus_irq 5 global_irq 5 high level)
+ACPI: INT_SRC_OVR (bus 0 bus_irq 9 global_irq 9 high level)
+ACPI: INT_SRC_OVR (bus 0 bus_irq 10 global_irq 10 high level)
+ACPI: INT_SRC_OVR (bus 0 bus_irq 11 global_irq 11 high level)
+ACPI: Using ACPI (MADT) for SMP configuration information
+ACPI: HPET id: 0x8086a201 base: 0xfed00000
+TSC deadline timer available
+CPU topo: Max. logical packages:   1
+CPU topo: Max. logical dies:       1
+CPU topo: Max. dies per package:   1
+CPU topo: Max. threads per core:   1
+CPU topo: Num. cores per package:     3
+CPU topo: Num. threads per package:   3
+CPU topo: Allowing 3 present CPUs plus 0 hotplug CPUs
+kvm-guest: APIC: eoi() replaced with kvm_guest_apic_eoi_write()
+kvm-guest: KVM setup pv remote TLB flush
+kvm-guest: setup PV sched yield
+[mem 0xc0000000-0xfed1bfff] available for PCI devices
+Booting paravirtualized kernel on KVM
+clocksource: refined-jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 19112604462750000 ns
+setup_percpu: NR_CPUS:4 nr_cpumask_bits:3 nr_cpu_ids:3 nr_node_ids:1
+percpu: Embedded 43 pages/cpu s146456 r0 d29672 u524288
+kvm-guest: PV spinlocks enabled
+PV qspinlock hash table entries: 256 (order: 0, 4096 bytes, linear)
+Kernel command line: console=ttyS0 panic=-1 nokaslr printk.devkmsg=on printk.time=0 kdc.bounce_max=65536
+Unknown kernel command line parameters "nokaslr", will be passed to user space.
+random: crng init done
+Dentry cache hash table entries: 262144 (order: 9, 2097152 bytes, linear)
+Inode-cache hash table entries: 131072 (order: 8, 1048576 bytes, linear)
+Built 1 zonelists, mobility grouping on.  Total pages: 524158
+mem auto-init: stack:all(zero), heap alloc:off, heap free:off
+SLUB: HWalign=64, Order=0-3, MinObjects=0, CPUs=3, Nodes=1
+rcu: Hierarchical RCU implementation.
+rcu: 	RCU restricting CPUs from NR_CPUS=4 to nr_cpu_ids=3.
+rcu: RCU calculated value of scheduler-enlistment delay is 10 jiffies.
+rcu: Adjusting geometry for rcu_fanout_leaf=16, nr_cpu_ids=3
+NR_IRQS: 4352, nr_irqs: 448, preallocated irqs: 16
+rcu: srcu_init: Setting srcu_struct sizes based on contention.
+Console: colour *CGA 80x25
+printk: legacy console [ttyS0] enabled
+ACPI: Core revision 20240827
+clocksource: hpet: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 19112604467 ns
+APIC: Switch to symmetric I/O mode setup
+x2apic enabled
+APIC: Switched APIC routing to: physical x2apic
+kvm-guest: APIC: send_IPI_mask() replaced with kvm_send_ipi_mask()
+kvm-guest: APIC: send_IPI_mask_allbutself() replaced with kvm_send_ipi_mask_allbutself()
+kvm-guest: setup PV IPIs
+..TIMER: vector=0x30 apic1=0 pin1=2 apic2=-1 pin2=-1
+clocksource: tsc-early: mask: 0xffffffffffffffff max_cycles: 0x2b2c8ec87c7, max_idle_ns: 440795278598 ns
+Calibrating delay loop (skipped) preset value.. 5990.40 BogoMIPS (lpj=29952000)
+Last level iTLB entries: 4KB 0, 2MB 0, 4MB 0
+Last level dTLB entries: 4KB 0, 2MB 0, 4MB 0, 1GB 0
+Spectre V2 : User space: Vulnerable
+Speculative Store Bypass: Vulnerable
+x86/fpu: Supporting XSAVE feature 0x001: 'x87 floating point registers'
+x86/fpu: Supporting XSAVE feature 0x002: 'SSE registers'
+x86/fpu: Supporting XSAVE feature 0x004: 'AVX registers'
+x86/fpu: Supporting XSAVE feature 0x200: 'Protection Keys User registers'
+x86/fpu: xstate_offset[2]:  576, xstate_sizes[2]:  256
+x86/fpu: xstate_offset[9]:  832, xstate_sizes[9]:    8
+x86/fpu: Enabled xstate features 0x207, context size is 840 bytes, using 'compacted' format.
+Freeing SMP alternatives memory: 8K
+pid_max: default: 32768 minimum: 301
+Mount-cache hash table entries: 4096 (order: 3, 32768 bytes, linear)
+Mountpoint-cache hash table entries: 4096 (order: 3, 32768 bytes, linear)
+smpboot: CPU0: 13th Gen Intel(R) Core(TM) i9-13900K (family: 0x6, model: 0xb7, stepping: 0x1)
+Performance Events: unsupported p6 CPU model 183 no PMU driver, software events only.
+signal: max sigframe size: 3232
+rcu: Hierarchical SRCU implementation.
+rcu: 	Max phase no-delay instances is 1000.
+Timer migration: 1 hierarchy levels; 8 children per group; 1 crossnode level
+smp: Bringing up secondary CPUs ...
+smpboot: x86: Booting SMP configuration:
+.... node  #0, CPUs:      #1 #2
+smp: Brought up 1 node, 3 CPUs
+smpboot: Total of 3 processors activated (17971.20 BogoMIPS)
+Memory: 2043020K/2096632K available (6144K kernel code, 805K rwdata, 1260K rodata, 820K init, 1200K bss, 50928K reserved, 0K cma-reserved)
+devtmpfs: initialized
+clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 19112604462750000 ns
+futex hash table entries: 1024 (order: 4, 65536 bytes, linear)
+thermal_sys: Registered thermal governor 'step_wise'
+thermal_sys: Registered thermal governor 'user_space'
+cpuidle: using governor ladder
+cpuidle: using governor menu
+acpiphp: ACPI Hot Plug PCI Controller Driver version: 0.5
+PCI: ECAM [mem 0xb0000000-0xbfffffff] (base 0xb0000000) for domain 0000 [bus 00-ff]
+PCI: ECAM [mem 0xb0000000-0xbfffffff] reserved as E820 entry
+PCI: Using configuration type 1 for base access
+ACPI: Added _OSI(Module Device)
+ACPI: Added _OSI(Processor Device)
+ACPI: Added _OSI(Processor Aggregator Device)
+ACPI: 1 ACPI AML tables successfully acquired and loaded
+ACPI: Interpreter enabled
+ACPI: PM: (supports S0 S5)
+ACPI: Using IOAPIC for interrupt routing
+PCI: Using host bridge windows from ACPI; if necessary, use "pci=nocrs" and report a bug
+PCI: Using E820 reservations for host bridge windows
+ACPI: Enabled 2 GPEs in block 00 to 3F
+ACPI: PCI Root Bridge [PCI0] (domain 0000 [bus 00-ff])
+acpi PNP0A08:00: _OSC: OS supports [ExtendedConfig ASPM ClockPM Segments MSI HPX-Type3]
+acpi PNP0A08:00: _OSC: platform does not support [PCIeHotplug LTR]
+acpi PNP0A08:00: _OSC: OS now controls [PME PCIeCapability]
+PCI host bridge to bus 0000:00
+pci_bus 0000:00: root bus resource [io  0x0000-0x0cf7 window]
+pci_bus 0000:00: root bus resource [io  0x0d00-0xffff window]
+pci_bus 0000:00: root bus resource [mem 0x000a0000-0x000bffff window]
+pci_bus 0000:00: root bus resource [mem 0x80000000-0xafffffff window]
+pci_bus 0000:00: root bus resource [mem 0xc0000000-0xfebfffff window]
+pci_bus 0000:00: root bus resource [mem 0x100000000-0x8ffffffff window]
+pci_bus 0000:00: root bus resource [bus 00-ff]
+pci 0000:00:00.0: [8086:29c0] type 00 class 0x060000 conventional PCI endpoint
+pci 0000:00:02.0: [1b36:000c] type 01 class 0x060400 PCIe Root Port
+pci 0000:00:02.0: BAR 0 [mem 0xfe800000-0xfe800fff]
+pci 0000:00:02.0: PCI bridge to [bus 01]
+pci 0000:00:02.0:   bridge window [mem 0xfe600000-0xfe7fffff]
+pci 0000:00:02.0:   bridge window [mem 0xfea00000-0xfebfffff 64bit pref]
+pci 0000:00:02.0: enabling Extended Tags
+pci 0000:00:1f.0: [8086:2918] type 00 class 0x060100 conventional PCI endpoint
+pci 0000:00:1f.0: quirk: [io  0x0600-0x067f] claimed by ICH6 ACPI/GPIO/TCO
+pci 0000:00:1f.2: [8086:2922] type 00 class 0x010601 conventional PCI endpoint
+pci 0000:00:1f.2: BAR 4 [io  0xc040-0xc05f]
+pci 0000:00:1f.2: BAR 5 [mem 0xfe801000-0xfe801fff]
+pci 0000:00:1f.3: [8086:2930] type 00 class 0x0c0500 conventional PCI endpoint
+pci 0000:00:1f.3: BAR 4 [io  0x0700-0x073f]
+acpiphp: Slot [0] registered
+pci 0000:01:00.0: [1234:4b44] type 00 class 0x088000 PCIe Endpoint
+pci 0000:01:00.0: BAR 0 [mem 0xfe600000-0xfe603fff 64bit]
+pci 0000:01:00.0: BAR 2 [mem 0xfe604000-0xfe604fff]
+pci 0000:01:00.0: enabling Extended Tags
+pci 0000:00:02.0: PCI bridge to [bus 01]
+ACPI: PCI: Interrupt link LNKA configured for IRQ 10
+ACPI: PCI: Interrupt link LNKB configured for IRQ 10
+ACPI: PCI: Interrupt link LNKC configured for IRQ 11
+ACPI: PCI: Interrupt link LNKD configured for IRQ 11
+ACPI: PCI: Interrupt link LNKE configured for IRQ 10
+ACPI: PCI: Interrupt link LNKF configured for IRQ 10
+ACPI: PCI: Interrupt link LNKG configured for IRQ 11
+ACPI: PCI: Interrupt link LNKH configured for IRQ 11
+ACPI: PCI: Interrupt link GSIA configured for IRQ 16
+ACPI: PCI: Interrupt link GSIB configured for IRQ 17
+ACPI: PCI: Interrupt link GSIC configured for IRQ 18
+ACPI: PCI: Interrupt link GSID configured for IRQ 19
+ACPI: PCI: Interrupt link GSIE configured for IRQ 20
+ACPI: PCI: Interrupt link GSIF configured for IRQ 21
+ACPI: PCI: Interrupt link GSIG configured for IRQ 22
+ACPI: PCI: Interrupt link GSIH configured for IRQ 23
+iommu: Default domain type: Translated
+iommu: DMA domain TLB invalidation policy: lazy mode
+PCI: Using ACPI for IRQ routing
+vgaarb: loaded
+clocksource: Switched to clocksource kvm-clock
+ACPI: Failed to create genetlink family for ACPI event
+pnp: PnP ACPI init
+system 00:04: [mem 0xb0000000-0xbfffffff window] has been reserved
+pnp: PnP ACPI: found 5 devices
+clocksource: acpi_pm: mask: 0xffffff max_cycles: 0xffffff, max_idle_ns: 2085701024 ns
+pci 0000:00:02.0: bridge window [io  0x1000-0x0fff] to [bus 01] add_size 1000
+pci 0000:00:02.0: bridge window [io  0x1000-0x1fff]: assigned
+pci 0000:00:02.0: PCI bridge to [bus 01]
+pci 0000:00:02.0:   bridge window [io  0x1000-0x1fff]
+pci 0000:00:02.0:   bridge window [mem 0xfe600000-0xfe7fffff]
+pci 0000:00:02.0:   bridge window [mem 0xfea00000-0xfebfffff 64bit pref]
+pci_bus 0000:00: resource 4 [io  0x0000-0x0cf7 window]
+pci_bus 0000:00: resource 5 [io  0x0d00-0xffff window]
+pci_bus 0000:00: resource 6 [mem 0x000a0000-0x000bffff window]
+pci_bus 0000:00: resource 7 [mem 0x80000000-0xafffffff window]
+pci_bus 0000:00: resource 8 [mem 0xc0000000-0xfebfffff window]
+pci_bus 0000:00: resource 9 [mem 0x100000000-0x8ffffffff window]
+pci_bus 0000:01: resource 0 [io  0x1000-0x1fff]
+pci_bus 0000:01: resource 1 [mem 0xfe600000-0xfe7fffff]
+pci_bus 0000:01: resource 2 [mem 0xfea00000-0xfebfffff 64bit pref]
+PCI: CLS 0 bytes, default 64
+RAPL PMU: API unit is 2^-32 Joules, 0 fixed counters, 10737418240 ms ovfl timer
+Unpacking initramfs...
+clocksource: tsc: mask: 0xffffffffffffffff max_cycles: 0x2b2c8ec87c7, max_idle_ns: 440795278598 ns
+workingset: timestamp_bits=62 max_order=19 bucket_order=0
+ACPI: \_SB_.GSIG: Enabled at IRQ 22
+input: Power Button as /devices/LNXSYSTM:00/LNXPWRBN:00/input/input0
+ACPI: button: Power Button [PWRF]
+Serial: 8250/16550 driver, 1 ports, IRQ sharing disabled
+00:02: ttyS0 at I/O 0x3f8 (irq = 4, base_baud = 115200) is a 16550A
+kdc 0000:01:00.0: kdc0: 3 queues x 64 entries, bounce <= 65536 bytes
+i8042: PNP: PS/2 Controller [PNP0303:KBD,PNP0f13:MOU] at 0x60,0x64 irq 1,12
+serio: i8042 KBD port at 0x60,0x64 irq 1
+serio: i8042 AUX port at 0x60,0x64 irq 12
+intel_pstate: CPU model not supported
+IPI shorthand broadcast: enabled
+sched_clock: Marking stable (103019461, 19840701)->(135724471, -12864309)
+input: AT Translated Set 2 keyboard as /devices/platform/i8042/serio0/input/input1
+Freeing initrd memory: 1544K
+Freeing unused kernel image (initmem) memory: 820K
+Write protecting the kernel read-only data: 8192k
+Freeing unused kernel image (rodata/data gap) memory: 788K
+Run /init as init process
+input: ImExPS/2 Generic Explorer Mouse as /devices/platform/i8042/serio1/input/input3
+kdc_bench: START arms=6 reps=5 cpus=3
+kdc_bench: @M 1
+kdc_bench: @M 2
+kdc_bench: RESULT arm=zc4k-qd1 rep=0 try=1 token=2 accepted=1 cmds=103695 bad=0 ns=1000007749 lat_p10=8934 lat_p50=9584 lat_p90=10359 lat_p99=11593 queues=0x1
+kdc_bench: @M 3
+kdc_bench: @M 4
+kdc_bench: RESULT arm=bounce512-qd32-batch rep=0 try=1 token=4 accepted=1 cmds=680160 bad=0 ns=1000022684 lat_p10=34113 lat_p50=39973 lat_p90=50735 lat_p99=60629 queues=0x1
+kdc_bench: @M 5
+kdc_bench: @M 6
+kdc_bench: RESULT arm=zc4k-qd32-batch rep=0 try=1 token=6 accepted=1 cmds=508768 bad=0 ns=1000054379 lat_p10=46883 lat_p50=54793 lat_p90=67033 lat_p99=72815 queues=0x1
+kdc_bench: @M 7
+kdc_bench: @M 8
+kdc_bench: RESULT arm=zc4k-t3-qd8 rep=0 try=1 token=8 accepted=0 cmds=172325 bad=0 ns=1000080423 lat_p10=25705 lat_p50=75398 lat_p90=139423 lat_p99=243895 queues=0x7
+kdc_bench: @M 9
+kdc_bench: @M 10
+kdc_bench: RESULT arm=zc4k-t3-qd8 rep=0 try=2 token=10 accepted=0 cmds=189196 bad=0 ns=1000060117 lat_p10=24864 lat_p50=70998 lat_p90=125778 lat_p99=170261 queues=0x7
+kdc_bench: @M 11
+kdc_bench: @M 12
+kdc_bench: RESULT arm=zc4k-t3-qd8 rep=0 try=3 token=12 accepted=0 cmds=181572 bad=0 ns=1001437975 lat_p10=27393 lat_p50=73577 lat_p90=128322 lat_p99=174270 queues=0x7
+kdc_bench: @M 13
+kdc_bench: @M 14
+kdc_bench: RESULT arm=zc4k-t3-qd8 rep=0 try=4 token=14 accepted=0 cmds=192830 bad=0 ns=1000068278 lat_p10=25000 lat_p50=71035 lat_p90=125142 lat_p99=172703 queues=0x7
+kdc_bench: @M 15
+kdc_bench: @M 16
+kdc_bench: RESULT arm=zc4k-t3-qd8-batch rep=0 try=1 token=16 accepted=1 cmds=507256 bad=0 ns=1000023894 lat_p10=27647 lat_p50=43644 lat_p90=59058 lat_p99=80470 queues=0x7
+kdc_bench: @M 17
+kdc_bench: @M 18
+kdc_bench: RESULT arm=bounce512-t3-qd8-batch rep=0 try=1 token=18 accepted=0 cmds=742040 bad=0 ns=1000019766 lat_p10=17226 lat_p50=27887 lat_p90=42503 lat_p99=64979 queues=0x7
+kdc_bench: @M 19
+kdc_bench: @M 20
+kdc_bench: RESULT arm=bounce512-t3-qd8-batch rep=0 try=2 token=20 accepted=1 cmds=742328 bad=0 ns=1000005509 lat_p10=17786 lat_p50=28497 lat_p90=42748 lat_p99=64259 queues=0x7
+kdc_bench: @M 21
+kdc_bench: @M 22
+kdc_bench: RESULT arm=bounce512-qd32-batch rep=1 try=1 token=22 accepted=1 cmds=710272 bad=0 ns=1000024640 lat_p10=33559 lat_p50=39061 lat_p90=48569 lat_p99=52828 queues=0x1
+kdc_bench: @M 23
+kdc_bench: @M 24
+kdc_bench: RESULT arm=zc4k-qd32-batch rep=1 try=1 token=24 accepted=0 cmds=489536 bad=0 ns=1000025302 lat_p10=46879 lat_p50=54431 lat_p90=68488 lat_p99=81962 queues=0x1
+kdc_bench: @M 25
+kdc_bench: @M 26
+kdc_bench: RESULT arm=zc4k-qd32-batch rep=1 try=2 token=26 accepted=1 cmds=493312 bad=0 ns=1000011176 lat_p10=47307 lat_p50=55698 lat_p90=67398 lat_p99=78873 queues=0x1
+kdc_bench: @M 27
+kdc_bench: @M 28
+kdc_bench: RESULT arm=zc4k-t3-qd8 rep=1 try=1 token=28 accepted=0 cmds=190613 bad=0 ns=1000096563 lat_p10=26032 lat_p50=72032 lat_p90=126321 lat_p99=168786 queues=0x7
+kdc_bench: @M 29
+kdc_bench: @M 30
+kdc_bench: RESULT arm=zc4k-t3-qd8 rep=1 try=2 token=30 accepted=1 cmds=191186 bad=0 ns=1000078384 lat_p10=26346 lat_p50=72126 lat_p90=126936 lat_p99=171375 queues=0x7
+kdc_bench: @M 31
+kdc_bench: @M 32
+kdc_bench: RESULT arm=zc4k-t3-qd8-batch rep=1 try=1 token=32 accepted=0 cmds=489040 bad=0 ns=1000037442 lat_p10=23752 lat_p50=41116 lat_p90=61808 lat_p99=216759 queues=0x7
+kdc_bench: @M 33
+kdc_bench: @M 34
+kdc_bench: RESULT arm=zc4k-t3-qd8-batch rep=1 try=2 token=34 accepted=0 cmds=525904 bad=0 ns=1000030595 lat_p10=24887 lat_p50=41940 lat_p90=59341 lat_p99=85780 queues=0x7
+kdc_bench: @M 35
+kdc_bench: @M 36
+kdc_bench: RESULT arm=zc4k-t3-qd8-batch rep=1 try=3 token=36 accepted=0 cmds=380968 bad=0 ns=1000219010 lat_p10=32808 lat_p50=51612 lat_p90=80831 lat_p99=183891 queues=0x7
+kdc_bench: @M 37
+kdc_bench: @M 38
+kdc_bench: RESULT arm=zc4k-t3-qd8-batch rep=1 try=4 token=38 accepted=0 cmds=447992 bad=0 ns=1000049069 lat_p10=28569 lat_p50=46456 lat_p90=72165 lat_p99=114031 queues=0x7
+kdc_bench: @M 39
+kdc_bench: @M 40
+kdc_bench: RESULT arm=bounce512-t3-qd8-batch rep=1 try=1 token=40 accepted=0 cmds=624984 bad=0 ns=1000028484 lat_p10=19319 lat_p50=31130 lat_p90=48992 lat_p99=150246 queues=0x7
+kdc_bench: @M 41
+kdc_bench: @M 42
+kdc_bench: RESULT arm=bounce512-t3-qd8-batch rep=1 try=2 token=42 accepted=1 cmds=720048 bad=0 ns=1000022537 lat_p10=18327 lat_p50=29510 lat_p90=45130 lat_p99=67650 queues=0x7
+kdc_bench: @M 43
+kdc_bench: @M 44
+kdc_bench: RESULT arm=zc4k-qd1 rep=1 try=1 token=44 accepted=1 cmds=103215 bad=0 ns=1000010377 lat_p10=8934 lat_p50=9479 lat_p90=10468 lat_p99=11717 queues=0x1
+kdc_bench: @M 45
+kdc_bench: @M 46
+kdc_bench: RESULT arm=zc4k-qd32-batch rep=2 try=1 token=46 accepted=1 cmds=508448 bad=0 ns=1000002310 lat_p10=46627 lat_p50=55054 lat_p90=65943 lat_p99=71624 queues=0x1
+kdc_bench: @M 47
+kdc_bench: @M 48
+kdc_bench: RESULT arm=zc4k-t3-qd8 rep=2 try=1 token=48 accepted=0 cmds=190070 bad=0 ns=1000090282 lat_p10=26053 lat_p50=72074 lat_p90=126012 lat_p99=168372 queues=0x7
+kdc_bench: @M 49
+kdc_bench: @M 50
+kdc_bench: RESULT arm=zc4k-t3-qd8 rep=2 try=2 token=50 accepted=1 cmds=194221 bad=0 ns=1000046682 lat_p10=24557 lat_p50=70938 lat_p90=124856 lat_p99=165592 queues=0x7
+kdc_bench: @M 51
+kdc_bench: @M 52
+kdc_bench: RESULT arm=zc4k-t3-qd8-batch rep=2 try=1 token=52 accepted=0 cmds=571592 bad=0 ns=1000031011 lat_p10=22464 lat_p50=37868 lat_p90=53870 lat_p99=70565 queues=0x7
+kdc_bench: @M 53
+kdc_bench: @M 54
+kdc_bench: RESULT arm=zc4k-t3-qd8-batch rep=2 try=2 token=54 accepted=0 cmds=555072 bad=0 ns=1000036688 lat_p10=23034 lat_p50=37978 lat_p90=55207 lat_p99=74083 queues=0x7
+kdc_bench: @M 55
+kdc_bench: @M 56
+kdc_bench: RESULT arm=zc4k-t3-qd8-batch rep=2 try=3 token=56 accepted=1 cmds=591920 bad=0 ns=1000025824 lat_p10=22440 lat_p50=36469 lat_p90=52303 lat_p99=68108 queues=0x7
+kdc_bench: @M 57
+kdc_bench: @M 58
+kdc_bench: RESULT arm=bounce512-t3-qd8-batch rep=2 try=1 token=58 accepted=1 cmds=694024 bad=0 ns=1000018413 lat_p10=19362 lat_p50=31785 lat_p90=45841 lat_p99=65860 queues=0x7
+kdc_bench: @M 59
+kdc_bench: @M 60
+kdc_bench: RESULT arm=zc4k-qd1 rep=2 try=1 token=60 accepted=1 cmds=88595 bad=0 ns=1000006585 lat_p10=9018 lat_p50=9870 lat_p90=13669 lat_p99=32670 queues=0x1
+kdc_bench: @M 61
+kdc_bench: @M 62
+kdc_bench: RESULT arm=bounce512-qd32-batch rep=2 try=1 token=62 accepted=0 cmds=681824 bad=0 ns=1000016169 lat_p10=34225 lat_p50=40856 lat_p90=49701 lat_p99=53327 queues=0x1
+kdc_bench: @M 63
+kdc_bench: @M 64
+kdc_bench: RESULT arm=bounce512-qd32-batch rep=2 try=2 token=64 accepted=0 cmds=541376 bad=0 ns=1000003845 lat_p10=42644 lat_p50=50430 lat_p90=60122 lat_p99=104292 queues=0x1
+kdc_bench: @M 65
+kdc_bench: @M 66
+kdc_bench: RESULT arm=bounce512-qd32-batch rep=2 try=3 token=66 accepted=0 cmds=560224 bad=0 ns=1000027801 lat_p10=39254 lat_p50=48045 lat_p90=57565 lat_p99=64836 queues=0x1
+kdc_bench: @M 67
+kdc_bench: @M 68
+kdc_bench: RESULT arm=bounce512-qd32-batch rep=2 try=4 token=68 accepted=0 cmds=601056 bad=0 ns=1000001659 lat_p10=38722 lat_p50=46535 lat_p90=54897 lat_p99=59187 queues=0x1
+kdc_bench: @M 69
+kdc_bench: @M 70
+kdc_bench: RESULT arm=zc4k-t3-qd8 rep=3 try=1 token=70 accepted=0 cmds=187373 bad=0 ns=1000049993 lat_p10=27351 lat_p50=72995 lat_p90=126963 lat_p99=175024 queues=0x7
+kdc_bench: @M 71
+kdc_bench: @M 72
+kdc_bench: RESULT arm=zc4k-t3-qd8 rep=3 try=2 token=72 accepted=0 cmds=163528 bad=0 ns=1000113922 lat_p10=29253 lat_p50=81116 lat_p90=150296 lat_p99=237629 queues=0x7
+kdc_bench: @M 73
+kdc_bench: @M 74
+kdc_bench: RESULT arm=zc4k-t3-qd8 rep=3 try=3 token=74 accepted=0 cmds=183148 bad=0 ns=1000119557 lat_p10=27964 lat_p50=74863 lat_p90=131051 lat_p99=190702 queues=0x7
+kdc_bench: @M 75
+kdc_bench: @M 76
+kdc_bench: RESULT arm=zc4k-t3-qd8 rep=3 try=4 token=76 accepted=0 cmds=190588 bad=0 ns=1000062589 lat_p10=26943 lat_p50=72541 lat_p90=126222 lat_p99=168541 queues=0x7
+kdc_bench: @M 77
+kdc_bench: @M 78
+kdc_bench: RESULT arm=zc4k-t3-qd8-batch rep=3 try=1 token=78 accepted=1 cmds=558768 bad=0 ns=1000006179 lat_p10=23609 lat_p50=39761 lat_p90=55705 lat_p99=74983 queues=0x7
+kdc_bench: @M 79
+kdc_bench: @M 80
+kdc_bench: RESULT arm=bounce512-t3-qd8-batch rep=3 try=1 token=80 accepted=0 cmds=779192 bad=0 ns=1000030190 lat_p10=17323 lat_p50=26695 lat_p90=40725 lat_p99=63431 queues=0x7
+kdc_bench: @M 81
+kdc_bench: @M 82
+kdc_bench: RESULT arm=bounce512-t3-qd8-batch rep=3 try=2 token=82 accepted=0 cmds=699152 bad=0 ns=1000024337 lat_p10=19038 lat_p50=29763 lat_p90=43675 lat_p99=65214 queues=0x7
+kdc_bench: @M 83
+kdc_bench: @M 84
+kdc_bench: RESULT arm=bounce512-t3-qd8-batch rep=3 try=3 token=84 accepted=0 cmds=632864 bad=0 ns=1000021896 lat_p10=20111 lat_p50=32282 lat_p90=49897 lat_p99=97340 queues=0x7
+kdc_bench: @M 85
+kdc_bench: @M 86
+kdc_bench: RESULT arm=bounce512-t3-qd8-batch rep=3 try=4 token=86 accepted=1 cmds=747608 bad=0 ns=1000019240 lat_p10=17565 lat_p50=28668 lat_p90=43137 lat_p99=64170 queues=0x7
+kdc_bench: @M 87
+kdc_bench: @M 88
+kdc_bench: RESULT arm=zc4k-qd1 rep=3 try=1 token=88 accepted=1 cmds=100496 bad=0 ns=1000002626 lat_p10=8949 lat_p50=9843 lat_p90=10553 lat_p99=11974 queues=0x1
+kdc_bench: @M 89
+kdc_bench: @M 90
+kdc_bench: RESULT arm=bounce512-qd32-batch rep=3 try=1 token=90 accepted=1 cmds=660640 bad=0 ns=1000032598 lat_p10=34735 lat_p50=42607 lat_p90=50064 lat_p99=57650 queues=0x1
+kdc_bench: @M 91
+kdc_bench: @M 92
+kdc_bench: RESULT arm=zc4k-qd32-batch rep=3 try=1 token=92 accepted=1 cmds=519072 bad=0 ns=1000031192 lat_p10=46927 lat_p50=53662 lat_p90=65008 lat_p99=72225 queues=0x1
+kdc_bench: @M 93
+kdc_bench: @M 94
+kdc_bench: RESULT arm=zc4k-t3-qd8-batch rep=4 try=1 token=94 accepted=0 cmds=526608 bad=0 ns=1000005312 lat_p10=25906 lat_p50=42006 lat_p90=58531 lat_p99=81073 queues=0x7
+kdc_bench: @M 95
+kdc_bench: @M 96
+kdc_bench: RESULT arm=zc4k-t3-qd8-batch rep=4 try=2 token=96 accepted=0 cmds=521568 bad=0 ns=1000038029 lat_p10=24075 lat_p50=42132 lat_p90=60376 lat_p99=85273 queues=0x7
+kdc_bench: @M 97
+kdc_bench: @M 98
+kdc_bench: RESULT arm=zc4k-t3-qd8-batch rep=4 try=3 token=98 accepted=0 cmds=465560 bad=0 ns=1000037441 lat_p10=24430 lat_p50=41389 lat_p90=63591 lat_p99=287487 queues=0x7
+kdc_bench: @M 99
+kdc_bench: @M 100
+kdc_bench: RESULT arm=zc4k-t3-qd8-batch rep=4 try=4 token=100 accepted=0 cmds=536848 bad=0 ns=1000012168 lat_p10=24133 lat_p50=40884 lat_p90=56287 lat_p99=77840 queues=0x7
+kdc_bench: @M 101
+kdc_bench: @M 102
+kdc_bench: RESULT arm=bounce512-t3-qd8-batch rep=4 try=1 token=102 accepted=1 cmds=720272 bad=0 ns=1000038767 lat_p10=18832 lat_p50=30120 lat_p90=42993 lat_p99=58014 queues=0x7
+kdc_bench: @M 103
+kdc_bench: @M 104
+kdc_bench: RESULT arm=zc4k-qd1 rep=4 try=1 token=104 accepted=1 cmds=101880 bad=0 ns=1000004671 lat_p10=8939 lat_p50=9437 lat_p90=10657 lat_p99=12650 queues=0x1
+kdc_bench: @M 105
+kdc_bench: @M 106
+kdc_bench: RESULT arm=bounce512-qd32-batch rep=4 try=1 token=106 accepted=1 cmds=664480 bad=0 ns=1000014318 lat_p10=34751 lat_p50=43724 lat_p90=49807 lat_p99=52989 queues=0x1
+kdc_bench: @M 107
+kdc_bench: @M 108
+kdc_bench: RESULT arm=zc4k-qd32-batch rep=4 try=1 token=108 accepted=1 cmds=554688 bad=0 ns=1000054101 lat_p10=45000 lat_p50=50643 lat_p90=56462 lat_p99=67792 queues=0x1
+kdc_bench: @M 109
+kdc_bench: @M 110
+kdc_bench: RESULT arm=zc4k-t3-qd8 rep=4 try=1 token=110 accepted=1 cmds=198319 bad=0 ns=1000079786 lat_p10=24054 lat_p50=69785 lat_p90=123152 lat_p99=162548 queues=0x7
+kdc_bench: DONE
+kdc_init: BENCH_EXIT 0
+ACPI: PM: Preparing to enter system sleep state S5
+reboot: Power down
+===== boot 1 (notrack) =====
+Linux version 6.12.41 (kdc@local) (gcc (Ubuntu 15.2.0-16ubuntu1) 15.2.0, GNU ld (GNU Binutils for Ubuntu) 2.46) #1 SMP 2026-11-06 00:00:00 +0000
+Command line: console=ttyS0 panic=-1 nokaslr printk.devkmsg=on printk.time=0 kdc.bounce_max=65536 kdc.track_overlap=0
+BIOS-provided physical RAM map:
+BIOS-e820: [mem 0x0000000000000000-0x000000000009fbff] usable
+BIOS-e820: [mem 0x000000000009fc00-0x000000000009ffff] reserved
+BIOS-e820: [mem 0x00000000000f0000-0x00000000000fffff] reserved
+BIOS-e820: [mem 0x0000000000100000-0x000000007ffdffff] usable
+BIOS-e820: [mem 0x000000007ffe0000-0x000000007fffffff] reserved
+BIOS-e820: [mem 0x00000000b0000000-0x00000000bfffffff] reserved
+BIOS-e820: [mem 0x00000000fed1c000-0x00000000fed1ffff] reserved
+BIOS-e820: [mem 0x00000000feffc000-0x00000000feffffff] reserved
+BIOS-e820: [mem 0x00000000fffc0000-0x00000000ffffffff] reserved
+NX (Execute Disable) protection: active
+APIC: Static calls initialized
+Hypervisor detected: KVM
+kvm-clock: Using msrs 4b564d01 and 4b564d00
+kvm-clock: using sched offset of 133677616 cycles
+clocksource: kvm-clock: mask: 0xffffffffffffffff max_cycles: 0x1cd42e4dffb, max_idle_ns: 881590591483 ns
+tsc: Detected 2995.200 MHz processor
+last_pfn = 0x7ffe0 max_arch_pfn = 0x400000000
+x86/PAT: PAT support disabled because CONFIG_X86_PAT is disabled in the kernel.
+x86/PAT: Configuration [0-7]: WB  WT  UC- UC  WB  WT  UC- UC  
+found SMP MP-table at [mem 0x000f54c0-0x000f54cf]
+Using GB pages for direct mapping
+RAMDISK: [mem 0x7fe5e000-0x7ffdffff]
+ACPI: Early table checksum verification disabled
+ACPI: RSDP 0x00000000000F52E0 000014 (v00 BOCHS )
+ACPI: RSDT 0x000000007FFE2498 000038 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+ACPI: FACP 0x000000007FFE2280 0000F4 (v03 BOCHS  BXPC     00000001 BXPC 00000001)
+ACPI: DSDT 0x000000007FFE0040 002240 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+ACPI: FACS 0x000000007FFE0000 000040
+ACPI: APIC 0x000000007FFE2374 000088 (v03 BOCHS  BXPC     00000001 BXPC 00000001)
+ACPI: HPET 0x000000007FFE23FC 000038 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+ACPI: MCFG 0x000000007FFE2434 00003C (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+ACPI: WAET 0x000000007FFE2470 000028 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+ACPI: Reserving FACP table memory at [mem 0x7ffe2280-0x7ffe2373]
+ACPI: Reserving DSDT table memory at [mem 0x7ffe0040-0x7ffe227f]
+ACPI: Reserving FACS table memory at [mem 0x7ffe0000-0x7ffe003f]
+ACPI: Reserving APIC table memory at [mem 0x7ffe2374-0x7ffe23fb]
+ACPI: Reserving HPET table memory at [mem 0x7ffe23fc-0x7ffe2433]
+ACPI: Reserving MCFG table memory at [mem 0x7ffe2434-0x7ffe246f]
+ACPI: Reserving WAET table memory at [mem 0x7ffe2470-0x7ffe2497]
+Zone ranges:
+  DMA32    [mem 0x0000000000001000-0x000000007ffdffff]
+  Normal   empty
+Movable zone start for each node
+Early memory node ranges
+  node   0: [mem 0x0000000000001000-0x000000000009efff]
+  node   0: [mem 0x0000000000100000-0x000000007ffdffff]
+Initmem setup node 0 [mem 0x0000000000001000-0x000000007ffdffff]
+On node 0, zone DMA32: 1 pages in unavailable ranges
+On node 0, zone DMA32: 97 pages in unavailable ranges
+On node 0, zone DMA32: 32 pages in unavailable ranges
+ACPI: PM-Timer IO Port: 0x608
+ACPI: LAPIC_NMI (acpi_id[0xff] dfl dfl lint[0x1])
+IOAPIC[0]: apic_id 0, version 17, address 0xfec00000, GSI 0-23
+ACPI: INT_SRC_OVR (bus 0 bus_irq 0 global_irq 2 dfl dfl)
+ACPI: INT_SRC_OVR (bus 0 bus_irq 5 global_irq 5 high level)
+ACPI: INT_SRC_OVR (bus 0 bus_irq 9 global_irq 9 high level)
+ACPI: INT_SRC_OVR (bus 0 bus_irq 10 global_irq 10 high level)
+ACPI: INT_SRC_OVR (bus 0 bus_irq 11 global_irq 11 high level)
+ACPI: Using ACPI (MADT) for SMP configuration information
+ACPI: HPET id: 0x8086a201 base: 0xfed00000
+TSC deadline timer available
+CPU topo: Max. logical packages:   1
+CPU topo: Max. logical dies:       1
+CPU topo: Max. dies per package:   1
+CPU topo: Max. threads per core:   1
+CPU topo: Num. cores per package:     3
+CPU topo: Num. threads per package:   3
+CPU topo: Allowing 3 present CPUs plus 0 hotplug CPUs
+kvm-guest: APIC: eoi() replaced with kvm_guest_apic_eoi_write()
+kvm-guest: KVM setup pv remote TLB flush
+kvm-guest: setup PV sched yield
+[mem 0xc0000000-0xfed1bfff] available for PCI devices
+Booting paravirtualized kernel on KVM
+clocksource: refined-jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 19112604462750000 ns
+setup_percpu: NR_CPUS:4 nr_cpumask_bits:3 nr_cpu_ids:3 nr_node_ids:1
+percpu: Embedded 43 pages/cpu s146456 r0 d29672 u524288
+kvm-guest: PV spinlocks enabled
+PV qspinlock hash table entries: 256 (order: 0, 4096 bytes, linear)
+Kernel command line: console=ttyS0 panic=-1 nokaslr printk.devkmsg=on printk.time=0 kdc.bounce_max=65536 kdc.track_overlap=0
+Unknown kernel command line parameters "nokaslr", will be passed to user space.
+random: crng init done
+Dentry cache hash table entries: 262144 (order: 9, 2097152 bytes, linear)
+Inode-cache hash table entries: 131072 (order: 8, 1048576 bytes, linear)
+Built 1 zonelists, mobility grouping on.  Total pages: 524158
+mem auto-init: stack:all(zero), heap alloc:off, heap free:off
+SLUB: HWalign=64, Order=0-3, MinObjects=0, CPUs=3, Nodes=1
+rcu: Hierarchical RCU implementation.
+rcu: 	RCU restricting CPUs from NR_CPUS=4 to nr_cpu_ids=3.
+rcu: RCU calculated value of scheduler-enlistment delay is 10 jiffies.
+rcu: Adjusting geometry for rcu_fanout_leaf=16, nr_cpu_ids=3
+NR_IRQS: 4352, nr_irqs: 448, preallocated irqs: 16
+rcu: srcu_init: Setting srcu_struct sizes based on contention.
+Console: colour *CGA 80x25
+printk: legacy console [ttyS0] enabled
+ACPI: Core revision 20240827
+clocksource: hpet: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 19112604467 ns
+APIC: Switch to symmetric I/O mode setup
+x2apic enabled
+APIC: Switched APIC routing to: physical x2apic
+kvm-guest: APIC: send_IPI_mask() replaced with kvm_send_ipi_mask()
+kvm-guest: APIC: send_IPI_mask_allbutself() replaced with kvm_send_ipi_mask_allbutself()
+kvm-guest: setup PV IPIs
+..TIMER: vector=0x30 apic1=0 pin1=2 apic2=-1 pin2=-1
+clocksource: tsc-early: mask: 0xffffffffffffffff max_cycles: 0x2b2c8ec87c7, max_idle_ns: 440795278598 ns
+Calibrating delay loop (skipped) preset value.. 5990.40 BogoMIPS (lpj=29952000)
+Last level iTLB entries: 4KB 0, 2MB 0, 4MB 0
+Last level dTLB entries: 4KB 0, 2MB 0, 4MB 0, 1GB 0
+Spectre V2 : User space: Vulnerable
+Speculative Store Bypass: Vulnerable
+x86/fpu: Supporting XSAVE feature 0x001: 'x87 floating point registers'
+x86/fpu: Supporting XSAVE feature 0x002: 'SSE registers'
+x86/fpu: Supporting XSAVE feature 0x004: 'AVX registers'
+x86/fpu: Supporting XSAVE feature 0x200: 'Protection Keys User registers'
+x86/fpu: xstate_offset[2]:  576, xstate_sizes[2]:  256
+x86/fpu: xstate_offset[9]:  832, xstate_sizes[9]:    8
+x86/fpu: Enabled xstate features 0x207, context size is 840 bytes, using 'compacted' format.
+Freeing SMP alternatives memory: 8K
+pid_max: default: 32768 minimum: 301
+Mount-cache hash table entries: 4096 (order: 3, 32768 bytes, linear)
+Mountpoint-cache hash table entries: 4096 (order: 3, 32768 bytes, linear)
+smpboot: CPU0: 13th Gen Intel(R) Core(TM) i9-13900K (family: 0x6, model: 0xb7, stepping: 0x1)
+Performance Events: unsupported p6 CPU model 183 no PMU driver, software events only.
+signal: max sigframe size: 3232
+rcu: Hierarchical SRCU implementation.
+rcu: 	Max phase no-delay instances is 1000.
+Timer migration: 1 hierarchy levels; 8 children per group; 1 crossnode level
+smp: Bringing up secondary CPUs ...
+smpboot: x86: Booting SMP configuration:
+.... node  #0, CPUs:      #1 #2
+smp: Brought up 1 node, 3 CPUs
+smpboot: Total of 3 processors activated (17971.20 BogoMIPS)
+Memory: 2043020K/2096632K available (6144K kernel code, 805K rwdata, 1260K rodata, 820K init, 1200K bss, 50928K reserved, 0K cma-reserved)
+devtmpfs: initialized
+clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 19112604462750000 ns
+futex hash table entries: 1024 (order: 4, 65536 bytes, linear)
+thermal_sys: Registered thermal governor 'step_wise'
+thermal_sys: Registered thermal governor 'user_space'
+cpuidle: using governor ladder
+cpuidle: using governor menu
+acpiphp: ACPI Hot Plug PCI Controller Driver version: 0.5
+PCI: ECAM [mem 0xb0000000-0xbfffffff] (base 0xb0000000) for domain 0000 [bus 00-ff]
+PCI: ECAM [mem 0xb0000000-0xbfffffff] reserved as E820 entry
+PCI: Using configuration type 1 for base access
+ACPI: Added _OSI(Module Device)
+ACPI: Added _OSI(Processor Device)
+ACPI: Added _OSI(Processor Aggregator Device)
+ACPI: 1 ACPI AML tables successfully acquired and loaded
+ACPI: Interpreter enabled
+ACPI: PM: (supports S0 S5)
+ACPI: Using IOAPIC for interrupt routing
+PCI: Using host bridge windows from ACPI; if necessary, use "pci=nocrs" and report a bug
+PCI: Using E820 reservations for host bridge windows
+ACPI: Enabled 2 GPEs in block 00 to 3F
+ACPI: PCI Root Bridge [PCI0] (domain 0000 [bus 00-ff])
+acpi PNP0A08:00: _OSC: OS supports [ExtendedConfig ASPM ClockPM Segments MSI HPX-Type3]
+acpi PNP0A08:00: _OSC: platform does not support [PCIeHotplug LTR]
+acpi PNP0A08:00: _OSC: OS now controls [PME PCIeCapability]
+PCI host bridge to bus 0000:00
+pci_bus 0000:00: root bus resource [io  0x0000-0x0cf7 window]
+pci_bus 0000:00: root bus resource [io  0x0d00-0xffff window]
+pci_bus 0000:00: root bus resource [mem 0x000a0000-0x000bffff window]
+pci_bus 0000:00: root bus resource [mem 0x80000000-0xafffffff window]
+pci_bus 0000:00: root bus resource [mem 0xc0000000-0xfebfffff window]
+pci_bus 0000:00: root bus resource [mem 0x100000000-0x8ffffffff window]
+pci_bus 0000:00: root bus resource [bus 00-ff]
+pci 0000:00:00.0: [8086:29c0] type 00 class 0x060000 conventional PCI endpoint
+pci 0000:00:02.0: [1b36:000c] type 01 class 0x060400 PCIe Root Port
+pci 0000:00:02.0: BAR 0 [mem 0xfe800000-0xfe800fff]
+pci 0000:00:02.0: PCI bridge to [bus 01]
+pci 0000:00:02.0:   bridge window [mem 0xfe600000-0xfe7fffff]
+pci 0000:00:02.0:   bridge window [mem 0xfea00000-0xfebfffff 64bit pref]
+pci 0000:00:02.0: enabling Extended Tags
+pci 0000:00:1f.0: [8086:2918] type 00 class 0x060100 conventional PCI endpoint
+pci 0000:00:1f.0: quirk: [io  0x0600-0x067f] claimed by ICH6 ACPI/GPIO/TCO
+pci 0000:00:1f.2: [8086:2922] type 00 class 0x010601 conventional PCI endpoint
+pci 0000:00:1f.2: BAR 4 [io  0xc040-0xc05f]
+pci 0000:00:1f.2: BAR 5 [mem 0xfe801000-0xfe801fff]
+pci 0000:00:1f.3: [8086:2930] type 00 class 0x0c0500 conventional PCI endpoint
+pci 0000:00:1f.3: BAR 4 [io  0x0700-0x073f]
+acpiphp: Slot [0] registered
+pci 0000:01:00.0: [1234:4b44] type 00 class 0x088000 PCIe Endpoint
+pci 0000:01:00.0: BAR 0 [mem 0xfe600000-0xfe603fff 64bit]
+pci 0000:01:00.0: BAR 2 [mem 0xfe604000-0xfe604fff]
+pci 0000:01:00.0: enabling Extended Tags
+pci 0000:00:02.0: PCI bridge to [bus 01]
+ACPI: PCI: Interrupt link LNKA configured for IRQ 10
+ACPI: PCI: Interrupt link LNKB configured for IRQ 10
+ACPI: PCI: Interrupt link LNKC configured for IRQ 11
+ACPI: PCI: Interrupt link LNKD configured for IRQ 11
+ACPI: PCI: Interrupt link LNKE configured for IRQ 10
+ACPI: PCI: Interrupt link LNKF configured for IRQ 10
+ACPI: PCI: Interrupt link LNKG configured for IRQ 11
+ACPI: PCI: Interrupt link LNKH configured for IRQ 11
+ACPI: PCI: Interrupt link GSIA configured for IRQ 16
+ACPI: PCI: Interrupt link GSIB configured for IRQ 17
+ACPI: PCI: Interrupt link GSIC configured for IRQ 18
+ACPI: PCI: Interrupt link GSID configured for IRQ 19
+ACPI: PCI: Interrupt link GSIE configured for IRQ 20
+ACPI: PCI: Interrupt link GSIF configured for IRQ 21
+ACPI: PCI: Interrupt link GSIG configured for IRQ 22
+ACPI: PCI: Interrupt link GSIH configured for IRQ 23
+iommu: Default domain type: Translated
+iommu: DMA domain TLB invalidation policy: lazy mode
+PCI: Using ACPI for IRQ routing
+vgaarb: loaded
+clocksource: Switched to clocksource kvm-clock
+ACPI: Failed to create genetlink family for ACPI event
+pnp: PnP ACPI init
+system 00:04: [mem 0xb0000000-0xbfffffff window] has been reserved
+pnp: PnP ACPI: found 5 devices
+clocksource: acpi_pm: mask: 0xffffff max_cycles: 0xffffff, max_idle_ns: 2085701024 ns
+pci 0000:00:02.0: bridge window [io  0x1000-0x0fff] to [bus 01] add_size 1000
+pci 0000:00:02.0: bridge window [io  0x1000-0x1fff]: assigned
+pci 0000:00:02.0: PCI bridge to [bus 01]
+pci 0000:00:02.0:   bridge window [io  0x1000-0x1fff]
+pci 0000:00:02.0:   bridge window [mem 0xfe600000-0xfe7fffff]
+pci 0000:00:02.0:   bridge window [mem 0xfea00000-0xfebfffff 64bit pref]
+pci_bus 0000:00: resource 4 [io  0x0000-0x0cf7 window]
+pci_bus 0000:00: resource 5 [io  0x0d00-0xffff window]
+pci_bus 0000:00: resource 6 [mem 0x000a0000-0x000bffff window]
+pci_bus 0000:00: resource 7 [mem 0x80000000-0xafffffff window]
+pci_bus 0000:00: resource 8 [mem 0xc0000000-0xfebfffff window]
+pci_bus 0000:00: resource 9 [mem 0x100000000-0x8ffffffff window]
+pci_bus 0000:01: resource 0 [io  0x1000-0x1fff]
+pci_bus 0000:01: resource 1 [mem 0xfe600000-0xfe7fffff]
+pci_bus 0000:01: resource 2 [mem 0xfea00000-0xfebfffff 64bit pref]
+PCI: CLS 0 bytes, default 64
+RAPL PMU: API unit is 2^-32 Joules, 0 fixed counters, 10737418240 ms ovfl timer
+Unpacking initramfs...
+clocksource: tsc: mask: 0xffffffffffffffff max_cycles: 0x2b2c8ec87c7, max_idle_ns: 440795278598 ns
+workingset: timestamp_bits=62 max_order=19 bucket_order=0
+ACPI: \_SB_.GSIG: Enabled at IRQ 22
+input: Power Button as /devices/LNXSYSTM:00/LNXPWRBN:00/input/input0
+ACPI: button: Power Button [PWRF]
+Serial: 8250/16550 driver, 1 ports, IRQ sharing disabled
+00:02: ttyS0 at I/O 0x3f8 (irq = 4, base_baud = 115200) is a 16550A
+kdc 0000:01:00.0: kdc0: 3 queues x 64 entries, bounce <= 65536 bytes
+i8042: PNP: PS/2 Controller [PNP0303:KBD,PNP0f13:MOU] at 0x60,0x64 irq 1,12
+serio: i8042 KBD port at 0x60,0x64 irq 1
+serio: i8042 AUX port at 0x60,0x64 irq 12
+intel_pstate: CPU model not supported
+IPI shorthand broadcast: enabled
+sched_clock: Marking stable (101431619, 20792917)->(135852496, -13627960)
+input: AT Translated Set 2 keyboard as /devices/platform/i8042/serio0/input/input1
+Freeing initrd memory: 1544K
+Freeing unused kernel image (initmem) memory: 820K
+Write protecting the kernel read-only data: 8192k
+Freeing unused kernel image (rodata/data gap) memory: 788K
+Run /init as init process
+input: ImExPS/2 Generic Explorer Mouse as /devices/platform/i8042/serio1/input/input3
+kdc_bench: START arms=6 reps=5 cpus=3
+kdc_bench: @M 1
+kdc_bench: @M 2
+kdc_bench: RESULT arm=zc4k-qd1 rep=0 try=1 token=2 accepted=0 cmds=100731 bad=0 ns=1000006739 lat_p10=8834 lat_p50=9723 lat_p90=10641 lat_p99=12034 queues=0x1
+kdc_bench: @M 3
+kdc_bench: @M 4
+kdc_bench: RESULT arm=zc4k-qd1 rep=0 try=2 token=4 accepted=0 cmds=102484 bad=0 ns=1000001298 lat_p10=8844 lat_p50=9717 lat_p90=10518 lat_p99=11650 queues=0x1
+kdc_bench: @M 5
+kdc_bench: @M 6
+kdc_bench: RESULT arm=zc4k-qd1 rep=0 try=3 token=6 accepted=1 cmds=101922 bad=0 ns=1000000914 lat_p10=8843 lat_p50=9728 lat_p90=10515 lat_p99=11794 queues=0x1
+kdc_bench: @M 7
+kdc_bench: @M 8
+kdc_bench: RESULT arm=bounce512-qd32-batch rep=0 try=1 token=8 accepted=1 cmds=708832 bad=0 ns=1000031388 lat_p10=32887 lat_p50=40672 lat_p90=47934 lat_p99=50764 queues=0x1
+kdc_bench: @M 9
+kdc_bench: @M 10
+kdc_bench: RESULT arm=zc4k-qd32-batch rep=0 try=1 token=10 accepted=1 cmds=542336 bad=0 ns=1000007292 lat_p10=45236 lat_p50=52179 lat_p90=62986 lat_p99=67601 queues=0x1
+kdc_bench: @M 11
+kdc_bench: @M 12
+kdc_bench: RESULT arm=zc4k-t3-qd8 rep=0 try=1 token=12 accepted=1 cmds=201627 bad=0 ns=1000073224 lat_p10=23477 lat_p50=68753 lat_p90=122254 lat_p99=160781 queues=0x7
+kdc_bench: @M 13
+kdc_bench: @M 14
+kdc_bench: RESULT arm=zc4k-t3-qd8-batch rep=0 try=1 token=14 accepted=1 cmds=589968 bad=0 ns=1000031101 lat_p10=24300 lat_p50=36543 lat_p90=51911 lat_p99=71731 queues=0x7
+kdc_bench: @M 15
+kdc_bench: @M 16
+kdc_bench: RESULT arm=bounce512-t3-qd8-batch rep=0 try=1 token=16 accepted=1 cmds=701400 bad=0 ns=1000029777 lat_p10=19126 lat_p50=32818 lat_p90=44841 lat_p99=61511 queues=0x7
+kdc_bench: @M 17
+kdc_bench: @M 18
+kdc_bench: RESULT arm=bounce512-qd32-batch rep=1 try=1 token=18 accepted=1 cmds=693664 bad=0 ns=1000005606 lat_p10=33514 lat_p50=42535 lat_p90=47995 lat_p99=51120 queues=0x1
+kdc_bench: @M 19
+kdc_bench: @M 20
+kdc_bench: RESULT arm=zc4k-qd32-batch rep=1 try=1 token=20 accepted=1 cmds=493440 bad=0 ns=1000049072 lat_p10=48322 lat_p50=58799 lat_p90=66558 lat_p99=74095 queues=0x1
+kdc_bench: @M 21
+kdc_bench: @M 22
+kdc_bench: RESULT arm=zc4k-t3-qd8 rep=1 try=1 token=22 accepted=0 cmds=190469 bad=0 ns=1000071889 lat_p10=27316 lat_p50=72368 lat_p90=125777 lat_p99=166342 queues=0x7
+kdc_bench: @M 23
+kdc_bench: @M 24
+kdc_bench: RESULT arm=zc4k-t3-qd8 rep=1 try=2 token=24 accepted=1 cmds=202092 bad=0 ns=1000861555 lat_p10=22638 lat_p50=67914 lat_p90=120862 lat_p99=161885 queues=0x7
+kdc_bench: @M 25
+kdc_bench: @M 26
+kdc_bench: RESULT arm=zc4k-t3-qd8-batch rep=1 try=1 token=26 accepted=0 cmds=590224 bad=0 ns=1000030707 lat_p10=24989 lat_p50=36674 lat_p90=50372 lat_p99=69296 queues=0x7
+kdc_bench: @M 27
+kdc_bench: @M 28
+kdc_bench: RESULT arm=zc4k-t3-qd8-batch rep=1 try=2 token=28 accepted=1 cmds=560224 bad=0 ns=1000016821 lat_p10=24633 lat_p50=40650 lat_p90=54982 lat_p99=71802 queues=0x7
+kdc_bench: @M 29
+kdc_bench: @M 30
+kdc_bench: RESULT arm=bounce512-t3-qd8-batch rep=1 try=1 token=30 accepted=1 cmds=664856 bad=0 ns=1000032523 lat_p10=18530 lat_p50=32500 lat_p90=48350 lat_p99=95456 queues=0x7
+kdc_bench: @M 31
+kdc_bench: @M 32
+kdc_bench: RESULT arm=zc4k-qd1 rep=1 try=1 token=32 accepted=1 cmds=104821 bad=0 ns=1000007762 lat_p10=8806 lat_p50=9072 lat_p90=10112 lat_p99=11121 queues=0x1
+kdc_bench: @M 33
+kdc_bench: @M 34
+kdc_bench: RESULT arm=zc4k-qd32-batch rep=2 try=1 token=34 accepted=0 cmds=469088 bad=0 ns=1000021673 lat_p10=55663 lat_p50=61961 lat_p90=67798 lat_p99=72841 queues=0x1
+kdc_bench: @M 35
+kdc_bench: @M 36
+kdc_bench: RESULT arm=zc4k-qd32-batch rep=2 try=2 token=36 accepted=0 cmds=353664 bad=0 ns=1000004712 lat_p10=55931 lat_p50=69272 lat_p90=85219 lat_p99=450675 queues=0x1
+kdc_bench: @M 37
+kdc_bench: @M 38
+kdc_bench: RESULT arm=zc4k-qd32-batch rep=2 try=3 token=38 accepted=0 cmds=484320 bad=0 ns=1000011553 lat_p10=46725 lat_p50=56974 lat_p90=71823 lat_p99=82177 queues=0x1
+kdc_bench: @M 39
+kdc_bench: @M 40
+kdc_bench: RESULT arm=zc4k-qd32-batch rep=2 try=4 token=40 accepted=0 cmds=477696 bad=0 ns=1000006403 lat_p10=47976 lat_p50=59482 lat_p90=69650 lat_p99=79087 queues=0x1
+kdc_bench: @M 41
+kdc_bench: @M 42
+kdc_bench: RESULT arm=zc4k-t3-qd8 rep=2 try=1 token=42 accepted=1 cmds=199732 bad=0 ns=1000096222 lat_p10=23913 lat_p50=69091 lat_p90=122852 lat_p99=162774 queues=0x7
+kdc_bench: @M 43
+kdc_bench: @M 44
+kdc_bench: RESULT arm=zc4k-t3-qd8-batch rep=2 try=1 token=44 accepted=1 cmds=510968 bad=0 ns=1000065455 lat_p10=27246 lat_p50=41156 lat_p90=59127 lat_p99=120578 queues=0x7
+kdc_bench: @M 45
+kdc_bench: @M 46
+kdc_bench: RESULT arm=bounce512-t3-qd8-batch rep=2 try=1 token=46 accepted=1 cmds=766488 bad=0 ns=1000017185 lat_p10=16874 lat_p50=28011 lat_p90=42357 lat_p99=60444 queues=0x7
+kdc_bench: @M 47
+kdc_bench: @M 48
+kdc_bench: RESULT arm=zc4k-qd1 rep=2 try=1 token=48 accepted=1 cmds=101614 bad=0 ns=1000008271 lat_p10=8823 lat_p50=9722 lat_p90=10835 lat_p99=12787 queues=0x1
+kdc_bench: @M 49
+kdc_bench: @M 50
+kdc_bench: RESULT arm=bounce512-qd32-batch rep=2 try=1 token=50 accepted=1 cmds=751264 bad=0 ns=1000038761 lat_p10=31786 lat_p50=36500 lat_p90=46224 lat_p99=50950 queues=0x1
+kdc_bench: @M 51
+kdc_bench: @M 52
+kdc_bench: RESULT arm=zc4k-t3-qd8 rep=3 try=1 token=52 accepted=0 cmds=174397 bad=0 ns=1000046373 lat_p10=31426 lat_p50=79667 lat_p90=138509 lat_p99=203817 queues=0x7
+kdc_bench: @M 53
+kdc_bench: @M 54
+kdc_bench: RESULT arm=zc4k-t3-qd8 rep=3 try=2 token=54 accepted=1 cmds=189223 bad=0 ns=1000077991 lat_p10=28845 lat_p50=74029 lat_p90=127455 lat_p99=171583 queues=0x7
+kdc_bench: @M 55
+kdc_bench: @M 56
+kdc_bench: RESULT arm=zc4k-t3-qd8-batch rep=3 try=1 token=56 accepted=0 cmds=506768 bad=0 ns=1000025528 lat_p10=28630 lat_p50=43670 lat_p90=61681 lat_p99=86449 queues=0x7
+kdc_bench: @M 57
+kdc_bench: @M 58
+kdc_bench: RESULT arm=zc4k-t3-qd8-batch rep=3 try=2 token=58 accepted=1 cmds=533376 bad=0 ns=1000031757 lat_p10=25524 lat_p50=39386 lat_p90=58623 lat_p99=105836 queues=0x7
+kdc_bench: @M 59
+kdc_bench: @M 60
+kdc_bench: RESULT arm=bounce512-t3-qd8-batch rep=3 try=1 token=60 accepted=1 cmds=802496 bad=0 ns=1000019832 lat_p10=15985 lat_p50=25519 lat_p90=42361 lat_p99=64247 queues=0x7
+kdc_bench: @M 61
+kdc_bench: @M 62
+kdc_bench: RESULT arm=zc4k-qd1 rep=3 try=1 token=62 accepted=1 cmds=100492 bad=0 ns=1000001760 lat_p10=8824 lat_p50=9781 lat_p90=10802 lat_p99=13378 queues=0x1
+kdc_bench: @M 63
+kdc_bench: @M 64
+kdc_bench: RESULT arm=bounce512-qd32-batch rep=3 try=1 token=64 accepted=1 cmds=707968 bad=0 ns=1000013229 lat_p10=32620 lat_p50=38083 lat_p90=47788 lat_p99=55927 queues=0x1
+kdc_bench: @M 65
+kdc_bench: @M 66
+kdc_bench: RESULT arm=zc4k-qd32-batch rep=3 try=1 token=66 accepted=1 cmds=515200 bad=0 ns=1000049159 lat_p10=45578 lat_p50=53802 lat_p90=65586 lat_p99=76819 queues=0x1
+kdc_bench: @M 67
+kdc_bench: @M 68
+kdc_bench: RESULT arm=zc4k-t3-qd8-batch rep=4 try=1 token=68 accepted=1 cmds=568400 bad=0 ns=1000043422 lat_p10=25241 lat_p50=38092 lat_p90=54346 lat_p99=83023 queues=0x7
+kdc_bench: @M 69
+kdc_bench: @M 70
+kdc_bench: RESULT arm=bounce512-t3-qd8-batch rep=4 try=1 token=70 accepted=1 cmds=789184 bad=0 ns=1000024571 lat_p10=16397 lat_p50=27864 lat_p90=41863 lat_p99=58919 queues=0x7
+kdc_bench: @M 71
+kdc_bench: @M 72
+kdc_bench: RESULT arm=zc4k-qd1 rep=4 try=1 token=72 accepted=1 cmds=103997 bad=0 ns=1000005535 lat_p10=8784 lat_p50=9122 lat_p90=10125 lat_p99=11262 queues=0x1
+kdc_bench: @M 73
+kdc_bench: @M 74
+kdc_bench: RESULT arm=bounce512-qd32-batch rep=4 try=1 token=74 accepted=1 cmds=720704 bad=0 ns=1000044558 lat_p10=32053 lat_p50=40192 lat_p90=47522 lat_p99=50711 queues=0x1
+kdc_bench: @M 75
+kdc_bench: @M 76
+kdc_bench: RESULT arm=zc4k-qd32-batch rep=4 try=1 token=76 accepted=1 cmds=533024 bad=0 ns=1000006859 lat_p10=45461 lat_p50=52867 lat_p90=63658 lat_p99=70083 queues=0x1
+kdc_bench: @M 77
+kdc_bench: @M 78
+kdc_bench: RESULT arm=zc4k-t3-qd8 rep=4 try=1 token=78 accepted=0 cmds=181312 bad=0 ns=1000099798 lat_p10=25885 lat_p50=73923 lat_p90=133512 lat_p99=191468 queues=0x7
+kdc_bench: @M 79
+kdc_bench: @M 80
+kdc_bench: RESULT arm=zc4k-t3-qd8 rep=4 try=2 token=80 accepted=0 cmds=186710 bad=0 ns=1000035043 lat_p10=26572 lat_p50=73442 lat_p90=130879 lat_p99=186354 queues=0x7
+kdc_bench: @M 81
+kdc_bench: @M 82
+kdc_bench: RESULT arm=zc4k-t3-qd8 rep=4 try=3 token=82 accepted=0 cmds=184159 bad=0 ns=1000380695 lat_p10=23746 lat_p50=70954 lat_p90=131538 lat_p99=209246 queues=0x7
+kdc_bench: @M 83
+kdc_bench: @M 84
+kdc_bench: RESULT arm=zc4k-t3-qd8 rep=4 try=4 token=84 accepted=1 cmds=192926 bad=0 ns=1000043915 lat_p10=25476 lat_p50=71611 lat_p90=126272 lat_p99=169435 queues=0x7
+kdc_bench: DONE
+kdc_init: BENCH_EXIT 0
+ACPI: PM: Preparing to enter system sleep state S5
+reboot: Power down
+===== boot 2 (noiommu) =====
+Linux version 6.12.41 (kdc@local) (gcc (Ubuntu 15.2.0-16ubuntu1) 15.2.0, GNU ld (GNU Binutils for Ubuntu) 2.46) #1 SMP 2026-11-06 00:00:00 +0000
+Command line: console=ttyS0 panic=-1 nokaslr printk.devkmsg=on printk.time=0 kdc.bounce_max=65536
+BIOS-provided physical RAM map:
+BIOS-e820: [mem 0x0000000000000000-0x000000000009fbff] usable
+BIOS-e820: [mem 0x000000000009fc00-0x000000000009ffff] reserved
+BIOS-e820: [mem 0x00000000000f0000-0x00000000000fffff] reserved
+BIOS-e820: [mem 0x0000000000100000-0x000000007ffdffff] usable
+BIOS-e820: [mem 0x000000007ffe0000-0x000000007fffffff] reserved
+BIOS-e820: [mem 0x00000000b0000000-0x00000000bfffffff] reserved
+BIOS-e820: [mem 0x00000000fed1c000-0x00000000fed1ffff] reserved
+BIOS-e820: [mem 0x00000000feffc000-0x00000000feffffff] reserved
+BIOS-e820: [mem 0x00000000fffc0000-0x00000000ffffffff] reserved
+NX (Execute Disable) protection: active
+APIC: Static calls initialized
+Hypervisor detected: KVM
+kvm-clock: Using msrs 4b564d01 and 4b564d00
+kvm-clock: using sched offset of 132847953 cycles
+clocksource: kvm-clock: mask: 0xffffffffffffffff max_cycles: 0x1cd42e4dffb, max_idle_ns: 881590591483 ns
+tsc: Detected 2995.200 MHz processor
+last_pfn = 0x7ffe0 max_arch_pfn = 0x400000000
+x86/PAT: PAT support disabled because CONFIG_X86_PAT is disabled in the kernel.
+x86/PAT: Configuration [0-7]: WB  WT  UC- UC  WB  WT  UC- UC  
+found SMP MP-table at [mem 0x000f54c0-0x000f54cf]
+Using GB pages for direct mapping
+RAMDISK: [mem 0x7fe5e000-0x7ffdffff]
+ACPI: Early table checksum verification disabled
+ACPI: RSDP 0x00000000000F52E0 000014 (v00 BOCHS )
+ACPI: RSDT 0x000000007FFE2498 000038 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+ACPI: FACP 0x000000007FFE2280 0000F4 (v03 BOCHS  BXPC     00000001 BXPC 00000001)
+ACPI: DSDT 0x000000007FFE0040 002240 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+ACPI: FACS 0x000000007FFE0000 000040
+ACPI: APIC 0x000000007FFE2374 000088 (v03 BOCHS  BXPC     00000001 BXPC 00000001)
+ACPI: HPET 0x000000007FFE23FC 000038 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+ACPI: MCFG 0x000000007FFE2434 00003C (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+ACPI: WAET 0x000000007FFE2470 000028 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+ACPI: Reserving FACP table memory at [mem 0x7ffe2280-0x7ffe2373]
+ACPI: Reserving DSDT table memory at [mem 0x7ffe0040-0x7ffe227f]
+ACPI: Reserving FACS table memory at [mem 0x7ffe0000-0x7ffe003f]
+ACPI: Reserving APIC table memory at [mem 0x7ffe2374-0x7ffe23fb]
+ACPI: Reserving HPET table memory at [mem 0x7ffe23fc-0x7ffe2433]
+ACPI: Reserving MCFG table memory at [mem 0x7ffe2434-0x7ffe246f]
+ACPI: Reserving WAET table memory at [mem 0x7ffe2470-0x7ffe2497]
+Zone ranges:
+  DMA32    [mem 0x0000000000001000-0x000000007ffdffff]
+  Normal   empty
+Movable zone start for each node
+Early memory node ranges
+  node   0: [mem 0x0000000000001000-0x000000000009efff]
+  node   0: [mem 0x0000000000100000-0x000000007ffdffff]
+Initmem setup node 0 [mem 0x0000000000001000-0x000000007ffdffff]
+On node 0, zone DMA32: 1 pages in unavailable ranges
+On node 0, zone DMA32: 97 pages in unavailable ranges
+On node 0, zone DMA32: 32 pages in unavailable ranges
+ACPI: PM-Timer IO Port: 0x608
+ACPI: LAPIC_NMI (acpi_id[0xff] dfl dfl lint[0x1])
+IOAPIC[0]: apic_id 0, version 17, address 0xfec00000, GSI 0-23
+ACPI: INT_SRC_OVR (bus 0 bus_irq 0 global_irq 2 dfl dfl)
+ACPI: INT_SRC_OVR (bus 0 bus_irq 5 global_irq 5 high level)
+ACPI: INT_SRC_OVR (bus 0 bus_irq 9 global_irq 9 high level)
+ACPI: INT_SRC_OVR (bus 0 bus_irq 10 global_irq 10 high level)
+ACPI: INT_SRC_OVR (bus 0 bus_irq 11 global_irq 11 high level)
+ACPI: Using ACPI (MADT) for SMP configuration information
+ACPI: HPET id: 0x8086a201 base: 0xfed00000
+TSC deadline timer available
+CPU topo: Max. logical packages:   1
+CPU topo: Max. logical dies:       1
+CPU topo: Max. dies per package:   1
+CPU topo: Max. threads per core:   1
+CPU topo: Num. cores per package:     3
+CPU topo: Num. threads per package:   3
+CPU topo: Allowing 3 present CPUs plus 0 hotplug CPUs
+kvm-guest: APIC: eoi() replaced with kvm_guest_apic_eoi_write()
+kvm-guest: KVM setup pv remote TLB flush
+kvm-guest: setup PV sched yield
+[mem 0xc0000000-0xfed1bfff] available for PCI devices
+Booting paravirtualized kernel on KVM
+clocksource: refined-jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 19112604462750000 ns
+setup_percpu: NR_CPUS:4 nr_cpumask_bits:3 nr_cpu_ids:3 nr_node_ids:1
+percpu: Embedded 43 pages/cpu s146456 r0 d29672 u524288
+kvm-guest: PV spinlocks enabled
+PV qspinlock hash table entries: 256 (order: 0, 4096 bytes, linear)
+Kernel command line: console=ttyS0 panic=-1 nokaslr printk.devkmsg=on printk.time=0 kdc.bounce_max=65536
+Unknown kernel command line parameters "nokaslr", will be passed to user space.
+random: crng init done
+Dentry cache hash table entries: 262144 (order: 9, 2097152 bytes, linear)
+Inode-cache hash table entries: 131072 (order: 8, 1048576 bytes, linear)
+Built 1 zonelists, mobility grouping on.  Total pages: 524158
+mem auto-init: stack:all(zero), heap alloc:off, heap free:off
+SLUB: HWalign=64, Order=0-3, MinObjects=0, CPUs=3, Nodes=1
+rcu: Hierarchical RCU implementation.
+rcu: 	RCU restricting CPUs from NR_CPUS=4 to nr_cpu_ids=3.
+rcu: RCU calculated value of scheduler-enlistment delay is 10 jiffies.
+rcu: Adjusting geometry for rcu_fanout_leaf=16, nr_cpu_ids=3
+NR_IRQS: 4352, nr_irqs: 448, preallocated irqs: 16
+rcu: srcu_init: Setting srcu_struct sizes based on contention.
+Console: colour *CGA 80x25
+printk: legacy console [ttyS0] enabled
+ACPI: Core revision 20240827
+clocksource: hpet: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 19112604467 ns
+APIC: Switch to symmetric I/O mode setup
+x2apic enabled
+APIC: Switched APIC routing to: physical x2apic
+kvm-guest: APIC: send_IPI_mask() replaced with kvm_send_ipi_mask()
+kvm-guest: APIC: send_IPI_mask_allbutself() replaced with kvm_send_ipi_mask_allbutself()
+kvm-guest: setup PV IPIs
+..TIMER: vector=0x30 apic1=0 pin1=2 apic2=-1 pin2=-1
+clocksource: tsc-early: mask: 0xffffffffffffffff max_cycles: 0x2b2c8ec87c7, max_idle_ns: 440795278598 ns
+Calibrating delay loop (skipped) preset value.. 5990.40 BogoMIPS (lpj=29952000)
+Last level iTLB entries: 4KB 0, 2MB 0, 4MB 0
+Last level dTLB entries: 4KB 0, 2MB 0, 4MB 0, 1GB 0
+Spectre V2 : User space: Vulnerable
+Speculative Store Bypass: Vulnerable
+x86/fpu: Supporting XSAVE feature 0x001: 'x87 floating point registers'
+x86/fpu: Supporting XSAVE feature 0x002: 'SSE registers'
+x86/fpu: Supporting XSAVE feature 0x004: 'AVX registers'
+x86/fpu: Supporting XSAVE feature 0x200: 'Protection Keys User registers'
+x86/fpu: xstate_offset[2]:  576, xstate_sizes[2]:  256
+x86/fpu: xstate_offset[9]:  832, xstate_sizes[9]:    8
+x86/fpu: Enabled xstate features 0x207, context size is 840 bytes, using 'compacted' format.
+Freeing SMP alternatives memory: 8K
+pid_max: default: 32768 minimum: 301
+Mount-cache hash table entries: 4096 (order: 3, 32768 bytes, linear)
+Mountpoint-cache hash table entries: 4096 (order: 3, 32768 bytes, linear)
+smpboot: CPU0: 13th Gen Intel(R) Core(TM) i9-13900K (family: 0x6, model: 0xb7, stepping: 0x1)
+Performance Events: unsupported p6 CPU model 183 no PMU driver, software events only.
+signal: max sigframe size: 3232
+rcu: Hierarchical SRCU implementation.
+rcu: 	Max phase no-delay instances is 1000.
+Timer migration: 1 hierarchy levels; 8 children per group; 1 crossnode level
+smp: Bringing up secondary CPUs ...
+smpboot: x86: Booting SMP configuration:
+.... node  #0, CPUs:      #1 #2
+smp: Brought up 1 node, 3 CPUs
+smpboot: Total of 3 processors activated (17971.20 BogoMIPS)
+Memory: 2043020K/2096632K available (6144K kernel code, 805K rwdata, 1260K rodata, 820K init, 1200K bss, 50928K reserved, 0K cma-reserved)
+devtmpfs: initialized
+clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 19112604462750000 ns
+futex hash table entries: 1024 (order: 4, 65536 bytes, linear)
+thermal_sys: Registered thermal governor 'step_wise'
+thermal_sys: Registered thermal governor 'user_space'
+cpuidle: using governor ladder
+cpuidle: using governor menu
+acpiphp: ACPI Hot Plug PCI Controller Driver version: 0.5
+PCI: ECAM [mem 0xb0000000-0xbfffffff] (base 0xb0000000) for domain 0000 [bus 00-ff]
+PCI: ECAM [mem 0xb0000000-0xbfffffff] reserved as E820 entry
+PCI: Using configuration type 1 for base access
+ACPI: Added _OSI(Module Device)
+ACPI: Added _OSI(Processor Device)
+ACPI: Added _OSI(Processor Aggregator Device)
+ACPI: 1 ACPI AML tables successfully acquired and loaded
+ACPI: Interpreter enabled
+ACPI: PM: (supports S0 S5)
+ACPI: Using IOAPIC for interrupt routing
+PCI: Using host bridge windows from ACPI; if necessary, use "pci=nocrs" and report a bug
+PCI: Using E820 reservations for host bridge windows
+ACPI: Enabled 2 GPEs in block 00 to 3F
+ACPI: PCI Root Bridge [PCI0] (domain 0000 [bus 00-ff])
+acpi PNP0A08:00: _OSC: OS supports [ExtendedConfig ASPM ClockPM Segments MSI HPX-Type3]
+acpi PNP0A08:00: _OSC: platform does not support [PCIeHotplug LTR]
+acpi PNP0A08:00: _OSC: OS now controls [PME PCIeCapability]
+PCI host bridge to bus 0000:00
+pci_bus 0000:00: root bus resource [io  0x0000-0x0cf7 window]
+pci_bus 0000:00: root bus resource [io  0x0d00-0xffff window]
+pci_bus 0000:00: root bus resource [mem 0x000a0000-0x000bffff window]
+pci_bus 0000:00: root bus resource [mem 0x80000000-0xafffffff window]
+pci_bus 0000:00: root bus resource [mem 0xc0000000-0xfebfffff window]
+pci_bus 0000:00: root bus resource [mem 0x100000000-0x8ffffffff window]
+pci_bus 0000:00: root bus resource [bus 00-ff]
+pci 0000:00:00.0: [8086:29c0] type 00 class 0x060000 conventional PCI endpoint
+pci 0000:00:02.0: [1b36:000c] type 01 class 0x060400 PCIe Root Port
+pci 0000:00:02.0: BAR 0 [mem 0xfe800000-0xfe800fff]
+pci 0000:00:02.0: PCI bridge to [bus 01]
+pci 0000:00:02.0:   bridge window [mem 0xfe600000-0xfe7fffff]
+pci 0000:00:02.0:   bridge window [mem 0xfea00000-0xfebfffff 64bit pref]
+pci 0000:00:02.0: enabling Extended Tags
+pci 0000:00:1f.0: [8086:2918] type 00 class 0x060100 conventional PCI endpoint
+pci 0000:00:1f.0: quirk: [io  0x0600-0x067f] claimed by ICH6 ACPI/GPIO/TCO
+pci 0000:00:1f.2: [8086:2922] type 00 class 0x010601 conventional PCI endpoint
+pci 0000:00:1f.2: BAR 4 [io  0xc040-0xc05f]
+pci 0000:00:1f.2: BAR 5 [mem 0xfe801000-0xfe801fff]
+pci 0000:00:1f.3: [8086:2930] type 00 class 0x0c0500 conventional PCI endpoint
+pci 0000:00:1f.3: BAR 4 [io  0x0700-0x073f]
+acpiphp: Slot [0] registered
+pci 0000:01:00.0: [1234:4b44] type 00 class 0x088000 PCIe Endpoint
+pci 0000:01:00.0: BAR 0 [mem 0xfe600000-0xfe603fff 64bit]
+pci 0000:01:00.0: BAR 2 [mem 0xfe604000-0xfe604fff]
+pci 0000:01:00.0: enabling Extended Tags
+pci 0000:00:02.0: PCI bridge to [bus 01]
+ACPI: PCI: Interrupt link LNKA configured for IRQ 10
+ACPI: PCI: Interrupt link LNKB configured for IRQ 10
+ACPI: PCI: Interrupt link LNKC configured for IRQ 11
+ACPI: PCI: Interrupt link LNKD configured for IRQ 11
+ACPI: PCI: Interrupt link LNKE configured for IRQ 10
+ACPI: PCI: Interrupt link LNKF configured for IRQ 10
+ACPI: PCI: Interrupt link LNKG configured for IRQ 11
+ACPI: PCI: Interrupt link LNKH configured for IRQ 11
+ACPI: PCI: Interrupt link GSIA configured for IRQ 16
+ACPI: PCI: Interrupt link GSIB configured for IRQ 17
+ACPI: PCI: Interrupt link GSIC configured for IRQ 18
+ACPI: PCI: Interrupt link GSID configured for IRQ 19
+ACPI: PCI: Interrupt link GSIE configured for IRQ 20
+ACPI: PCI: Interrupt link GSIF configured for IRQ 21
+ACPI: PCI: Interrupt link GSIG configured for IRQ 22
+ACPI: PCI: Interrupt link GSIH configured for IRQ 23
+iommu: Default domain type: Translated
+iommu: DMA domain TLB invalidation policy: lazy mode
+PCI: Using ACPI for IRQ routing
+vgaarb: loaded
+clocksource: Switched to clocksource kvm-clock
+ACPI: Failed to create genetlink family for ACPI event
+pnp: PnP ACPI init
+system 00:04: [mem 0xb0000000-0xbfffffff window] has been reserved
+pnp: PnP ACPI: found 5 devices
+clocksource: acpi_pm: mask: 0xffffff max_cycles: 0xffffff, max_idle_ns: 2085701024 ns
+pci 0000:00:02.0: bridge window [io  0x1000-0x0fff] to [bus 01] add_size 1000
+pci 0000:00:02.0: bridge window [io  0x1000-0x1fff]: assigned
+pci 0000:00:02.0: PCI bridge to [bus 01]
+pci 0000:00:02.0:   bridge window [io  0x1000-0x1fff]
+pci 0000:00:02.0:   bridge window [mem 0xfe600000-0xfe7fffff]
+pci 0000:00:02.0:   bridge window [mem 0xfea00000-0xfebfffff 64bit pref]
+pci_bus 0000:00: resource 4 [io  0x0000-0x0cf7 window]
+pci_bus 0000:00: resource 5 [io  0x0d00-0xffff window]
+pci_bus 0000:00: resource 6 [mem 0x000a0000-0x000bffff window]
+pci_bus 0000:00: resource 7 [mem 0x80000000-0xafffffff window]
+pci_bus 0000:00: resource 8 [mem 0xc0000000-0xfebfffff window]
+pci_bus 0000:00: resource 9 [mem 0x100000000-0x8ffffffff window]
+pci_bus 0000:01: resource 0 [io  0x1000-0x1fff]
+pci_bus 0000:01: resource 1 [mem 0xfe600000-0xfe7fffff]
+pci_bus 0000:01: resource 2 [mem 0xfea00000-0xfebfffff 64bit pref]
+PCI: CLS 0 bytes, default 64
+RAPL PMU: API unit is 2^-32 Joules, 0 fixed counters, 10737418240 ms ovfl timer
+Unpacking initramfs...
+clocksource: tsc: mask: 0xffffffffffffffff max_cycles: 0x2b2c8ec87c7, max_idle_ns: 440795278598 ns
+workingset: timestamp_bits=62 max_order=19 bucket_order=0
+ACPI: \_SB_.GSIG: Enabled at IRQ 22
+input: Power Button as /devices/LNXSYSTM:00/LNXPWRBN:00/input/input0
+ACPI: button: Power Button [PWRF]
+Serial: 8250/16550 driver, 1 ports, IRQ sharing disabled
+00:02: ttyS0 at I/O 0x3f8 (irq = 4, base_baud = 115200) is a 16550A
+Freeing initrd memory: 1544K
+kdc 0000:01:00.0: kdc0: 3 queues x 64 entries, bounce <= 65536 bytes
+i8042: PNP: PS/2 Controller [PNP0303:KBD,PNP0f13:MOU] at 0x60,0x64 irq 1,12
+serio: i8042 KBD port at 0x60,0x64 irq 1
+serio: i8042 AUX port at 0x60,0x64 irq 12
+intel_pstate: CPU model not supported
+IPI shorthand broadcast: enabled
+sched_clock: Marking stable (106258245, 20663388)->(137343438, -10421805)
+input: AT Translated Set 2 keyboard as /devices/platform/i8042/serio0/input/input1
+Freeing unused kernel image (initmem) memory: 820K
+Write protecting the kernel read-only data: 8192k
+Freeing unused kernel image (rodata/data gap) memory: 788K
+Run /init as init process
+input: ImExPS/2 Generic Explorer Mouse as /devices/platform/i8042/serio1/input/input3
+kdc_bench: START arms=6 reps=5 cpus=3
+kdc_bench: @M 1
+kdc_bench: @M 2
+kdc_bench: RESULT arm=zc4k-qd1 rep=0 try=1 token=2 accepted=0 cmds=101247 bad=0 ns=1000009181 lat_p10=9016 lat_p50=9403 lat_p90=10320 lat_p99=12266 queues=0x1
+kdc_bench: @M 3
+kdc_bench: @M 4
+kdc_bench: RESULT arm=zc4k-qd1 rep=0 try=2 token=4 accepted=0 cmds=96223 bad=0 ns=1000002599 lat_p10=8996 lat_p50=9413 lat_p90=10804 lat_p99=15157 queues=0x1
+kdc_bench: @M 5
+kdc_bench: @M 6
+kdc_bench: RESULT arm=zc4k-qd1 rep=0 try=3 token=6 accepted=1 cmds=99944 bad=0 ns=1000008681 lat_p10=8973 lat_p50=9624 lat_p90=10780 lat_p99=14663 queues=0x1
+kdc_bench: @M 7
+kdc_bench: @M 8
+kdc_bench: RESULT arm=bounce512-qd32-batch rep=0 try=1 token=8 accepted=0 cmds=735776 bad=0 ns=1000010407 lat_p10=33350 lat_p50=37514 lat_p90=41421 lat_p99=46301 queues=0x1
+kdc_bench: @M 9
+kdc_bench: @M 10
+kdc_bench: RESULT arm=bounce512-qd32-batch rep=0 try=2 token=10 accepted=0 cmds=697056 bad=0 ns=1000024763 lat_p10=32846 lat_p50=38256 lat_p90=47414 lat_p99=52221 queues=0x1
+kdc_bench: @M 11
+kdc_bench: @M 12
+kdc_bench: RESULT arm=bounce512-qd32-batch rep=0 try=3 token=12 accepted=1 cmds=757024 bad=0 ns=1000000784 lat_p10=32867 lat_p50=37015 lat_p90=41049 lat_p99=48680 queues=0x1
+kdc_bench: @M 13
+kdc_bench: @M 14
+kdc_bench: RESULT arm=zc4k-qd32-batch rep=0 try=1 token=14 accepted=1 cmds=484672 bad=0 ns=1000001371 lat_p10=48265 lat_p50=59482 lat_p90=66941 lat_p99=71053 queues=0x1
+kdc_bench: @M 15
+kdc_bench: @M 16
+kdc_bench: RESULT arm=zc4k-t3-qd8 rep=0 try=1 token=16 accepted=0 cmds=174512 bad=0 ns=1000052356 lat_p10=25799 lat_p50=74819 lat_p90=136217 lat_p99=229217 queues=0x7
+kdc_bench: @M 17
+kdc_bench: @M 18
+kdc_bench: RESULT arm=zc4k-t3-qd8 rep=0 try=2 token=18 accepted=1 cmds=191998 bad=0 ns=1000069891 lat_p10=26648 lat_p50=72139 lat_p90=126040 lat_p99=167443 queues=0x7
+kdc_bench: @M 19
+kdc_bench: @M 20
+kdc_bench: RESULT arm=zc4k-t3-qd8-batch rep=0 try=1 token=20 accepted=1 cmds=568728 bad=0 ns=1000038749 lat_p10=21270 lat_p50=40208 lat_p90=55918 lat_p99=73995 queues=0x7
+kdc_bench: @M 21
+kdc_bench: @M 22
+kdc_bench: RESULT arm=bounce512-t3-qd8-batch rep=0 try=1 token=22 accepted=1 cmds=766392 bad=0 ns=1000019381 lat_p10=17493 lat_p50=27595 lat_p90=41702 lat_p99=62381 queues=0x7
+kdc_bench: @M 23
+kdc_bench: @M 24
+kdc_bench: RESULT arm=bounce512-qd32-batch rep=1 try=1 token=24 accepted=1 cmds=741088 bad=0 ns=1000038657 lat_p10=32709 lat_p50=37440 lat_p90=44844 lat_p99=51742 queues=0x1
+kdc_bench: @M 25
+kdc_bench: @M 26
+kdc_bench: RESULT arm=zc4k-qd32-batch rep=1 try=1 token=26 accepted=0 cmds=478208 bad=0 ns=1000067925 lat_p10=49119 lat_p50=59477 lat_p90=66751 lat_p99=70860 queues=0x1
+kdc_bench: @M 27
+kdc_bench: @M 28
+kdc_bench: RESULT arm=zc4k-qd32-batch rep=1 try=2 token=28 accepted=1 cmds=459072 bad=0 ns=1000003937 lat_p10=56476 lat_p50=62386 lat_p90=67829 lat_p99=71551 queues=0x1
+kdc_bench: @M 29
+kdc_bench: @M 30
+kdc_bench: RESULT arm=zc4k-t3-qd8 rep=1 try=1 token=30 accepted=1 cmds=177210 bad=0 ns=1000054142 lat_p10=29758 lat_p50=78071 lat_p90=136440 lat_p99=187422 queues=0x7
+kdc_bench: @M 31
+kdc_bench: @M 32
+kdc_bench: RESULT arm=zc4k-t3-qd8-batch rep=1 try=1 token=32 accepted=1 cmds=550520 bad=0 ns=1000013599 lat_p10=23745 lat_p50=40226 lat_p90=55788 lat_p99=75796 queues=0x7
+kdc_bench: @M 33
+kdc_bench: @M 34
+kdc_bench: RESULT arm=bounce512-t3-qd8-batch rep=1 try=1 token=34 accepted=0 cmds=645664 bad=0 ns=1000023521 lat_p10=19615 lat_p50=31646 lat_p90=48327 lat_p99=94463 queues=0x7
+kdc_bench: @M 35
+kdc_bench: @M 36
+kdc_bench: RESULT arm=bounce512-t3-qd8-batch rep=1 try=2 token=36 accepted=1 cmds=740304 bad=0 ns=1000020618 lat_p10=17581 lat_p50=28414 lat_p90=43475 lat_p99=65922 queues=0x7
+kdc_bench: @M 37
+kdc_bench: @M 38
+kdc_bench: RESULT arm=zc4k-qd1 rep=1 try=1 token=38 accepted=0 cmds=99845 bad=0 ns=1000002306 lat_p10=8966 lat_p50=9384 lat_p90=10735 lat_p99=12104 queues=0x1
+kdc_bench: @M 39
+kdc_bench: @M 40
+kdc_bench: RESULT arm=zc4k-qd1 rep=1 try=2 token=40 accepted=1 cmds=103659 bad=0 ns=1000007429 lat_p10=8938 lat_p50=9248 lat_p90=10590 lat_p99=11939 queues=0x1
+kdc_bench: @M 41
+kdc_bench: @M 42
+kdc_bench: RESULT arm=zc4k-qd32-batch rep=2 try=1 token=42 accepted=1 cmds=553024 bad=0 ns=1000034330 lat_p10=46113 lat_p50=51387 lat_p90=56425 lat_p99=59296 queues=0x1
+kdc_bench: @M 43
+kdc_bench: @M 44
+kdc_bench: RESULT arm=zc4k-t3-qd8 rep=2 try=1 token=44 accepted=0 cmds=190183 bad=0 ns=1000097091 lat_p10=26204 lat_p50=71745 lat_p90=125712 lat_p99=167222 queues=0x7
+kdc_bench: @M 45
+kdc_bench: @M 46
+kdc_bench: RESULT arm=zc4k-t3-qd8 rep=2 try=2 token=46 accepted=0 cmds=184397 bad=0 ns=1000047125 lat_p10=25358 lat_p50=73069 lat_p90=130902 lat_p99=201269 queues=0x7
+kdc_bench: @M 47
+kdc_bench: @M 48
+kdc_bench: RESULT arm=zc4k-t3-qd8 rep=2 try=3 token=48 accepted=1 cmds=195024 bad=0 ns=1000046894 lat_p10=24202 lat_p50=70496 lat_p90=124015 lat_p99=165160 queues=0x7
+kdc_bench: @M 49
+kdc_bench: @M 50
+kdc_bench: RESULT arm=zc4k-t3-qd8-batch rep=2 try=1 token=50 accepted=1 cmds=545864 bad=0 ns=1000018495 lat_p10=24156 lat_p50=41243 lat_p90=56513 lat_p99=75631 queues=0x7
+kdc_bench: @M 51
+kdc_bench: @M 52
+kdc_bench: RESULT arm=bounce512-t3-qd8-batch rep=2 try=1 token=52 accepted=0 cmds=644616 bad=0 ns=1000023332 lat_p10=21701 lat_p50=34621 lat_p90=46958 lat_p99=61624 queues=0x7
+kdc_bench: @M 53
+kdc_bench: @M 54
+kdc_bench: RESULT arm=bounce512-t3-qd8-batch rep=2 try=2 token=54 accepted=1 cmds=777672 bad=0 ns=1000030957 lat_p10=17402 lat_p50=27222 lat_p90=41391 lat_p99=61581 queues=0x7
+kdc_bench: @M 55
+kdc_bench: @M 56
+kdc_bench: RESULT arm=zc4k-qd1 rep=2 try=1 token=56 accepted=1 cmds=93858 bad=0 ns=1000007834 lat_p10=9020 lat_p50=9995 lat_p90=10908 lat_p99=27853 queues=0x1
+kdc_bench: @M 57
+kdc_bench: @M 58
+kdc_bench: RESULT arm=bounce512-qd32-batch rep=2 try=1 token=58 accepted=1 cmds=675520 bad=0 ns=1000026762 lat_p10=34411 lat_p50=42309 lat_p90=50348 lat_p99=54065 queues=0x1
+kdc_bench: @M 59
+kdc_bench: @M 60
+kdc_bench: RESULT arm=zc4k-t3-qd8 rep=3 try=1 token=60 accepted=0 cmds=169058 bad=0 ns=1000063122 lat_p10=28117 lat_p50=76102 lat_p90=135669 lat_p99=215025 queues=0x7
+kdc_bench: @M 61
+kdc_bench: @M 62
+kdc_bench: RESULT arm=zc4k-t3-qd8 rep=3 try=2 token=62 accepted=0 cmds=167093 bad=0 ns=1000046573 lat_p10=28061 lat_p50=78565 lat_p90=141714 lat_p99=231539 queues=0x7
+kdc_bench: @M 63
+kdc_bench: @M 64
+kdc_bench: RESULT arm=zc4k-t3-qd8 rep=3 try=3 token=64 accepted=1 cmds=185249 bad=0 ns=1000056607 lat_p10=29550 lat_p50=75529 lat_p90=128821 lat_p99=169797 queues=0x7
+kdc_bench: @M 65
+kdc_bench: @M 66
+kdc_bench: RESULT arm=zc4k-t3-qd8-batch rep=3 try=1 token=66 accepted=0 cmds=537136 bad=0 ns=1000031921 lat_p10=22705 lat_p50=37850 lat_p90=56246 lat_p99=117513 queues=0x7
+kdc_bench: @M 67
+kdc_bench: @M 68
+kdc_bench: RESULT arm=zc4k-t3-qd8-batch rep=3 try=2 token=68 accepted=0 cmds=481152 bad=0 ns=1000050559 lat_p10=28440 lat_p50=45309 lat_p90=64465 lat_p99=91803 queues=0x7
+kdc_bench: @M 69
+kdc_bench: @M 70
+kdc_bench: RESULT arm=zc4k-t3-qd8-batch rep=3 try=3 token=70 accepted=0 cmds=429704 bad=0 ns=1000026560 lat_p10=33420 lat_p50=48366 lat_p90=68553 lat_p99=129359 queues=0x7
+kdc_bench: @M 71
+kdc_bench: @M 72
+kdc_bench: RESULT arm=zc4k-t3-qd8-batch rep=3 try=4 token=72 accepted=0 cmds=558696 bad=0 ns=1000031806 lat_p10=23298 lat_p50=39038 lat_p90=54062 lat_p99=74852 queues=0x7
+kdc_bench: @M 73
+kdc_bench: @M 74
+kdc_bench: RESULT arm=bounce512-t3-qd8-batch rep=3 try=1 token=74 accepted=0 cmds=741880 bad=0 ns=1000027478 lat_p10=17181 lat_p50=27493 lat_p90=42897 lat_p99=65397 queues=0x7
+kdc_bench: @M 75
+kdc_bench: @M 76
+kdc_bench: RESULT arm=bounce512-t3-qd8-batch rep=3 try=2 token=76 accepted=0 cmds=734816 bad=0 ns=1000010461 lat_p10=17817 lat_p50=27287 lat_p90=40134 lat_p99=105760 queues=0x7
+kdc_bench: @M 77
+kdc_bench: @M 78
+kdc_bench: RESULT arm=bounce512-t3-qd8-batch rep=3 try=3 token=78 accepted=1 cmds=718176 bad=0 ns=1000011961 lat_p10=18424 lat_p50=29663 lat_p90=44052 lat_p99=63506 queues=0x7
+kdc_bench: @M 79
+kdc_bench: @M 80
+kdc_bench: RESULT arm=zc4k-qd1 rep=3 try=1 token=80 accepted=0 cmds=101672 bad=0 ns=1000000960 lat_p10=8937 lat_p50=9244 lat_p90=10371 lat_p99=11952 queues=0x1
+kdc_bench: @M 81
+kdc_bench: @M 82
+kdc_bench: RESULT arm=zc4k-qd1 rep=3 try=2 token=82 accepted=1 cmds=100335 bad=0 ns=1000002927 lat_p10=8953 lat_p50=9789 lat_p90=10740 lat_p99=11826 queues=0x1
+kdc_bench: @M 83
+kdc_bench: @M 84
+kdc_bench: RESULT arm=bounce512-qd32-batch rep=3 try=1 token=84 accepted=1 cmds=649312 bad=0 ns=1001020168 lat_p10=35916 lat_p50=45343 lat_p90=50321 lat_p99=52972 queues=0x1
+kdc_bench: @M 85
+kdc_bench: @M 86
+kdc_bench: RESULT arm=zc4k-qd32-batch rep=3 try=1 token=86 accepted=1 cmds=545568 bad=0 ns=1000017941 lat_p10=45803 lat_p50=51792 lat_p90=57991 lat_p99=67055 queues=0x1
+kdc_bench: @M 87
+kdc_bench: @M 88
+kdc_bench: RESULT arm=zc4k-t3-qd8-batch rep=4 try=1 token=88 accepted=1 cmds=500016 bad=0 ns=1000025510 lat_p10=29564 lat_p50=43916 lat_p90=58934 lat_p99=80053 queues=0x7
+kdc_bench: @M 89
+kdc_bench: @M 90
+kdc_bench: RESULT arm=bounce512-t3-qd8-batch rep=4 try=1 token=90 accepted=0 cmds=734616 bad=0 ns=1000029888 lat_p10=17638 lat_p50=28871 lat_p90=42737 lat_p99=61959 queues=0x7
+kdc_bench: @M 91
+kdc_bench: @M 92
+kdc_bench: RESULT arm=bounce512-t3-qd8-batch rep=4 try=2 token=92 accepted=1 cmds=740376 bad=0 ns=1000028109 lat_p10=18450 lat_p50=29394 lat_p90=42688 lat_p99=59065 queues=0x7
+kdc_bench: @M 93
+kdc_bench: @M 94
+kdc_bench: RESULT arm=zc4k-qd1 rep=4 try=1 token=94 accepted=1 cmds=104611 bad=0 ns=1000004539 lat_p10=8938 lat_p50=9153 lat_p90=10024 lat_p99=11269 queues=0x1
+kdc_bench: @M 95
+kdc_bench: @M 96
+kdc_bench: RESULT arm=bounce512-qd32-batch rep=4 try=1 token=96 accepted=0 cmds=696992 bad=0 ns=1000014197 lat_p10=33646 lat_p50=38473 lat_p90=48134 lat_p99=54859 queues=0x1
+kdc_bench: @M 97
+kdc_bench: @M 98
+kdc_bench: RESULT arm=bounce512-qd32-batch rep=4 try=2 token=98 accepted=0 cmds=680928 bad=0 ns=1000037837 lat_p10=33966 lat_p50=39862 lat_p90=49301 lat_p99=53470 queues=0x1
+kdc_bench: @M 99
+kdc_bench: @M 100
+kdc_bench: RESULT arm=bounce512-qd32-batch rep=4 try=3 token=100 accepted=0 cmds=549088 bad=0 ns=1000040222 lat_p10=35785 lat_p50=43509 lat_p90=52867 lat_p99=280796 queues=0x1
+kdc_bench: @M 101
+kdc_bench: @M 102
+kdc_bench: RESULT arm=bounce512-qd32-batch rep=4 try=4 token=102 accepted=0 cmds=634208 bad=0 ns=1000007285 lat_p10=35426 lat_p50=43467 lat_p90=51968 lat_p99=58685 queues=0x1
+kdc_bench: @M 103
+kdc_bench: @M 104
+kdc_bench: RESULT arm=zc4k-qd32-batch rep=4 try=1 token=104 accepted=0 cmds=482496 bad=0 ns=1000496742 lat_p10=47669 lat_p50=58106 lat_p90=68494 lat_p99=72746 queues=0x1
+kdc_bench: @M 105
+kdc_bench: @M 106
+kdc_bench: RESULT arm=zc4k-qd32-batch rep=4 try=2 token=106 accepted=1 cmds=478976 bad=0 ns=1000044338 lat_p10=47974 lat_p50=57677 lat_p90=70048 lat_p99=78426 queues=0x1
+kdc_bench: @M 107
+kdc_bench: @M 108
+kdc_bench: RESULT arm=zc4k-t3-qd8 rep=4 try=1 token=108 accepted=0 cmds=185000 bad=0 ns=1000856664 lat_p10=28421 lat_p50=74751 lat_p90=129120 lat_p99=175157 queues=0x7
+kdc_bench: @M 109
+kdc_bench: @M 110
+kdc_bench: RESULT arm=zc4k-t3-qd8 rep=4 try=2 token=110 accepted=0 cmds=169899 bad=0 ns=1000103421 lat_p10=24764 lat_p50=72998 lat_p90=135909 lat_p99=382932 queues=0x7
+kdc_bench: @M 111
+kdc_bench: @M 112
+kdc_bench: RESULT arm=zc4k-t3-qd8 rep=4 try=3 token=112 accepted=0 cmds=183866 bad=0 ns=1000067048 lat_p10=25431 lat_p50=72524 lat_p90=132490 lat_p99=195377 queues=0x7
+kdc_bench: @M 113
+kdc_bench: @M 114
+kdc_bench: RESULT arm=zc4k-t3-qd8 rep=4 try=4 token=114 accepted=0 cmds=188222 bad=0 ns=1000070611 lat_p10=25817 lat_p50=72299 lat_p90=127995 lat_p99=174549 queues=0x7
+kdc_bench: DONE
+kdc_init: BENCH_EXIT 0
+ACPI: PM: Preparing to enter system sleep state S5
+reboot: Power down
+===== boot 3 (notrack) =====
+Linux version 6.12.41 (kdc@local) (gcc (Ubuntu 15.2.0-16ubuntu1) 15.2.0, GNU ld (GNU Binutils for Ubuntu) 2.46) #1 SMP 2026-11-06 00:00:00 +0000
+Command line: console=ttyS0 panic=-1 nokaslr printk.devkmsg=on printk.time=0 kdc.bounce_max=65536 kdc.track_overlap=0
+BIOS-provided physical RAM map:
+BIOS-e820: [mem 0x0000000000000000-0x000000000009fbff] usable
+BIOS-e820: [mem 0x000000000009fc00-0x000000000009ffff] reserved
+BIOS-e820: [mem 0x00000000000f0000-0x00000000000fffff] reserved
+BIOS-e820: [mem 0x0000000000100000-0x000000007ffdffff] usable
+BIOS-e820: [mem 0x000000007ffe0000-0x000000007fffffff] reserved
+BIOS-e820: [mem 0x00000000b0000000-0x00000000bfffffff] reserved
+BIOS-e820: [mem 0x00000000fed1c000-0x00000000fed1ffff] reserved
+BIOS-e820: [mem 0x00000000feffc000-0x00000000feffffff] reserved
+BIOS-e820: [mem 0x00000000fffc0000-0x00000000ffffffff] reserved
+NX (Execute Disable) protection: active
+APIC: Static calls initialized
+Hypervisor detected: KVM
+kvm-clock: Using msrs 4b564d01 and 4b564d00
+kvm-clock: using sched offset of 135250319 cycles
+clocksource: kvm-clock: mask: 0xffffffffffffffff max_cycles: 0x1cd42e4dffb, max_idle_ns: 881590591483 ns
+tsc: Detected 2995.200 MHz processor
+last_pfn = 0x7ffe0 max_arch_pfn = 0x400000000
+x86/PAT: PAT support disabled because CONFIG_X86_PAT is disabled in the kernel.
+x86/PAT: Configuration [0-7]: WB  WT  UC- UC  WB  WT  UC- UC  
+found SMP MP-table at [mem 0x000f54c0-0x000f54cf]
+Using GB pages for direct mapping
+RAMDISK: [mem 0x7fe5e000-0x7ffdffff]
+ACPI: Early table checksum verification disabled
+ACPI: RSDP 0x00000000000F52E0 000014 (v00 BOCHS )
+ACPI: RSDT 0x000000007FFE2498 000038 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+ACPI: FACP 0x000000007FFE2280 0000F4 (v03 BOCHS  BXPC     00000001 BXPC 00000001)
+ACPI: DSDT 0x000000007FFE0040 002240 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+ACPI: FACS 0x000000007FFE0000 000040
+ACPI: APIC 0x000000007FFE2374 000088 (v03 BOCHS  BXPC     00000001 BXPC 00000001)
+ACPI: HPET 0x000000007FFE23FC 000038 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+ACPI: MCFG 0x000000007FFE2434 00003C (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+ACPI: WAET 0x000000007FFE2470 000028 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+ACPI: Reserving FACP table memory at [mem 0x7ffe2280-0x7ffe2373]
+ACPI: Reserving DSDT table memory at [mem 0x7ffe0040-0x7ffe227f]
+ACPI: Reserving FACS table memory at [mem 0x7ffe0000-0x7ffe003f]
+ACPI: Reserving APIC table memory at [mem 0x7ffe2374-0x7ffe23fb]
+ACPI: Reserving HPET table memory at [mem 0x7ffe23fc-0x7ffe2433]
+ACPI: Reserving MCFG table memory at [mem 0x7ffe2434-0x7ffe246f]
+ACPI: Reserving WAET table memory at [mem 0x7ffe2470-0x7ffe2497]
+Zone ranges:
+  DMA32    [mem 0x0000000000001000-0x000000007ffdffff]
+  Normal   empty
+Movable zone start for each node
+Early memory node ranges
+  node   0: [mem 0x0000000000001000-0x000000000009efff]
+  node   0: [mem 0x0000000000100000-0x000000007ffdffff]
+Initmem setup node 0 [mem 0x0000000000001000-0x000000007ffdffff]
+On node 0, zone DMA32: 1 pages in unavailable ranges
+On node 0, zone DMA32: 97 pages in unavailable ranges
+On node 0, zone DMA32: 32 pages in unavailable ranges
+ACPI: PM-Timer IO Port: 0x608
+ACPI: LAPIC_NMI (acpi_id[0xff] dfl dfl lint[0x1])
+IOAPIC[0]: apic_id 0, version 17, address 0xfec00000, GSI 0-23
+ACPI: INT_SRC_OVR (bus 0 bus_irq 0 global_irq 2 dfl dfl)
+ACPI: INT_SRC_OVR (bus 0 bus_irq 5 global_irq 5 high level)
+ACPI: INT_SRC_OVR (bus 0 bus_irq 9 global_irq 9 high level)
+ACPI: INT_SRC_OVR (bus 0 bus_irq 10 global_irq 10 high level)
+ACPI: INT_SRC_OVR (bus 0 bus_irq 11 global_irq 11 high level)
+ACPI: Using ACPI (MADT) for SMP configuration information
+ACPI: HPET id: 0x8086a201 base: 0xfed00000
+TSC deadline timer available
+CPU topo: Max. logical packages:   1
+CPU topo: Max. logical dies:       1
+CPU topo: Max. dies per package:   1
+CPU topo: Max. threads per core:   1
+CPU topo: Num. cores per package:     3
+CPU topo: Num. threads per package:   3
+CPU topo: Allowing 3 present CPUs plus 0 hotplug CPUs
+kvm-guest: APIC: eoi() replaced with kvm_guest_apic_eoi_write()
+kvm-guest: KVM setup pv remote TLB flush
+kvm-guest: setup PV sched yield
+[mem 0xc0000000-0xfed1bfff] available for PCI devices
+Booting paravirtualized kernel on KVM
+clocksource: refined-jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 19112604462750000 ns
+setup_percpu: NR_CPUS:4 nr_cpumask_bits:3 nr_cpu_ids:3 nr_node_ids:1
+percpu: Embedded 43 pages/cpu s146456 r0 d29672 u524288
+kvm-guest: PV spinlocks enabled
+PV qspinlock hash table entries: 256 (order: 0, 4096 bytes, linear)
+Kernel command line: console=ttyS0 panic=-1 nokaslr printk.devkmsg=on printk.time=0 kdc.bounce_max=65536 kdc.track_overlap=0
+Unknown kernel command line parameters "nokaslr", will be passed to user space.
+random: crng init done
+Dentry cache hash table entries: 262144 (order: 9, 2097152 bytes, linear)
+Inode-cache hash table entries: 131072 (order: 8, 1048576 bytes, linear)
+Built 1 zonelists, mobility grouping on.  Total pages: 524158
+mem auto-init: stack:all(zero), heap alloc:off, heap free:off
+SLUB: HWalign=64, Order=0-3, MinObjects=0, CPUs=3, Nodes=1
+rcu: Hierarchical RCU implementation.
+rcu: 	RCU restricting CPUs from NR_CPUS=4 to nr_cpu_ids=3.
+rcu: RCU calculated value of scheduler-enlistment delay is 10 jiffies.
+rcu: Adjusting geometry for rcu_fanout_leaf=16, nr_cpu_ids=3
+NR_IRQS: 4352, nr_irqs: 448, preallocated irqs: 16
+rcu: srcu_init: Setting srcu_struct sizes based on contention.
+Console: colour *CGA 80x25
+printk: legacy console [ttyS0] enabled
+ACPI: Core revision 20240827
+clocksource: hpet: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 19112604467 ns
+APIC: Switch to symmetric I/O mode setup
+x2apic enabled
+APIC: Switched APIC routing to: physical x2apic
+kvm-guest: APIC: send_IPI_mask() replaced with kvm_send_ipi_mask()
+kvm-guest: APIC: send_IPI_mask_allbutself() replaced with kvm_send_ipi_mask_allbutself()
+kvm-guest: setup PV IPIs
+..TIMER: vector=0x30 apic1=0 pin1=2 apic2=-1 pin2=-1
+clocksource: tsc-early: mask: 0xffffffffffffffff max_cycles: 0x2b2c8ec87c7, max_idle_ns: 440795278598 ns
+Calibrating delay loop (skipped) preset value.. 5990.40 BogoMIPS (lpj=29952000)
+Last level iTLB entries: 4KB 0, 2MB 0, 4MB 0
+Last level dTLB entries: 4KB 0, 2MB 0, 4MB 0, 1GB 0
+Spectre V2 : User space: Vulnerable
+Speculative Store Bypass: Vulnerable
+x86/fpu: Supporting XSAVE feature 0x001: 'x87 floating point registers'
+x86/fpu: Supporting XSAVE feature 0x002: 'SSE registers'
+x86/fpu: Supporting XSAVE feature 0x004: 'AVX registers'
+x86/fpu: Supporting XSAVE feature 0x200: 'Protection Keys User registers'
+x86/fpu: xstate_offset[2]:  576, xstate_sizes[2]:  256
+x86/fpu: xstate_offset[9]:  832, xstate_sizes[9]:    8
+x86/fpu: Enabled xstate features 0x207, context size is 840 bytes, using 'compacted' format.
+Freeing SMP alternatives memory: 8K
+pid_max: default: 32768 minimum: 301
+Mount-cache hash table entries: 4096 (order: 3, 32768 bytes, linear)
+Mountpoint-cache hash table entries: 4096 (order: 3, 32768 bytes, linear)
+smpboot: CPU0: 13th Gen Intel(R) Core(TM) i9-13900K (family: 0x6, model: 0xb7, stepping: 0x1)
+Performance Events: unsupported p6 CPU model 183 no PMU driver, software events only.
+signal: max sigframe size: 3232
+rcu: Hierarchical SRCU implementation.
+rcu: 	Max phase no-delay instances is 1000.
+Timer migration: 1 hierarchy levels; 8 children per group; 1 crossnode level
+smp: Bringing up secondary CPUs ...
+smpboot: x86: Booting SMP configuration:
+.... node  #0, CPUs:      #1 #2
+smp: Brought up 1 node, 3 CPUs
+smpboot: Total of 3 processors activated (17971.20 BogoMIPS)
+Memory: 2043020K/2096632K available (6144K kernel code, 805K rwdata, 1260K rodata, 820K init, 1200K bss, 50928K reserved, 0K cma-reserved)
+devtmpfs: initialized
+clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 19112604462750000 ns
+futex hash table entries: 1024 (order: 4, 65536 bytes, linear)
+thermal_sys: Registered thermal governor 'step_wise'
+thermal_sys: Registered thermal governor 'user_space'
+cpuidle: using governor ladder
+cpuidle: using governor menu
+acpiphp: ACPI Hot Plug PCI Controller Driver version: 0.5
+PCI: ECAM [mem 0xb0000000-0xbfffffff] (base 0xb0000000) for domain 0000 [bus 00-ff]
+PCI: ECAM [mem 0xb0000000-0xbfffffff] reserved as E820 entry
+PCI: Using configuration type 1 for base access
+ACPI: Added _OSI(Module Device)
+ACPI: Added _OSI(Processor Device)
+ACPI: Added _OSI(Processor Aggregator Device)
+ACPI: 1 ACPI AML tables successfully acquired and loaded
+ACPI: Interpreter enabled
+ACPI: PM: (supports S0 S5)
+ACPI: Using IOAPIC for interrupt routing
+PCI: Using host bridge windows from ACPI; if necessary, use "pci=nocrs" and report a bug
+PCI: Using E820 reservations for host bridge windows
+ACPI: Enabled 2 GPEs in block 00 to 3F
+ACPI: PCI Root Bridge [PCI0] (domain 0000 [bus 00-ff])
+acpi PNP0A08:00: _OSC: OS supports [ExtendedConfig ASPM ClockPM Segments MSI HPX-Type3]
+acpi PNP0A08:00: _OSC: platform does not support [PCIeHotplug LTR]
+acpi PNP0A08:00: _OSC: OS now controls [PME PCIeCapability]
+PCI host bridge to bus 0000:00
+pci_bus 0000:00: root bus resource [io  0x0000-0x0cf7 window]
+pci_bus 0000:00: root bus resource [io  0x0d00-0xffff window]
+pci_bus 0000:00: root bus resource [mem 0x000a0000-0x000bffff window]
+pci_bus 0000:00: root bus resource [mem 0x80000000-0xafffffff window]
+pci_bus 0000:00: root bus resource [mem 0xc0000000-0xfebfffff window]
+pci_bus 0000:00: root bus resource [mem 0x100000000-0x8ffffffff window]
+pci_bus 0000:00: root bus resource [bus 00-ff]
+pci 0000:00:00.0: [8086:29c0] type 00 class 0x060000 conventional PCI endpoint
+pci 0000:00:02.0: [1b36:000c] type 01 class 0x060400 PCIe Root Port
+pci 0000:00:02.0: BAR 0 [mem 0xfe800000-0xfe800fff]
+pci 0000:00:02.0: PCI bridge to [bus 01]
+pci 0000:00:02.0:   bridge window [mem 0xfe600000-0xfe7fffff]
+pci 0000:00:02.0:   bridge window [mem 0xfea00000-0xfebfffff 64bit pref]
+pci 0000:00:02.0: enabling Extended Tags
+pci 0000:00:1f.0: [8086:2918] type 00 class 0x060100 conventional PCI endpoint
+pci 0000:00:1f.0: quirk: [io  0x0600-0x067f] claimed by ICH6 ACPI/GPIO/TCO
+pci 0000:00:1f.2: [8086:2922] type 00 class 0x010601 conventional PCI endpoint
+pci 0000:00:1f.2: BAR 4 [io  0xc040-0xc05f]
+pci 0000:00:1f.2: BAR 5 [mem 0xfe801000-0xfe801fff]
+pci 0000:00:1f.3: [8086:2930] type 00 class 0x0c0500 conventional PCI endpoint
+pci 0000:00:1f.3: BAR 4 [io  0x0700-0x073f]
+acpiphp: Slot [0] registered
+pci 0000:01:00.0: [1234:4b44] type 00 class 0x088000 PCIe Endpoint
+pci 0000:01:00.0: BAR 0 [mem 0xfe600000-0xfe603fff 64bit]
+pci 0000:01:00.0: BAR 2 [mem 0xfe604000-0xfe604fff]
+pci 0000:01:00.0: enabling Extended Tags
+pci 0000:00:02.0: PCI bridge to [bus 01]
+ACPI: PCI: Interrupt link LNKA configured for IRQ 10
+ACPI: PCI: Interrupt link LNKB configured for IRQ 10
+ACPI: PCI: Interrupt link LNKC configured for IRQ 11
+ACPI: PCI: Interrupt link LNKD configured for IRQ 11
+ACPI: PCI: Interrupt link LNKE configured for IRQ 10
+ACPI: PCI: Interrupt link LNKF configured for IRQ 10
+ACPI: PCI: Interrupt link LNKG configured for IRQ 11
+ACPI: PCI: Interrupt link LNKH configured for IRQ 11
+ACPI: PCI: Interrupt link GSIA configured for IRQ 16
+ACPI: PCI: Interrupt link GSIB configured for IRQ 17
+ACPI: PCI: Interrupt link GSIC configured for IRQ 18
+ACPI: PCI: Interrupt link GSID configured for IRQ 19
+ACPI: PCI: Interrupt link GSIE configured for IRQ 20
+ACPI: PCI: Interrupt link GSIF configured for IRQ 21
+ACPI: PCI: Interrupt link GSIG configured for IRQ 22
+ACPI: PCI: Interrupt link GSIH configured for IRQ 23
+iommu: Default domain type: Translated
+iommu: DMA domain TLB invalidation policy: lazy mode
+PCI: Using ACPI for IRQ routing
+vgaarb: loaded
+clocksource: Switched to clocksource kvm-clock
+ACPI: Failed to create genetlink family for ACPI event
+pnp: PnP ACPI init
+system 00:04: [mem 0xb0000000-0xbfffffff window] has been reserved
+pnp: PnP ACPI: found 5 devices
+clocksource: acpi_pm: mask: 0xffffff max_cycles: 0xffffff, max_idle_ns: 2085701024 ns
+pci 0000:00:02.0: bridge window [io  0x1000-0x0fff] to [bus 01] add_size 1000
+pci 0000:00:02.0: bridge window [io  0x1000-0x1fff]: assigned
+pci 0000:00:02.0: PCI bridge to [bus 01]
+pci 0000:00:02.0:   bridge window [io  0x1000-0x1fff]
+pci 0000:00:02.0:   bridge window [mem 0xfe600000-0xfe7fffff]
+pci 0000:00:02.0:   bridge window [mem 0xfea00000-0xfebfffff 64bit pref]
+pci_bus 0000:00: resource 4 [io  0x0000-0x0cf7 window]
+pci_bus 0000:00: resource 5 [io  0x0d00-0xffff window]
+pci_bus 0000:00: resource 6 [mem 0x000a0000-0x000bffff window]
+pci_bus 0000:00: resource 7 [mem 0x80000000-0xafffffff window]
+pci_bus 0000:00: resource 8 [mem 0xc0000000-0xfebfffff window]
+pci_bus 0000:00: resource 9 [mem 0x100000000-0x8ffffffff window]
+pci_bus 0000:01: resource 0 [io  0x1000-0x1fff]
+pci_bus 0000:01: resource 1 [mem 0xfe600000-0xfe7fffff]
+pci_bus 0000:01: resource 2 [mem 0xfea00000-0xfebfffff 64bit pref]
+PCI: CLS 0 bytes, default 64
+RAPL PMU: API unit is 2^-32 Joules, 0 fixed counters, 10737418240 ms ovfl timer
+Unpacking initramfs...
+clocksource: tsc: mask: 0xffffffffffffffff max_cycles: 0x2b2c8ec87c7, max_idle_ns: 440795278598 ns
+workingset: timestamp_bits=62 max_order=19 bucket_order=0
+ACPI: \_SB_.GSIG: Enabled at IRQ 22
+input: Power Button as /devices/LNXSYSTM:00/LNXPWRBN:00/input/input0
+ACPI: button: Power Button [PWRF]
+Serial: 8250/16550 driver, 1 ports, IRQ sharing disabled
+00:02: ttyS0 at I/O 0x3f8 (irq = 4, base_baud = 115200) is a 16550A
+kdc 0000:01:00.0: kdc0: 3 queues x 64 entries, bounce <= 65536 bytes
+i8042: PNP: PS/2 Controller [PNP0303:KBD,PNP0f13:MOU] at 0x60,0x64 irq 1,12
+Freeing initrd memory: 1544K
+serio: i8042 KBD port at 0x60,0x64 irq 1
+serio: i8042 AUX port at 0x60,0x64 irq 12
+intel_pstate: CPU model not supported
+IPI shorthand broadcast: enabled
+sched_clock: Marking stable (106642688, 21150871)->(138221984, -10428425)
+input: AT Translated Set 2 keyboard as /devices/platform/i8042/serio0/input/input1
+Freeing unused kernel image (initmem) memory: 820K
+Write protecting the kernel read-only data: 8192k
+Freeing unused kernel image (rodata/data gap) memory: 788K
+Run /init as init process
+input: ImExPS/2 Generic Explorer Mouse as /devices/platform/i8042/serio1/input/input3
+kdc_bench: START arms=6 reps=5 cpus=3
+kdc_bench: @M 1
+kdc_bench: @M 2
+kdc_bench: RESULT arm=zc4k-qd1 rep=0 try=1 token=2 accepted=0 cmds=96646 bad=0 ns=1000007560 lat_p10=8868 lat_p50=9979 lat_p90=10862 lat_p99=12259 queues=0x1
+kdc_bench: @M 3
+kdc_bench: @M 4
+kdc_bench: RESULT arm=zc4k-qd1 rep=0 try=2 token=4 accepted=0 cmds=97586 bad=0 ns=1000005925 lat_p10=8988 lat_p50=9326 lat_p90=10296 lat_p99=11754 queues=0x1
+kdc_bench: @M 5
+kdc_bench: @M 6
+kdc_bench: RESULT arm=zc4k-qd1 rep=0 try=3 token=6 accepted=0 cmds=92580 bad=0 ns=1000001372 lat_p10=8922 lat_p50=9845 lat_p90=13444 lat_p99=14616 queues=0x1
+kdc_bench: @M 7
+kdc_bench: @M 8
+kdc_bench: RESULT arm=zc4k-qd1 rep=0 try=4 token=8 accepted=1 cmds=82816 bad=0 ns=1000005451 lat_p10=9957 lat_p50=11882 lat_p90=13900 lat_p99=15345 queues=0x1
+kdc_bench: @M 9
+kdc_bench: @M 10
+kdc_bench: RESULT arm=bounce512-qd32-batch rep=0 try=1 token=10 accepted=1 cmds=713408 bad=0 ns=1000015522 lat_p10=32929 lat_p50=38800 lat_p90=47411 lat_p99=51273 queues=0x1
+kdc_bench: @M 11
+kdc_bench: @M 12
+kdc_bench: RESULT arm=zc4k-qd32-batch rep=0 try=1 token=12 accepted=0 cmds=453280 bad=0 ns=1000264042 lat_p10=49100 lat_p50=61171 lat_p90=74339 lat_p99=81999 queues=0x1
+kdc_bench: @M 13
+kdc_bench: @M 14
+kdc_bench: RESULT arm=zc4k-qd32-batch rep=0 try=2 token=14 accepted=1 cmds=530176 bad=0 ns=1000004812 lat_p10=45474 lat_p50=53144 lat_p90=63985 lat_p99=68449 queues=0x1
+kdc_bench: @M 15
+kdc_bench: @M 16
+kdc_bench: RESULT arm=zc4k-t3-qd8 rep=0 try=1 token=16 accepted=1 cmds=192121 bad=0 ns=1000071004 lat_p10=25534 lat_p50=71965 lat_p90=127359 lat_p99=169434 queues=0x7
+kdc_bench: @M 17
+kdc_bench: @M 18
+kdc_bench: RESULT arm=zc4k-t3-qd8-batch rep=0 try=1 token=18 accepted=1 cmds=583272 bad=0 ns=1000018359 lat_p10=24874 lat_p50=37304 lat_p90=52430 lat_p99=74961 queues=0x7
+kdc_bench: @M 19
+kdc_bench: @M 20
+kdc_bench: RESULT arm=bounce512-t3-qd8-batch rep=0 try=1 token=20 accepted=0 cmds=694984 bad=0 ns=1000023293 lat_p10=18436 lat_p50=32690 lat_p90=44055 lat_p99=65383 queues=0x7
+kdc_bench: @M 21
+kdc_bench: @M 22
+kdc_bench: RESULT arm=bounce512-t3-qd8-batch rep=0 try=2 token=22 accepted=1 cmds=668944 bad=0 ns=1000030146 lat_p10=22394 lat_p50=34114 lat_p90=44567 lat_p99=60388 queues=0x7
+kdc_bench: @M 23
+kdc_bench: @M 24
+kdc_bench: RESULT arm=bounce512-qd32-batch rep=1 try=1 token=24 accepted=1 cmds=701024 bad=0 ns=1000006098 lat_p10=32835 lat_p50=39651 lat_p90=48377 lat_p99=51958 queues=0x1
+kdc_bench: @M 25
+kdc_bench: @M 26
+kdc_bench: RESULT arm=zc4k-qd32-batch rep=1 try=1 token=26 accepted=1 cmds=530976 bad=0 ns=1000050670 lat_p10=45532 lat_p50=51691 lat_p90=61590 lat_p99=71140 queues=0x1
+kdc_bench: @M 27
+kdc_bench: @M 28
+kdc_bench: RESULT arm=zc4k-t3-qd8 rep=1 try=1 token=28 accepted=1 cmds=181653 bad=0 ns=1000038143 lat_p10=27010 lat_p50=74610 lat_p90=132924 lat_p99=207718 queues=0x7
+kdc_bench: @M 29
+kdc_bench: @M 30
+kdc_bench: RESULT arm=zc4k-t3-qd8-batch rep=1 try=1 token=30 accepted=1 cmds=589952 bad=0 ns=1000027831 lat_p10=25939 lat_p50=37216 lat_p90=51074 lat_p99=67537 queues=0x7
+kdc_bench: @M 31
+kdc_bench: @M 32
+kdc_bench: RESULT arm=bounce512-t3-qd8-batch rep=1 try=1 token=32 accepted=0 cmds=716424 bad=0 ns=1000032844 lat_p10=18321 lat_p50=31676 lat_p90=43828 lat_p99=61795 queues=0x7
+kdc_bench: @M 33
+kdc_bench: @M 34
+kdc_bench: RESULT arm=bounce512-t3-qd8-batch rep=1 try=2 token=34 accepted=1 cmds=718752 bad=0 ns=1000026508 lat_p10=18213 lat_p50=31355 lat_p90=44195 lat_p99=64652 queues=0x7
+kdc_bench: @M 35
+kdc_bench: @M 36
+kdc_bench: RESULT arm=zc4k-qd1 rep=1 try=1 token=36 accepted=0 cmds=99841 bad=0 ns=1000006824 lat_p10=8904 lat_p50=9320 lat_p90=10847 lat_p99=13079 queues=0x1
+kdc_bench: @M 37
+kdc_bench: @M 38
+kdc_bench: RESULT arm=zc4k-qd1 rep=1 try=2 token=38 accepted=0 cmds=91745 bad=0 ns=1000008506 lat_p10=8855 lat_p50=9792 lat_p90=13623 lat_p99=14986 queues=0x1
+kdc_bench: @M 39
+kdc_bench: @M 40
+kdc_bench: RESULT arm=zc4k-qd1 rep=1 try=3 token=40 accepted=0 cmds=100428 bad=0 ns=1000002181 lat_p10=8847 lat_p50=9755 lat_p90=10778 lat_p99=12193 queues=0x1
+kdc_bench: @M 41
+kdc_bench: @M 42
+kdc_bench: RESULT arm=zc4k-qd1 rep=1 try=4 token=42 accepted=0 cmds=102767 bad=0 ns=1000000089 lat_p10=8849 lat_p50=9110 lat_p90=10051 lat_p99=11248 queues=0x1
+kdc_bench: @M 43
+kdc_bench: @M 44
+kdc_bench: RESULT arm=zc4k-qd32-batch rep=2 try=1 token=44 accepted=1 cmds=548352 bad=0 ns=1000011338 lat_p10=45062 lat_p50=51051 lat_p90=61600 lat_p99=68413 queues=0x1
+kdc_bench: @M 45
+kdc_bench: @M 46
+kdc_bench: RESULT arm=zc4k-t3-qd8 rep=2 try=1 token=46 accepted=1 cmds=191768 bad=0 ns=1000057835 lat_p10=24761 lat_p50=71742 lat_p90=127903 lat_p99=172252 queues=0x7
+kdc_bench: @M 47
+kdc_bench: @M 48
+kdc_bench: RESULT arm=zc4k-t3-qd8-batch rep=2 try=1 token=48 accepted=0 cmds=570864 bad=0 ns=1000042453 lat_p10=25172 lat_p50=37810 lat_p90=52825 lat_p99=70640 queues=0x7
+kdc_bench: @M 49
+kdc_bench: @M 50
+kdc_bench: RESULT arm=zc4k-t3-qd8-batch rep=2 try=2 token=50 accepted=0 cmds=556560 bad=0 ns=1000026896 lat_p10=25476 lat_p50=39425 lat_p90=55957 lat_p99=81375 queues=0x7
+kdc_bench: @M 51
+kdc_bench: @M 52
+kdc_bench: RESULT arm=zc4k-t3-qd8-batch rep=2 try=3 token=52 accepted=0 cmds=534336 bad=0 ns=1000043537 lat_p10=26747 lat_p50=41412 lat_p90=57772 lat_p99=83551 queues=0x7
+kdc_bench: @M 53
+kdc_bench: @M 54
+kdc_bench: RESULT arm=zc4k-t3-qd8-batch rep=2 try=4 token=54 accepted=0 cmds=506792 bad=0 ns=1000060838 lat_p10=26687 lat_p50=40201 lat_p90=59285 lat_p99=138578 queues=0x7
+kdc_bench: @M 55
+kdc_bench: @M 56
+kdc_bench: RESULT arm=bounce512-t3-qd8-batch rep=2 try=1 token=56 accepted=0 cmds=537496 bad=0 ns=1000028333 lat_p10=23067 lat_p50=37226 lat_p90=62435 lat_p99=125735 queues=0x7
+kdc_bench: @M 57
+kdc_bench: @M 58
+kdc_bench: RESULT arm=bounce512-t3-qd8-batch rep=2 try=2 token=58 accepted=0 cmds=747088 bad=0 ns=1000034454 lat_p10=17062 lat_p50=28332 lat_p90=44889 lat_p99=66860 queues=0x7
+kdc_bench: @M 59
+kdc_bench: @M 60
+kdc_bench: RESULT arm=bounce512-t3-qd8-batch rep=2 try=3 token=60 accepted=1 cmds=817584 bad=0 ns=1000028146 lat_p10=16395 lat_p50=26061 lat_p90=39670 lat_p99=59588 queues=0x7
+kdc_bench: @M 61
+kdc_bench: @M 62
+kdc_bench: RESULT arm=zc4k-qd1 rep=2 try=1 token=62 accepted=1 cmds=102144 bad=0 ns=1000009884 lat_p10=8905 lat_p50=9254 lat_p90=10337 lat_p99=11514 queues=0x1
+kdc_bench: @M 63
+kdc_bench: @M 64
+kdc_bench: RESULT arm=bounce512-qd32-batch rep=2 try=1 token=64 accepted=0 cmds=609312 bad=0 ns=1000008520 lat_p10=35422 lat_p50=43496 lat_p90=52699 lat_p99=59874 queues=0x1
+kdc_bench: @M 65
+kdc_bench: @M 66
+kdc_bench: RESULT arm=bounce512-qd32-batch rep=2 try=2 token=66 accepted=1 cmds=705472 bad=0 ns=1000030632 lat_p10=33730 lat_p50=38972 lat_p90=46161 lat_p99=52259 queues=0x1
+kdc_bench: @M 67
+kdc_bench: @M 68
+kdc_bench: RESULT arm=zc4k-t3-qd8 rep=3 try=1 token=68 accepted=1 cmds=193750 bad=0 ns=1000113719 lat_p10=24514 lat_p50=71154 lat_p90=126839 lat_p99=170030 queues=0x7
+kdc_bench: @M 69
+kdc_bench: @M 70
+kdc_bench: RESULT arm=zc4k-t3-qd8-batch rep=3 try=1 token=70 accepted=1 cmds=615480 bad=0 ns=1000012515 lat_p10=24070 lat_p50=35288 lat_p90=49036 lat_p99=62368 queues=0x7
+kdc_bench: @M 71
+kdc_bench: @M 72
+kdc_bench: RESULT arm=bounce512-t3-qd8-batch rep=3 try=1 token=72 accepted=1 cmds=829496 bad=0 ns=1000024159 lat_p10=16250 lat_p50=25346 lat_p90=40065 lat_p99=60065 queues=0x7
+kdc_bench: @M 73
+kdc_bench: @M 74
+kdc_bench: RESULT arm=zc4k-qd1 rep=3 try=1 token=74 accepted=1 cmds=107283 bad=0 ns=1000004527 lat_p10=8799 lat_p50=8986 lat_p90=9842 lat_p99=10750 queues=0x1
+kdc_bench: @M 75
+kdc_bench: @M 76
+kdc_bench: RESULT arm=bounce512-qd32-batch rep=3 try=1 token=76 accepted=1 cmds=793664 bad=0 ns=1000003142 lat_p10=32186 lat_p50=35830 lat_p90=39316 lat_p99=40869 queues=0x1
+kdc_bench: @M 77
+kdc_bench: @M 78
+kdc_bench: RESULT arm=zc4k-qd32-batch rep=3 try=1 token=78 accepted=1 cmds=572544 bad=0 ns=1000047166 lat_p10=44933 lat_p50=49740 lat_p90=54394 lat_p99=57001 queues=0x1
+kdc_bench: @M 79
+kdc_bench: @M 80
+kdc_bench: RESULT arm=zc4k-t3-qd8-batch rep=4 try=1 token=80 accepted=1 cmds=604616 bad=0 ns=1000019560 lat_p10=24928 lat_p50=36144 lat_p90=49959 lat_p99=64986 queues=0x7
+kdc_bench: @M 81
+kdc_bench: @M 82
+kdc_bench: RESULT arm=bounce512-t3-qd8-batch rep=4 try=1 token=82 accepted=1 cmds=785456 bad=0 ns=1000030561 lat_p10=16674 lat_p50=27116 lat_p90=41145 lat_p99=59994 queues=0x7
+kdc_bench: @M 83
+kdc_bench: @M 84
+kdc_bench: RESULT arm=zc4k-qd1 rep=4 try=1 token=84 accepted=1 cmds=106952 bad=0 ns=1000003264 lat_p10=8841 lat_p50=9051 lat_p90=9934 lat_p99=11073 queues=0x1
+kdc_bench: @M 85
+kdc_bench: @M 86
+kdc_bench: RESULT arm=bounce512-qd32-batch rep=4 try=1 token=86 accepted=1 cmds=772064 bad=0 ns=1000019001 lat_p10=32408 lat_p50=36103 lat_p90=39625 lat_p99=42011 queues=0x1
+kdc_bench: @M 87
+kdc_bench: @M 88
+kdc_bench: RESULT arm=zc4k-qd32-batch rep=4 try=1 token=88 accepted=1 cmds=533024 bad=0 ns=1000003435 lat_p10=45227 lat_p50=52319 lat_p90=64633 lat_p99=70426 queues=0x1
+kdc_bench: @M 89
+kdc_bench: @M 90
+kdc_bench: RESULT arm=zc4k-t3-qd8 rep=4 try=1 token=90 accepted=1 cmds=190587 bad=0 ns=1000088523 lat_p10=26845 lat_p50=73028 lat_p90=127920 lat_p99=166357 queues=0x7
+kdc_bench: DONE
+kdc_init: BENCH_EXIT 0
+ACPI: PM: Preparing to enter system sleep state S5
+reboot: Power down
+===== boot 4 (noiommu) =====
+Linux version 6.12.41 (kdc@local) (gcc (Ubuntu 15.2.0-16ubuntu1) 15.2.0, GNU ld (GNU Binutils for Ubuntu) 2.46) #1 SMP 2026-11-06 00:00:00 +0000
+Command line: console=ttyS0 panic=-1 nokaslr printk.devkmsg=on printk.time=0 kdc.bounce_max=65536
+BIOS-provided physical RAM map:
+BIOS-e820: [mem 0x0000000000000000-0x000000000009fbff] usable
+BIOS-e820: [mem 0x000000000009fc00-0x000000000009ffff] reserved
+BIOS-e820: [mem 0x00000000000f0000-0x00000000000fffff] reserved
+BIOS-e820: [mem 0x0000000000100000-0x000000007ffdffff] usable
+BIOS-e820: [mem 0x000000007ffe0000-0x000000007fffffff] reserved
+BIOS-e820: [mem 0x00000000b0000000-0x00000000bfffffff] reserved
+BIOS-e820: [mem 0x00000000fed1c000-0x00000000fed1ffff] reserved
+BIOS-e820: [mem 0x00000000feffc000-0x00000000feffffff] reserved
+BIOS-e820: [mem 0x00000000fffc0000-0x00000000ffffffff] reserved
+NX (Execute Disable) protection: active
+APIC: Static calls initialized
+Hypervisor detected: KVM
+kvm-clock: Using msrs 4b564d01 and 4b564d00
+kvm-clock: using sched offset of 138375792 cycles
+clocksource: kvm-clock: mask: 0xffffffffffffffff max_cycles: 0x1cd42e4dffb, max_idle_ns: 881590591483 ns
+tsc: Detected 2995.200 MHz processor
+last_pfn = 0x7ffe0 max_arch_pfn = 0x400000000
+x86/PAT: PAT support disabled because CONFIG_X86_PAT is disabled in the kernel.
+x86/PAT: Configuration [0-7]: WB  WT  UC- UC  WB  WT  UC- UC  
+found SMP MP-table at [mem 0x000f54c0-0x000f54cf]
+Using GB pages for direct mapping
+RAMDISK: [mem 0x7fe5e000-0x7ffdffff]
+ACPI: Early table checksum verification disabled
+ACPI: RSDP 0x00000000000F52E0 000014 (v00 BOCHS )
+ACPI: RSDT 0x000000007FFE2498 000038 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+ACPI: FACP 0x000000007FFE2280 0000F4 (v03 BOCHS  BXPC     00000001 BXPC 00000001)
+ACPI: DSDT 0x000000007FFE0040 002240 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+ACPI: FACS 0x000000007FFE0000 000040
+ACPI: APIC 0x000000007FFE2374 000088 (v03 BOCHS  BXPC     00000001 BXPC 00000001)
+ACPI: HPET 0x000000007FFE23FC 000038 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+ACPI: MCFG 0x000000007FFE2434 00003C (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+ACPI: WAET 0x000000007FFE2470 000028 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+ACPI: Reserving FACP table memory at [mem 0x7ffe2280-0x7ffe2373]
+ACPI: Reserving DSDT table memory at [mem 0x7ffe0040-0x7ffe227f]
+ACPI: Reserving FACS table memory at [mem 0x7ffe0000-0x7ffe003f]
+ACPI: Reserving APIC table memory at [mem 0x7ffe2374-0x7ffe23fb]
+ACPI: Reserving HPET table memory at [mem 0x7ffe23fc-0x7ffe2433]
+ACPI: Reserving MCFG table memory at [mem 0x7ffe2434-0x7ffe246f]
+ACPI: Reserving WAET table memory at [mem 0x7ffe2470-0x7ffe2497]
+Zone ranges:
+  DMA32    [mem 0x0000000000001000-0x000000007ffdffff]
+  Normal   empty
+Movable zone start for each node
+Early memory node ranges
+  node   0: [mem 0x0000000000001000-0x000000000009efff]
+  node   0: [mem 0x0000000000100000-0x000000007ffdffff]
+Initmem setup node 0 [mem 0x0000000000001000-0x000000007ffdffff]
+On node 0, zone DMA32: 1 pages in unavailable ranges
+On node 0, zone DMA32: 97 pages in unavailable ranges
+On node 0, zone DMA32: 32 pages in unavailable ranges
+ACPI: PM-Timer IO Port: 0x608
+ACPI: LAPIC_NMI (acpi_id[0xff] dfl dfl lint[0x1])
+IOAPIC[0]: apic_id 0, version 17, address 0xfec00000, GSI 0-23
+ACPI: INT_SRC_OVR (bus 0 bus_irq 0 global_irq 2 dfl dfl)
+ACPI: INT_SRC_OVR (bus 0 bus_irq 5 global_irq 5 high level)
+ACPI: INT_SRC_OVR (bus 0 bus_irq 9 global_irq 9 high level)
+ACPI: INT_SRC_OVR (bus 0 bus_irq 10 global_irq 10 high level)
+ACPI: INT_SRC_OVR (bus 0 bus_irq 11 global_irq 11 high level)
+ACPI: Using ACPI (MADT) for SMP configuration information
+ACPI: HPET id: 0x8086a201 base: 0xfed00000
+TSC deadline timer available
+CPU topo: Max. logical packages:   1
+CPU topo: Max. logical dies:       1
+CPU topo: Max. dies per package:   1
+CPU topo: Max. threads per core:   1
+CPU topo: Num. cores per package:     3
+CPU topo: Num. threads per package:   3
+CPU topo: Allowing 3 present CPUs plus 0 hotplug CPUs
+kvm-guest: APIC: eoi() replaced with kvm_guest_apic_eoi_write()
+kvm-guest: KVM setup pv remote TLB flush
+kvm-guest: setup PV sched yield
+[mem 0xc0000000-0xfed1bfff] available for PCI devices
+Booting paravirtualized kernel on KVM
+clocksource: refined-jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 19112604462750000 ns
+setup_percpu: NR_CPUS:4 nr_cpumask_bits:3 nr_cpu_ids:3 nr_node_ids:1
+percpu: Embedded 43 pages/cpu s146456 r0 d29672 u524288
+kvm-guest: PV spinlocks enabled
+PV qspinlock hash table entries: 256 (order: 0, 4096 bytes, linear)
+Kernel command line: console=ttyS0 panic=-1 nokaslr printk.devkmsg=on printk.time=0 kdc.bounce_max=65536
+Unknown kernel command line parameters "nokaslr", will be passed to user space.
+random: crng init done
+Dentry cache hash table entries: 262144 (order: 9, 2097152 bytes, linear)
+Inode-cache hash table entries: 131072 (order: 8, 1048576 bytes, linear)
+Built 1 zonelists, mobility grouping on.  Total pages: 524158
+mem auto-init: stack:all(zero), heap alloc:off, heap free:off
+SLUB: HWalign=64, Order=0-3, MinObjects=0, CPUs=3, Nodes=1
+rcu: Hierarchical RCU implementation.
+rcu: 	RCU restricting CPUs from NR_CPUS=4 to nr_cpu_ids=3.
+rcu: RCU calculated value of scheduler-enlistment delay is 10 jiffies.
+rcu: Adjusting geometry for rcu_fanout_leaf=16, nr_cpu_ids=3
+NR_IRQS: 4352, nr_irqs: 448, preallocated irqs: 16
+rcu: srcu_init: Setting srcu_struct sizes based on contention.
+Console: colour *CGA 80x25
+printk: legacy console [ttyS0] enabled
+ACPI: Core revision 20240827
+clocksource: hpet: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 19112604467 ns
+APIC: Switch to symmetric I/O mode setup
+x2apic enabled
+APIC: Switched APIC routing to: physical x2apic
+kvm-guest: APIC: send_IPI_mask() replaced with kvm_send_ipi_mask()
+kvm-guest: APIC: send_IPI_mask_allbutself() replaced with kvm_send_ipi_mask_allbutself()
+kvm-guest: setup PV IPIs
+..TIMER: vector=0x30 apic1=0 pin1=2 apic2=-1 pin2=-1
+clocksource: tsc-early: mask: 0xffffffffffffffff max_cycles: 0x2b2c8ec87c7, max_idle_ns: 440795278598 ns
+Calibrating delay loop (skipped) preset value.. 5990.40 BogoMIPS (lpj=29952000)
+Last level iTLB entries: 4KB 0, 2MB 0, 4MB 0
+Last level dTLB entries: 4KB 0, 2MB 0, 4MB 0, 1GB 0
+Spectre V2 : User space: Vulnerable
+Speculative Store Bypass: Vulnerable
+x86/fpu: Supporting XSAVE feature 0x001: 'x87 floating point registers'
+x86/fpu: Supporting XSAVE feature 0x002: 'SSE registers'
+x86/fpu: Supporting XSAVE feature 0x004: 'AVX registers'
+x86/fpu: Supporting XSAVE feature 0x200: 'Protection Keys User registers'
+x86/fpu: xstate_offset[2]:  576, xstate_sizes[2]:  256
+x86/fpu: xstate_offset[9]:  832, xstate_sizes[9]:    8
+x86/fpu: Enabled xstate features 0x207, context size is 840 bytes, using 'compacted' format.
+Freeing SMP alternatives memory: 8K
+pid_max: default: 32768 minimum: 301
+Mount-cache hash table entries: 4096 (order: 3, 32768 bytes, linear)
+Mountpoint-cache hash table entries: 4096 (order: 3, 32768 bytes, linear)
+smpboot: CPU0: 13th Gen Intel(R) Core(TM) i9-13900K (family: 0x6, model: 0xb7, stepping: 0x1)
+Performance Events: unsupported p6 CPU model 183 no PMU driver, software events only.
+signal: max sigframe size: 3232
+rcu: Hierarchical SRCU implementation.
+rcu: 	Max phase no-delay instances is 1000.
+Timer migration: 1 hierarchy levels; 8 children per group; 1 crossnode level
+smp: Bringing up secondary CPUs ...
+smpboot: x86: Booting SMP configuration:
+.... node  #0, CPUs:      #1 #2
+smp: Brought up 1 node, 3 CPUs
+smpboot: Total of 3 processors activated (17971.20 BogoMIPS)
+Memory: 2043020K/2096632K available (6144K kernel code, 805K rwdata, 1260K rodata, 820K init, 1200K bss, 50928K reserved, 0K cma-reserved)
+devtmpfs: initialized
+clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 19112604462750000 ns
+futex hash table entries: 1024 (order: 4, 65536 bytes, linear)
+thermal_sys: Registered thermal governor 'step_wise'
+thermal_sys: Registered thermal governor 'user_space'
+cpuidle: using governor ladder
+cpuidle: using governor menu
+acpiphp: ACPI Hot Plug PCI Controller Driver version: 0.5
+PCI: ECAM [mem 0xb0000000-0xbfffffff] (base 0xb0000000) for domain 0000 [bus 00-ff]
+PCI: ECAM [mem 0xb0000000-0xbfffffff] reserved as E820 entry
+PCI: Using configuration type 1 for base access
+ACPI: Added _OSI(Module Device)
+ACPI: Added _OSI(Processor Device)
+ACPI: Added _OSI(Processor Aggregator Device)
+ACPI: 1 ACPI AML tables successfully acquired and loaded
+ACPI: Interpreter enabled
+ACPI: PM: (supports S0 S5)
+ACPI: Using IOAPIC for interrupt routing
+PCI: Using host bridge windows from ACPI; if necessary, use "pci=nocrs" and report a bug
+PCI: Using E820 reservations for host bridge windows
+ACPI: Enabled 2 GPEs in block 00 to 3F
+ACPI: PCI Root Bridge [PCI0] (domain 0000 [bus 00-ff])
+acpi PNP0A08:00: _OSC: OS supports [ExtendedConfig ASPM ClockPM Segments MSI HPX-Type3]
+acpi PNP0A08:00: _OSC: platform does not support [PCIeHotplug LTR]
+acpi PNP0A08:00: _OSC: OS now controls [PME PCIeCapability]
+PCI host bridge to bus 0000:00
+pci_bus 0000:00: root bus resource [io  0x0000-0x0cf7 window]
+pci_bus 0000:00: root bus resource [io  0x0d00-0xffff window]
+pci_bus 0000:00: root bus resource [mem 0x000a0000-0x000bffff window]
+pci_bus 0000:00: root bus resource [mem 0x80000000-0xafffffff window]
+pci_bus 0000:00: root bus resource [mem 0xc0000000-0xfebfffff window]
+pci_bus 0000:00: root bus resource [mem 0x100000000-0x8ffffffff window]
+pci_bus 0000:00: root bus resource [bus 00-ff]
+pci 0000:00:00.0: [8086:29c0] type 00 class 0x060000 conventional PCI endpoint
+pci 0000:00:02.0: [1b36:000c] type 01 class 0x060400 PCIe Root Port
+pci 0000:00:02.0: BAR 0 [mem 0xfe800000-0xfe800fff]
+pci 0000:00:02.0: PCI bridge to [bus 01]
+pci 0000:00:02.0:   bridge window [mem 0xfe600000-0xfe7fffff]
+pci 0000:00:02.0:   bridge window [mem 0xfea00000-0xfebfffff 64bit pref]
+pci 0000:00:02.0: enabling Extended Tags
+pci 0000:00:1f.0: [8086:2918] type 00 class 0x060100 conventional PCI endpoint
+pci 0000:00:1f.0: quirk: [io  0x0600-0x067f] claimed by ICH6 ACPI/GPIO/TCO
+pci 0000:00:1f.2: [8086:2922] type 00 class 0x010601 conventional PCI endpoint
+pci 0000:00:1f.2: BAR 4 [io  0xc040-0xc05f]
+pci 0000:00:1f.2: BAR 5 [mem 0xfe801000-0xfe801fff]
+pci 0000:00:1f.3: [8086:2930] type 00 class 0x0c0500 conventional PCI endpoint
+pci 0000:00:1f.3: BAR 4 [io  0x0700-0x073f]
+acpiphp: Slot [0] registered
+pci 0000:01:00.0: [1234:4b44] type 00 class 0x088000 PCIe Endpoint
+pci 0000:01:00.0: BAR 0 [mem 0xfe600000-0xfe603fff 64bit]
+pci 0000:01:00.0: BAR 2 [mem 0xfe604000-0xfe604fff]
+pci 0000:01:00.0: enabling Extended Tags
+pci 0000:00:02.0: PCI bridge to [bus 01]
+ACPI: PCI: Interrupt link LNKA configured for IRQ 10
+ACPI: PCI: Interrupt link LNKB configured for IRQ 10
+ACPI: PCI: Interrupt link LNKC configured for IRQ 11
+ACPI: PCI: Interrupt link LNKD configured for IRQ 11
+ACPI: PCI: Interrupt link LNKE configured for IRQ 10
+ACPI: PCI: Interrupt link LNKF configured for IRQ 10
+ACPI: PCI: Interrupt link LNKG configured for IRQ 11
+ACPI: PCI: Interrupt link LNKH configured for IRQ 11
+ACPI: PCI: Interrupt link GSIA configured for IRQ 16
+ACPI: PCI: Interrupt link GSIB configured for IRQ 17
+ACPI: PCI: Interrupt link GSIC configured for IRQ 18
+ACPI: PCI: Interrupt link GSID configured for IRQ 19
+ACPI: PCI: Interrupt link GSIE configured for IRQ 20
+ACPI: PCI: Interrupt link GSIF configured for IRQ 21
+ACPI: PCI: Interrupt link GSIG configured for IRQ 22
+ACPI: PCI: Interrupt link GSIH configured for IRQ 23
+iommu: Default domain type: Translated
+iommu: DMA domain TLB invalidation policy: lazy mode
+PCI: Using ACPI for IRQ routing
+vgaarb: loaded
+clocksource: Switched to clocksource kvm-clock
+ACPI: Failed to create genetlink family for ACPI event
+pnp: PnP ACPI init
+system 00:04: [mem 0xb0000000-0xbfffffff window] has been reserved
+pnp: PnP ACPI: found 5 devices
+clocksource: acpi_pm: mask: 0xffffff max_cycles: 0xffffff, max_idle_ns: 2085701024 ns
+pci 0000:00:02.0: bridge window [io  0x1000-0x0fff] to [bus 01] add_size 1000
+pci 0000:00:02.0: bridge window [io  0x1000-0x1fff]: assigned
+pci 0000:00:02.0: PCI bridge to [bus 01]
+pci 0000:00:02.0:   bridge window [io  0x1000-0x1fff]
+pci 0000:00:02.0:   bridge window [mem 0xfe600000-0xfe7fffff]
+pci 0000:00:02.0:   bridge window [mem 0xfea00000-0xfebfffff 64bit pref]
+pci_bus 0000:00: resource 4 [io  0x0000-0x0cf7 window]
+pci_bus 0000:00: resource 5 [io  0x0d00-0xffff window]
+pci_bus 0000:00: resource 6 [mem 0x000a0000-0x000bffff window]
+pci_bus 0000:00: resource 7 [mem 0x80000000-0xafffffff window]
+pci_bus 0000:00: resource 8 [mem 0xc0000000-0xfebfffff window]
+pci_bus 0000:00: resource 9 [mem 0x100000000-0x8ffffffff window]
+pci_bus 0000:01: resource 0 [io  0x1000-0x1fff]
+pci_bus 0000:01: resource 1 [mem 0xfe600000-0xfe7fffff]
+pci_bus 0000:01: resource 2 [mem 0xfea00000-0xfebfffff 64bit pref]
+PCI: CLS 0 bytes, default 64
+Unpacking initramfs...
+RAPL PMU: API unit is 2^-32 Joules, 0 fixed counters, 10737418240 ms ovfl timer
+clocksource: tsc: mask: 0xffffffffffffffff max_cycles: 0x2b2c8ec87c7, max_idle_ns: 440795278598 ns
+workingset: timestamp_bits=62 max_order=19 bucket_order=0
+ACPI: \_SB_.GSIG: Enabled at IRQ 22
+input: Power Button as /devices/LNXSYSTM:00/LNXPWRBN:00/input/input0
+ACPI: button: Power Button [PWRF]
+Serial: 8250/16550 driver, 1 ports, IRQ sharing disabled
+00:02: ttyS0 at I/O 0x3f8 (irq = 4, base_baud = 115200) is a 16550A
+kdc 0000:01:00.0: kdc0: 3 queues x 64 entries, bounce <= 65536 bytes
+i8042: PNP: PS/2 Controller [PNP0303:KBD,PNP0f13:MOU] at 0x60,0x64 irq 1,12
+serio: i8042 KBD port at 0x60,0x64 irq 1
+serio: i8042 AUX port at 0x60,0x64 irq 12
+intel_pstate: CPU model not supported
+IPI shorthand broadcast: enabled
+sched_clock: Marking stable (102668573, 20777663)->(133502195, -10055959)
+Freeing initrd memory: 1544K
+input: AT Translated Set 2 keyboard as /devices/platform/i8042/serio0/input/input1
+Freeing unused kernel image (initmem) memory: 820K
+Write protecting the kernel read-only data: 8192k
+Freeing unused kernel image (rodata/data gap) memory: 788K
+Run /init as init process
+input: ImExPS/2 Generic Explorer Mouse as /devices/platform/i8042/serio1/input/input3
+kdc_bench: START arms=6 reps=5 cpus=3
+kdc_bench: @M 1
+kdc_bench: @M 2
+kdc_bench: RESULT arm=zc4k-qd1 rep=0 try=1 token=2 accepted=1 cmds=105584 bad=0 ns=1000005878 lat_p10=8899 lat_p50=9132 lat_p90=9979 lat_p99=11008 queues=0x1
+kdc_bench: @M 3
+kdc_bench: @M 4
+kdc_bench: RESULT arm=bounce512-qd32-batch rep=0 try=1 token=4 accepted=1 cmds=761216 bad=0 ns=1000031516 lat_p10=33094 lat_p50=37152 lat_p90=40953 lat_p99=46313 queues=0x1
+kdc_bench: @M 5
+kdc_bench: @M 6
+kdc_bench: RESULT arm=zc4k-qd32-batch rep=0 try=1 token=6 accepted=1 cmds=558816 bad=0 ns=1000030819 lat_p10=45503 lat_p50=50866 lat_p90=55916 lat_p99=60969 queues=0x1
+kdc_bench: @M 7
+kdc_bench: @M 8
+kdc_bench: RESULT arm=zc4k-t3-qd8 rep=0 try=1 token=8 accepted=1 cmds=198867 bad=0 ns=1000100949 lat_p10=23736 lat_p50=69476 lat_p90=122440 lat_p99=161661 queues=0x7
+kdc_bench: @M 9
+kdc_bench: @M 10
+kdc_bench: RESULT arm=zc4k-t3-qd8-batch rep=0 try=1 token=10 accepted=1 cmds=621064 bad=0 ns=1000033097 lat_p10=21185 lat_p50=34764 lat_p90=51247 lat_p99=64793 queues=0x7
+kdc_bench: @M 11
+kdc_bench: @M 12
+kdc_bench: RESULT arm=bounce512-t3-qd8-batch rep=0 try=1 token=12 accepted=1 cmds=817632 bad=0 ns=1000011023 lat_p10=16759 lat_p50=25866 lat_p90=39869 lat_p99=58414 queues=0x7
+kdc_bench: @M 13
+kdc_bench: @M 14
+kdc_bench: RESULT arm=bounce512-qd32-batch rep=1 try=1 token=14 accepted=1 cmds=713664 bad=0 ns=1000034258 lat_p10=33140 lat_p50=38289 lat_p90=47563 lat_p99=52918 queues=0x1
+kdc_bench: @M 15
+kdc_bench: @M 16
+kdc_bench: RESULT arm=zc4k-qd32-batch rep=1 try=1 token=16 accepted=1 cmds=577408 bad=0 ns=1000009264 lat_p10=43773 lat_p50=49090 lat_p90=54076 lat_p99=58136 queues=0x1
+kdc_bench: @M 17
+kdc_bench: @M 18
+kdc_bench: RESULT arm=zc4k-t3-qd8 rep=1 try=1 token=18 accepted=1 cmds=200086 bad=0 ns=1000101703 lat_p10=23844 lat_p50=69502 lat_p90=122365 lat_p99=161115 queues=0x7
+kdc_bench: @M 19
+kdc_bench: @M 20
+kdc_bench: RESULT arm=zc4k-t3-qd8-batch rep=1 try=1 token=20 accepted=1 cmds=613336 bad=0 ns=1000021064 lat_p10=20479 lat_p50=34866 lat_p90=52178 lat_p99=67039 queues=0x7
+kdc_bench: @M 21
+kdc_bench: @M 22
+kdc_bench: RESULT arm=bounce512-t3-qd8-batch rep=1 try=1 token=22 accepted=1 cmds=829544 bad=0 ns=1000023533 lat_p10=16864 lat_p50=25514 lat_p90=38380 lat_p99=55810 queues=0x7
+kdc_bench: @M 23
+kdc_bench: @M 24
+kdc_bench: RESULT arm=zc4k-qd1 rep=1 try=1 token=24 accepted=1 cmds=106919 bad=0 ns=1000006705 lat_p10=8903 lat_p50=9029 lat_p90=9870 lat_p99=11616 queues=0x1
+kdc_bench: @M 25
+kdc_bench: @M 26
+kdc_bench: RESULT arm=zc4k-qd32-batch rep=2 try=1 token=26 accepted=1 cmds=548096 bad=0 ns=1000025284 lat_p10=45522 lat_p50=51111 lat_p90=56391 lat_p99=69392 queues=0x1
+kdc_bench: @M 27
+kdc_bench: @M 28
+kdc_bench: RESULT arm=zc4k-t3-qd8 rep=2 try=1 token=28 accepted=0 cmds=196648 bad=0 ns=1000104927 lat_p10=23997 lat_p50=69633 lat_p90=123076 lat_p99=164575 queues=0x7
+kdc_bench: @M 29
+kdc_bench: @M 30
+kdc_bench: RESULT arm=zc4k-t3-qd8 rep=2 try=2 token=30 accepted=1 cmds=202883 bad=0 ns=1000074125 lat_p10=23340 lat_p50=68407 lat_p90=120188 lat_p99=157110 queues=0x7
+kdc_bench: @M 31
+kdc_bench: @M 32
+kdc_bench: RESULT arm=zc4k-t3-qd8-batch rep=2 try=1 token=32 accepted=0 cmds=589520 bad=0 ns=1000022544 lat_p10=21714 lat_p50=35980 lat_p90=52510 lat_p99=69058 queues=0x7
+kdc_bench: @M 33
+kdc_bench: @M 34
+kdc_bench: RESULT arm=zc4k-t3-qd8-batch rep=2 try=2 token=34 accepted=1 cmds=608744 bad=0 ns=1000028298 lat_p10=21419 lat_p50=35519 lat_p90=51975 lat_p99=65994 queues=0x7
+kdc_bench: @M 35
+kdc_bench: @M 36
+kdc_bench: RESULT arm=bounce512-t3-qd8-batch rep=2 try=1 token=36 accepted=1 cmds=798976 bad=0 ns=1000027027 lat_p10=17069 lat_p50=26044 lat_p90=39627 lat_p99=59632 queues=0x7
+kdc_bench: @M 37
+kdc_bench: @M 38
+kdc_bench: RESULT arm=zc4k-qd1 rep=2 try=1 token=38 accepted=1 cmds=106140 bad=0 ns=1000002138 lat_p10=8903 lat_p50=9168 lat_p90=10000 lat_p99=11039 queues=0x1
+kdc_bench: @M 39
+kdc_bench: @M 40
+kdc_bench: RESULT arm=bounce512-qd32-batch rep=2 try=1 token=40 accepted=1 cmds=774656 bad=0 ns=1000039639 lat_p10=32340 lat_p50=36411 lat_p90=40337 lat_p99=42225 queues=0x1
+kdc_bench: @M 41
+kdc_bench: @M 42
+kdc_bench: RESULT arm=zc4k-t3-qd8 rep=3 try=1 token=42 accepted=1 cmds=201267 bad=0 ns=1000044164 lat_p10=23690 lat_p50=69308 lat_p90=121659 lat_p99=159430 queues=0x7
+kdc_bench: @M 43
+kdc_bench: @M 44
+kdc_bench: RESULT arm=zc4k-t3-qd8-batch rep=3 try=1 token=44 accepted=1 cmds=626288 bad=0 ns=1000020666 lat_p10=21565 lat_p50=34474 lat_p90=49626 lat_p99=62120 queues=0x7
+kdc_bench: @M 45
+kdc_bench: @M 46
+kdc_bench: RESULT arm=bounce512-t3-qd8-batch rep=3 try=1 token=46 accepted=1 cmds=809944 bad=0 ns=1000026402 lat_p10=16893 lat_p50=25696 lat_p90=39637 lat_p99=58898 queues=0x7
+kdc_bench: @M 47
+kdc_bench: @M 48
+kdc_bench: RESULT arm=zc4k-qd1 rep=3 try=1 token=48 accepted=1 cmds=106824 bad=0 ns=1000000988 lat_p10=8878 lat_p50=9009 lat_p90=9855 lat_p99=11679 queues=0x1
+kdc_bench: @M 49
+kdc_bench: @M 50
+kdc_bench: RESULT arm=bounce512-qd32-batch rep=3 try=1 token=50 accepted=1 cmds=760640 bad=0 ns=1000029155 lat_p10=33026 lat_p50=37120 lat_p90=40983 lat_p99=43530 queues=0x1
+kdc_bench: @M 51
+kdc_bench: @M 52
+kdc_bench: RESULT arm=zc4k-qd32-batch rep=3 try=1 token=52 accepted=1 cmds=558144 bad=0 ns=1000013884 lat_p10=45460 lat_p50=50814 lat_p90=55869 lat_p99=60218 queues=0x1
+kdc_bench: @M 53
+kdc_bench: @M 54
+kdc_bench: RESULT arm=zc4k-t3-qd8-batch rep=4 try=1 token=54 accepted=1 cmds=621352 bad=0 ns=1000039374 lat_p10=21583 lat_p50=34792 lat_p90=49817 lat_p99=63047 queues=0x7
+kdc_bench: @M 55
+kdc_bench: @M 56
+kdc_bench: RESULT arm=bounce512-t3-qd8-batch rep=4 try=1 token=56 accepted=1 cmds=841248 bad=0 ns=1000022747 lat_p10=16795 lat_p50=25313 lat_p90=37630 lat_p99=53586 queues=0x7
+kdc_bench: @M 57
+kdc_bench: @M 58
+kdc_bench: RESULT arm=zc4k-qd1 rep=4 try=1 token=58 accepted=1 cmds=106706 bad=0 ns=1000006424 lat_p10=8903 lat_p50=9094 lat_p90=9924 lat_p99=11043 queues=0x1
+kdc_bench: @M 59
+kdc_bench: @M 60
+kdc_bench: RESULT arm=bounce512-qd32-batch rep=4 try=1 token=60 accepted=1 cmds=761088 bad=0 ns=1000029776 lat_p10=32948 lat_p50=37115 lat_p90=40982 lat_p99=45457 queues=0x1
+kdc_bench: @M 61
+kdc_bench: @M 62
+kdc_bench: RESULT arm=zc4k-qd32-batch rep=4 try=1 token=62 accepted=1 cmds=555712 bad=0 ns=1000029524 lat_p10=45509 lat_p50=50878 lat_p90=55938 lat_p99=62077 queues=0x1
+kdc_bench: @M 63
+kdc_bench: @M 64
+kdc_bench: RESULT arm=zc4k-t3-qd8 rep=4 try=1 token=64 accepted=0 cmds=201657 bad=0 ns=1000051004 lat_p10=22552 lat_p50=67436 lat_p90=120795 lat_p99=160979 queues=0x7
+kdc_bench: @M 65
+kdc_bench: @M 66
+kdc_bench: RESULT arm=zc4k-t3-qd8 rep=4 try=2 token=66 accepted=0 cmds=194452 bad=0 ns=1000067660 lat_p10=26413 lat_p50=70958 lat_p90=122973 lat_p99=158866 queues=0x7
+kdc_bench: @M 67
+kdc_bench: @M 68
+kdc_bench: RESULT arm=zc4k-t3-qd8 rep=4 try=3 token=68 accepted=1 cmds=203361 bad=0 ns=1000108005 lat_p10=23484 lat_p50=68343 lat_p90=120151 lat_p99=156662 queues=0x7
+kdc_bench: DONE
+kdc_init: BENCH_EXIT 0
+ACPI: PM: Preparing to enter system sleep state S5
+reboot: Power down
+===== boot 5 (notrack) =====
+Linux version 6.12.41 (kdc@local) (gcc (Ubuntu 15.2.0-16ubuntu1) 15.2.0, GNU ld (GNU Binutils for Ubuntu) 2.46) #1 SMP 2026-11-06 00:00:00 +0000
+Command line: console=ttyS0 panic=-1 nokaslr printk.devkmsg=on printk.time=0 kdc.bounce_max=65536 kdc.track_overlap=0
+BIOS-provided physical RAM map:
+BIOS-e820: [mem 0x0000000000000000-0x000000000009fbff] usable
+BIOS-e820: [mem 0x000000000009fc00-0x000000000009ffff] reserved
+BIOS-e820: [mem 0x00000000000f0000-0x00000000000fffff] reserved
+BIOS-e820: [mem 0x0000000000100000-0x000000007ffdffff] usable
+BIOS-e820: [mem 0x000000007ffe0000-0x000000007fffffff] reserved
+BIOS-e820: [mem 0x00000000b0000000-0x00000000bfffffff] reserved
+BIOS-e820: [mem 0x00000000fed1c000-0x00000000fed1ffff] reserved
+BIOS-e820: [mem 0x00000000feffc000-0x00000000feffffff] reserved
+BIOS-e820: [mem 0x00000000fffc0000-0x00000000ffffffff] reserved
+NX (Execute Disable) protection: active
+APIC: Static calls initialized
+Hypervisor detected: KVM
+kvm-clock: Using msrs 4b564d01 and 4b564d00
+kvm-clock: using sched offset of 135594776 cycles
+clocksource: kvm-clock: mask: 0xffffffffffffffff max_cycles: 0x1cd42e4dffb, max_idle_ns: 881590591483 ns
+tsc: Detected 2995.200 MHz processor
+last_pfn = 0x7ffe0 max_arch_pfn = 0x400000000
+x86/PAT: PAT support disabled because CONFIG_X86_PAT is disabled in the kernel.
+x86/PAT: Configuration [0-7]: WB  WT  UC- UC  WB  WT  UC- UC  
+found SMP MP-table at [mem 0x000f54c0-0x000f54cf]
+Using GB pages for direct mapping
+RAMDISK: [mem 0x7fe5e000-0x7ffdffff]
+ACPI: Early table checksum verification disabled
+ACPI: RSDP 0x00000000000F52E0 000014 (v00 BOCHS )
+ACPI: RSDT 0x000000007FFE2498 000038 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+ACPI: FACP 0x000000007FFE2280 0000F4 (v03 BOCHS  BXPC     00000001 BXPC 00000001)
+ACPI: DSDT 0x000000007FFE0040 002240 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+ACPI: FACS 0x000000007FFE0000 000040
+ACPI: APIC 0x000000007FFE2374 000088 (v03 BOCHS  BXPC     00000001 BXPC 00000001)
+ACPI: HPET 0x000000007FFE23FC 000038 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+ACPI: MCFG 0x000000007FFE2434 00003C (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+ACPI: WAET 0x000000007FFE2470 000028 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+ACPI: Reserving FACP table memory at [mem 0x7ffe2280-0x7ffe2373]
+ACPI: Reserving DSDT table memory at [mem 0x7ffe0040-0x7ffe227f]
+ACPI: Reserving FACS table memory at [mem 0x7ffe0000-0x7ffe003f]
+ACPI: Reserving APIC table memory at [mem 0x7ffe2374-0x7ffe23fb]
+ACPI: Reserving HPET table memory at [mem 0x7ffe23fc-0x7ffe2433]
+ACPI: Reserving MCFG table memory at [mem 0x7ffe2434-0x7ffe246f]
+ACPI: Reserving WAET table memory at [mem 0x7ffe2470-0x7ffe2497]
+Zone ranges:
+  DMA32    [mem 0x0000000000001000-0x000000007ffdffff]
+  Normal   empty
+Movable zone start for each node
+Early memory node ranges
+  node   0: [mem 0x0000000000001000-0x000000000009efff]
+  node   0: [mem 0x0000000000100000-0x000000007ffdffff]
+Initmem setup node 0 [mem 0x0000000000001000-0x000000007ffdffff]
+On node 0, zone DMA32: 1 pages in unavailable ranges
+On node 0, zone DMA32: 97 pages in unavailable ranges
+On node 0, zone DMA32: 32 pages in unavailable ranges
+ACPI: PM-Timer IO Port: 0x608
+ACPI: LAPIC_NMI (acpi_id[0xff] dfl dfl lint[0x1])
+IOAPIC[0]: apic_id 0, version 17, address 0xfec00000, GSI 0-23
+ACPI: INT_SRC_OVR (bus 0 bus_irq 0 global_irq 2 dfl dfl)
+ACPI: INT_SRC_OVR (bus 0 bus_irq 5 global_irq 5 high level)
+ACPI: INT_SRC_OVR (bus 0 bus_irq 9 global_irq 9 high level)
+ACPI: INT_SRC_OVR (bus 0 bus_irq 10 global_irq 10 high level)
+ACPI: INT_SRC_OVR (bus 0 bus_irq 11 global_irq 11 high level)
+ACPI: Using ACPI (MADT) for SMP configuration information
+ACPI: HPET id: 0x8086a201 base: 0xfed00000
+TSC deadline timer available
+CPU topo: Max. logical packages:   1
+CPU topo: Max. logical dies:       1
+CPU topo: Max. dies per package:   1
+CPU topo: Max. threads per core:   1
+CPU topo: Num. cores per package:     3
+CPU topo: Num. threads per package:   3
+CPU topo: Allowing 3 present CPUs plus 0 hotplug CPUs
+kvm-guest: APIC: eoi() replaced with kvm_guest_apic_eoi_write()
+kvm-guest: KVM setup pv remote TLB flush
+kvm-guest: setup PV sched yield
+[mem 0xc0000000-0xfed1bfff] available for PCI devices
+Booting paravirtualized kernel on KVM
+clocksource: refined-jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 19112604462750000 ns
+setup_percpu: NR_CPUS:4 nr_cpumask_bits:3 nr_cpu_ids:3 nr_node_ids:1
+percpu: Embedded 43 pages/cpu s146456 r0 d29672 u524288
+kvm-guest: PV spinlocks enabled
+PV qspinlock hash table entries: 256 (order: 0, 4096 bytes, linear)
+Kernel command line: console=ttyS0 panic=-1 nokaslr printk.devkmsg=on printk.time=0 kdc.bounce_max=65536 kdc.track_overlap=0
+Unknown kernel command line parameters "nokaslr", will be passed to user space.
+random: crng init done
+Dentry cache hash table entries: 262144 (order: 9, 2097152 bytes, linear)
+Inode-cache hash table entries: 131072 (order: 8, 1048576 bytes, linear)
+Built 1 zonelists, mobility grouping on.  Total pages: 524158
+mem auto-init: stack:all(zero), heap alloc:off, heap free:off
+SLUB: HWalign=64, Order=0-3, MinObjects=0, CPUs=3, Nodes=1
+rcu: Hierarchical RCU implementation.
+rcu: 	RCU restricting CPUs from NR_CPUS=4 to nr_cpu_ids=3.
+rcu: RCU calculated value of scheduler-enlistment delay is 10 jiffies.
+rcu: Adjusting geometry for rcu_fanout_leaf=16, nr_cpu_ids=3
+NR_IRQS: 4352, nr_irqs: 448, preallocated irqs: 16
+rcu: srcu_init: Setting srcu_struct sizes based on contention.
+Console: colour *CGA 80x25
+printk: legacy console [ttyS0] enabled
+ACPI: Core revision 20240827
+clocksource: hpet: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 19112604467 ns
+APIC: Switch to symmetric I/O mode setup
+x2apic enabled
+APIC: Switched APIC routing to: physical x2apic
+kvm-guest: APIC: send_IPI_mask() replaced with kvm_send_ipi_mask()
+kvm-guest: APIC: send_IPI_mask_allbutself() replaced with kvm_send_ipi_mask_allbutself()
+kvm-guest: setup PV IPIs
+..TIMER: vector=0x30 apic1=0 pin1=2 apic2=-1 pin2=-1
+clocksource: tsc-early: mask: 0xffffffffffffffff max_cycles: 0x2b2c8ec87c7, max_idle_ns: 440795278598 ns
+Calibrating delay loop (skipped) preset value.. 5990.40 BogoMIPS (lpj=29952000)
+Last level iTLB entries: 4KB 0, 2MB 0, 4MB 0
+Last level dTLB entries: 4KB 0, 2MB 0, 4MB 0, 1GB 0
+Spectre V2 : User space: Vulnerable
+Speculative Store Bypass: Vulnerable
+x86/fpu: Supporting XSAVE feature 0x001: 'x87 floating point registers'
+x86/fpu: Supporting XSAVE feature 0x002: 'SSE registers'
+x86/fpu: Supporting XSAVE feature 0x004: 'AVX registers'
+x86/fpu: Supporting XSAVE feature 0x200: 'Protection Keys User registers'
+x86/fpu: xstate_offset[2]:  576, xstate_sizes[2]:  256
+x86/fpu: xstate_offset[9]:  832, xstate_sizes[9]:    8
+x86/fpu: Enabled xstate features 0x207, context size is 840 bytes, using 'compacted' format.
+Freeing SMP alternatives memory: 8K
+pid_max: default: 32768 minimum: 301
+Mount-cache hash table entries: 4096 (order: 3, 32768 bytes, linear)
+Mountpoint-cache hash table entries: 4096 (order: 3, 32768 bytes, linear)
+smpboot: CPU0: 13th Gen Intel(R) Core(TM) i9-13900K (family: 0x6, model: 0xb7, stepping: 0x1)
+Performance Events: unsupported p6 CPU model 183 no PMU driver, software events only.
+signal: max sigframe size: 3232
+rcu: Hierarchical SRCU implementation.
+rcu: 	Max phase no-delay instances is 1000.
+Timer migration: 1 hierarchy levels; 8 children per group; 1 crossnode level
+smp: Bringing up secondary CPUs ...
+smpboot: x86: Booting SMP configuration:
+.... node  #0, CPUs:      #1 #2
+smp: Brought up 1 node, 3 CPUs
+smpboot: Total of 3 processors activated (17971.20 BogoMIPS)
+Memory: 2043020K/2096632K available (6144K kernel code, 805K rwdata, 1260K rodata, 820K init, 1200K bss, 50928K reserved, 0K cma-reserved)
+devtmpfs: initialized
+clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 19112604462750000 ns
+futex hash table entries: 1024 (order: 4, 65536 bytes, linear)
+thermal_sys: Registered thermal governor 'step_wise'
+thermal_sys: Registered thermal governor 'user_space'
+cpuidle: using governor ladder
+cpuidle: using governor menu
+acpiphp: ACPI Hot Plug PCI Controller Driver version: 0.5
+PCI: ECAM [mem 0xb0000000-0xbfffffff] (base 0xb0000000) for domain 0000 [bus 00-ff]
+PCI: ECAM [mem 0xb0000000-0xbfffffff] reserved as E820 entry
+PCI: Using configuration type 1 for base access
+ACPI: Added _OSI(Module Device)
+ACPI: Added _OSI(Processor Device)
+ACPI: Added _OSI(Processor Aggregator Device)
+ACPI: 1 ACPI AML tables successfully acquired and loaded
+ACPI: Interpreter enabled
+ACPI: PM: (supports S0 S5)
+ACPI: Using IOAPIC for interrupt routing
+PCI: Using host bridge windows from ACPI; if necessary, use "pci=nocrs" and report a bug
+PCI: Using E820 reservations for host bridge windows
+ACPI: Enabled 2 GPEs in block 00 to 3F
+ACPI: PCI Root Bridge [PCI0] (domain 0000 [bus 00-ff])
+acpi PNP0A08:00: _OSC: OS supports [ExtendedConfig ASPM ClockPM Segments MSI HPX-Type3]
+acpi PNP0A08:00: _OSC: platform does not support [PCIeHotplug LTR]
+acpi PNP0A08:00: _OSC: OS now controls [PME PCIeCapability]
+PCI host bridge to bus 0000:00
+pci_bus 0000:00: root bus resource [io  0x0000-0x0cf7 window]
+pci_bus 0000:00: root bus resource [io  0x0d00-0xffff window]
+pci_bus 0000:00: root bus resource [mem 0x000a0000-0x000bffff window]
+pci_bus 0000:00: root bus resource [mem 0x80000000-0xafffffff window]
+pci_bus 0000:00: root bus resource [mem 0xc0000000-0xfebfffff window]
+pci_bus 0000:00: root bus resource [mem 0x100000000-0x8ffffffff window]
+pci_bus 0000:00: root bus resource [bus 00-ff]
+pci 0000:00:00.0: [8086:29c0] type 00 class 0x060000 conventional PCI endpoint
+pci 0000:00:02.0: [1b36:000c] type 01 class 0x060400 PCIe Root Port
+pci 0000:00:02.0: BAR 0 [mem 0xfe800000-0xfe800fff]
+pci 0000:00:02.0: PCI bridge to [bus 01]
+pci 0000:00:02.0:   bridge window [mem 0xfe600000-0xfe7fffff]
+pci 0000:00:02.0:   bridge window [mem 0xfea00000-0xfebfffff 64bit pref]
+pci 0000:00:02.0: enabling Extended Tags
+pci 0000:00:1f.0: [8086:2918] type 00 class 0x060100 conventional PCI endpoint
+pci 0000:00:1f.0: quirk: [io  0x0600-0x067f] claimed by ICH6 ACPI/GPIO/TCO
+pci 0000:00:1f.2: [8086:2922] type 00 class 0x010601 conventional PCI endpoint
+pci 0000:00:1f.2: BAR 4 [io  0xc040-0xc05f]
+pci 0000:00:1f.2: BAR 5 [mem 0xfe801000-0xfe801fff]
+pci 0000:00:1f.3: [8086:2930] type 00 class 0x0c0500 conventional PCI endpoint
+pci 0000:00:1f.3: BAR 4 [io  0x0700-0x073f]
+acpiphp: Slot [0] registered
+pci 0000:01:00.0: [1234:4b44] type 00 class 0x088000 PCIe Endpoint
+pci 0000:01:00.0: BAR 0 [mem 0xfe600000-0xfe603fff 64bit]
+pci 0000:01:00.0: BAR 2 [mem 0xfe604000-0xfe604fff]
+pci 0000:01:00.0: enabling Extended Tags
+pci 0000:00:02.0: PCI bridge to [bus 01]
+ACPI: PCI: Interrupt link LNKA configured for IRQ 10
+ACPI: PCI: Interrupt link LNKB configured for IRQ 10
+ACPI: PCI: Interrupt link LNKC configured for IRQ 11
+ACPI: PCI: Interrupt link LNKD configured for IRQ 11
+ACPI: PCI: Interrupt link LNKE configured for IRQ 10
+ACPI: PCI: Interrupt link LNKF configured for IRQ 10
+ACPI: PCI: Interrupt link LNKG configured for IRQ 11
+ACPI: PCI: Interrupt link LNKH configured for IRQ 11
+ACPI: PCI: Interrupt link GSIA configured for IRQ 16
+ACPI: PCI: Interrupt link GSIB configured for IRQ 17
+ACPI: PCI: Interrupt link GSIC configured for IRQ 18
+ACPI: PCI: Interrupt link GSID configured for IRQ 19
+ACPI: PCI: Interrupt link GSIE configured for IRQ 20
+ACPI: PCI: Interrupt link GSIF configured for IRQ 21
+ACPI: PCI: Interrupt link GSIG configured for IRQ 22
+ACPI: PCI: Interrupt link GSIH configured for IRQ 23
+iommu: Default domain type: Translated
+iommu: DMA domain TLB invalidation policy: lazy mode
+PCI: Using ACPI for IRQ routing
+vgaarb: loaded
+clocksource: Switched to clocksource kvm-clock
+ACPI: Failed to create genetlink family for ACPI event
+pnp: PnP ACPI init
+system 00:04: [mem 0xb0000000-0xbfffffff window] has been reserved
+pnp: PnP ACPI: found 5 devices
+clocksource: acpi_pm: mask: 0xffffff max_cycles: 0xffffff, max_idle_ns: 2085701024 ns
+pci 0000:00:02.0: bridge window [io  0x1000-0x0fff] to [bus 01] add_size 1000
+pci 0000:00:02.0: bridge window [io  0x1000-0x1fff]: assigned
+pci 0000:00:02.0: PCI bridge to [bus 01]
+pci 0000:00:02.0:   bridge window [io  0x1000-0x1fff]
+pci 0000:00:02.0:   bridge window [mem 0xfe600000-0xfe7fffff]
+pci 0000:00:02.0:   bridge window [mem 0xfea00000-0xfebfffff 64bit pref]
+pci_bus 0000:00: resource 4 [io  0x0000-0x0cf7 window]
+pci_bus 0000:00: resource 5 [io  0x0d00-0xffff window]
+pci_bus 0000:00: resource 6 [mem 0x000a0000-0x000bffff window]
+pci_bus 0000:00: resource 7 [mem 0x80000000-0xafffffff window]
+pci_bus 0000:00: resource 8 [mem 0xc0000000-0xfebfffff window]
+pci_bus 0000:00: resource 9 [mem 0x100000000-0x8ffffffff window]
+pci_bus 0000:01: resource 0 [io  0x1000-0x1fff]
+pci_bus 0000:01: resource 1 [mem 0xfe600000-0xfe7fffff]
+pci_bus 0000:01: resource 2 [mem 0xfea00000-0xfebfffff 64bit pref]
+PCI: CLS 0 bytes, default 64
+RAPL PMU: API unit is 2^-32 Joules, 0 fixed counters, 10737418240 ms ovfl timer
+Unpacking initramfs...
+clocksource: tsc: mask: 0xffffffffffffffff max_cycles: 0x2b2c8ec87c7, max_idle_ns: 440795278598 ns
+workingset: timestamp_bits=62 max_order=19 bucket_order=0
+ACPI: \_SB_.GSIG: Enabled at IRQ 22
+input: Power Button as /devices/LNXSYSTM:00/LNXPWRBN:00/input/input0
+ACPI: button: Power Button [PWRF]
+Serial: 8250/16550 driver, 1 ports, IRQ sharing disabled
+00:02: ttyS0 at I/O 0x3f8 (irq = 4, base_baud = 115200) is a 16550A
+kdc 0000:01:00.0: kdc0: 3 queues x 64 entries, bounce <= 65536 bytes
+i8042: PNP: PS/2 Controller [PNP0303:KBD,PNP0f13:MOU] at 0x60,0x64 irq 1,12
+serio: i8042 KBD port at 0x60,0x64 irq 1
+serio: i8042 AUX port at 0x60,0x64 irq 12
+intel_pstate: CPU model not supported
+IPI shorthand broadcast: enabled
+sched_clock: Marking stable (100499219, 19933049)->(128041370, -7609102)
+input: AT Translated Set 2 keyboard as /devices/platform/i8042/serio0/input/input1
+Freeing initrd memory: 1544K
+Freeing unused kernel image (initmem) memory: 820K
+Write protecting the kernel read-only data: 8192k
+Freeing unused kernel image (rodata/data gap) memory: 788K
+Run /init as init process
+input: ImExPS/2 Generic Explorer Mouse as /devices/platform/i8042/serio1/input/input3
+kdc_bench: START arms=6 reps=5 cpus=3
+kdc_bench: @M 1
+kdc_bench: @M 2
+kdc_bench: RESULT arm=zc4k-qd1 rep=0 try=1 token=2 accepted=0 cmds=96465 bad=0 ns=1000002107 lat_p10=9158 lat_p50=9690 lat_p90=11186 lat_p99=14067 queues=0x1
+kdc_bench: @M 3
+kdc_bench: @M 4
+kdc_bench: RESULT arm=zc4k-qd1 rep=0 try=2 token=4 accepted=1 cmds=95058 bad=0 ns=1000006625 lat_p10=8866 lat_p50=9732 lat_p90=13476 lat_p99=15409 queues=0x1
+kdc_bench: @M 5
+kdc_bench: @M 6
+kdc_bench: RESULT arm=bounce512-qd32-batch rep=0 try=1 token=6 accepted=1 cmds=791328 bad=0 ns=1000032898 lat_p10=32222 lat_p50=35873 lat_p90=39348 lat_p99=41221 queues=0x1
+kdc_bench: @M 7
+kdc_bench: @M 8
+kdc_bench: RESULT arm=zc4k-qd32-batch rep=0 try=1 token=8 accepted=1 cmds=582176 bad=0 ns=1000011456 lat_p10=44191 lat_p50=48981 lat_p90=53628 lat_p99=56276 queues=0x1
+kdc_bench: @M 9
+kdc_bench: @M 10
+kdc_bench: RESULT arm=zc4k-t3-qd8 rep=0 try=1 token=10 accepted=1 cmds=201277 bad=0 ns=1000033846 lat_p10=22665 lat_p50=68228 lat_p90=122272 lat_p99=164130 queues=0x7
+kdc_bench: @M 11
+kdc_bench: @M 12
+kdc_bench: RESULT arm=zc4k-t3-qd8-batch rep=0 try=1 token=12 accepted=1 cmds=639928 bad=0 ns=1000036753 lat_p10=24412 lat_p50=34349 lat_p90=46258 lat_p99=58098 queues=0x7
+kdc_bench: @M 13
+kdc_bench: @M 14
+kdc_bench: RESULT arm=bounce512-t3-qd8-batch rep=0 try=1 token=14 accepted=0 cmds=828160 bad=0 ns=1000005254 lat_p10=15659 lat_p50=23723 lat_p90=40531 lat_p99=63979 queues=0x7
+kdc_bench: @M 15
+kdc_bench: @M 16
+kdc_bench: RESULT arm=bounce512-t3-qd8-batch rep=0 try=2 token=16 accepted=0 cmds=814848 bad=0 ns=1000021628 lat_p10=15710 lat_p50=24669 lat_p90=40611 lat_p99=58739 queues=0x7
+kdc_bench: @M 17
+kdc_bench: @M 18
+kdc_bench: RESULT arm=bounce512-t3-qd8-batch rep=0 try=3 token=18 accepted=0 cmds=787512 bad=0 ns=1000011176 lat_p10=15607 lat_p50=24785 lat_p90=41509 lat_p99=63993 queues=0x7
+kdc_bench: @M 19
+kdc_bench: @M 20
+kdc_bench: RESULT arm=bounce512-t3-qd8-batch rep=0 try=4 token=20 accepted=1 cmds=836064 bad=0 ns=1000011545 lat_p10=15969 lat_p50=24393 lat_p90=41390 lat_p99=63765 queues=0x7
+kdc_bench: @M 21
+kdc_bench: @M 22
+kdc_bench: RESULT arm=bounce512-qd32-batch rep=1 try=1 token=22 accepted=0 cmds=788096 bad=0 ns=1000024386 lat_p10=31296 lat_p50=35016 lat_p90=38681 lat_p99=41330 queues=0x1
+kdc_bench: @M 23
+kdc_bench: @M 24
+kdc_bench: RESULT arm=bounce512-qd32-batch rep=1 try=2 token=24 accepted=1 cmds=787680 bad=0 ns=1000032375 lat_p10=32205 lat_p50=35859 lat_p90=39302 lat_p99=42560 queues=0x1
+kdc_bench: @M 25
+kdc_bench: @M 26
+kdc_bench: RESULT arm=zc4k-qd32-batch rep=1 try=1 token=26 accepted=1 cmds=578432 bad=0 ns=1000033032 lat_p10=44516 lat_p50=49352 lat_p90=53987 lat_p99=58483 queues=0x1
+kdc_bench: @M 27
+kdc_bench: @M 28
+kdc_bench: RESULT arm=zc4k-t3-qd8 rep=1 try=1 token=28 accepted=1 cmds=201701 bad=0 ns=1000064728 lat_p10=23161 lat_p50=68786 lat_p90=122043 lat_p99=160394 queues=0x7
+kdc_bench: @M 29
+kdc_bench: @M 30
+kdc_bench: RESULT arm=zc4k-t3-qd8-batch rep=1 try=1 token=30 accepted=1 cmds=634104 bad=0 ns=1000018537 lat_p10=24106 lat_p50=34395 lat_p90=46638 lat_p99=59158 queues=0x7
+kdc_bench: @M 31
+kdc_bench: @M 32
+kdc_bench: RESULT arm=bounce512-t3-qd8-batch rep=1 try=1 token=32 accepted=1 cmds=889472 bad=0 ns=1000016458 lat_p10=15347 lat_p50=23086 lat_p90=38721 lat_p99=58849 queues=0x7
+kdc_bench: @M 33
+kdc_bench: @M 34
+kdc_bench: RESULT arm=zc4k-qd1 rep=1 try=1 token=34 accepted=1 cmds=106994 bad=0 ns=1000008549 lat_p10=8837 lat_p50=9039 lat_p90=9906 lat_p99=11487 queues=0x1
+kdc_bench: @M 35
+kdc_bench: @M 36
+kdc_bench: RESULT arm=zc4k-qd32-batch rep=2 try=1 token=36 accepted=0 cmds=524736 bad=0 ns=1000027381 lat_p10=46920 lat_p50=52615 lat_p90=59753 lat_p99=70930 queues=0x1
+kdc_bench: @M 37
+kdc_bench: @M 38
+kdc_bench: RESULT arm=zc4k-qd32-batch rep=2 try=2 token=38 accepted=1 cmds=563808 bad=0 ns=1000011702 lat_p10=44180 lat_p50=49792 lat_p90=59463 lat_p99=69754 queues=0x1
+kdc_bench: @M 39
+kdc_bench: @M 40
+kdc_bench: RESULT arm=zc4k-t3-qd8 rep=2 try=1 token=40 accepted=1 cmds=200789 bad=0 ns=1000091245 lat_p10=23012 lat_p50=68688 lat_p90=121965 lat_p99=161790 queues=0x7
+kdc_bench: @M 41
+kdc_bench: @M 42
+kdc_bench: RESULT arm=zc4k-t3-qd8-batch rep=2 try=1 token=42 accepted=1 cmds=637944 bad=0 ns=1000020372 lat_p10=24244 lat_p50=34405 lat_p90=46676 lat_p99=58759 queues=0x7
+kdc_bench: @M 43
+kdc_bench: @M 44
+kdc_bench: RESULT arm=bounce512-t3-qd8-batch rep=2 try=1 token=44 accepted=1 cmds=842464 bad=0 ns=1000026480 lat_p10=15858 lat_p50=24062 lat_p90=40460 lat_p99=62074 queues=0x7
+kdc_bench: @M 45
+kdc_bench: @M 46
+kdc_bench: RESULT arm=zc4k-qd1 rep=2 try=1 token=46 accepted=1 cmds=104794 bad=0 ns=1000008358 lat_p10=8822 lat_p50=9138 lat_p90=10177 lat_p99=11370 queues=0x1
+kdc_bench: @M 47
+kdc_bench: @M 48
+kdc_bench: RESULT arm=bounce512-qd32-batch rep=2 try=1 token=48 accepted=1 cmds=787104 bad=0 ns=1000034480 lat_p10=32365 lat_p50=36035 lat_p90=39483 lat_p99=44407 queues=0x1
+kdc_bench: @M 49
+kdc_bench: @M 50
+kdc_bench: RESULT arm=zc4k-t3-qd8 rep=3 try=1 token=50 accepted=1 cmds=202128 bad=0 ns=1000056265 lat_p10=22961 lat_p50=68677 lat_p90=121811 lat_p99=160796 queues=0x7
+kdc_bench: @M 51
+kdc_bench: @M 52
+kdc_bench: RESULT arm=zc4k-t3-qd8-batch rep=3 try=1 token=52 accepted=1 cmds=637128 bad=0 ns=1000017211 lat_p10=24522 lat_p50=34541 lat_p90=46446 lat_p99=58090 queues=0x7
+kdc_bench: @M 53
+kdc_bench: @M 54
+kdc_bench: RESULT arm=bounce512-t3-qd8-batch rep=3 try=1 token=54 accepted=1 cmds=839848 bad=0 ns=1000021427 lat_p10=15856 lat_p50=24020 lat_p90=41526 lat_p99=65048 queues=0x7
+kdc_bench: @M 55
+kdc_bench: @M 56
+kdc_bench: RESULT arm=zc4k-qd1 rep=3 try=1 token=56 accepted=1 cmds=106731 bad=0 ns=1000001030 lat_p10=8782 lat_p50=8980 lat_p90=10009 lat_p99=11427 queues=0x1
+kdc_bench: @M 57
+kdc_bench: @M 58
+kdc_bench: RESULT arm=bounce512-qd32-batch rep=3 try=1 token=58 accepted=1 cmds=822976 bad=0 ns=1000006180 lat_p10=30656 lat_p50=34381 lat_p90=37863 lat_p99=43614 queues=0x1
+kdc_bench: @M 59
+kdc_bench: @M 60
+kdc_bench: RESULT arm=zc4k-qd32-batch rep=3 try=1 token=60 accepted=1 cmds=578816 bad=0 ns=1000022886 lat_p10=44471 lat_p50=49341 lat_p90=53995 lat_p99=60493 queues=0x1
+kdc_bench: @M 61
+kdc_bench: @M 62
+kdc_bench: RESULT arm=zc4k-t3-qd8-batch rep=4 try=1 token=62 accepted=1 cmds=636512 bad=0 ns=1000025524 lat_p10=24463 lat_p50=34349 lat_p90=46569 lat_p99=59469 queues=0x7
+kdc_bench: @M 63
+kdc_bench: @M 64
+kdc_bench: RESULT arm=bounce512-t3-qd8-batch rep=4 try=1 token=64 accepted=1 cmds=846688 bad=0 ns=1000020887 lat_p10=15810 lat_p50=24043 lat_p90=41145 lat_p99=64061 queues=0x7
+kdc_bench: @M 65
+kdc_bench: @M 66
+kdc_bench: RESULT arm=zc4k-qd1 rep=4 try=1 token=66 accepted=1 cmds=107262 bad=0 ns=1000011155 lat_p10=8796 lat_p50=8946 lat_p90=9819 lat_p99=12549 queues=0x1
+kdc_bench: @M 67
+kdc_bench: @M 68
+kdc_bench: RESULT arm=bounce512-qd32-batch rep=4 try=1 token=68 accepted=1 cmds=785632 bad=0 ns=1000018102 lat_p10=32423 lat_p50=36140 lat_p90=39612 lat_p99=42587 queues=0x1
+kdc_bench: @M 69
+kdc_bench: @M 70
+kdc_bench: RESULT arm=zc4k-qd32-batch rep=4 try=1 token=70 accepted=1 cmds=570656 bad=0 ns=1000005599 lat_p10=43993 lat_p50=49307 lat_p90=56283 lat_p99=67682 queues=0x1
+kdc_bench: @M 71
+kdc_bench: @M 72
+kdc_bench: RESULT arm=zc4k-t3-qd8 rep=4 try=1 token=72 accepted=1 cmds=201823 bad=0 ns=1000091631 lat_p10=23159 lat_p50=68950 lat_p90=122000 lat_p99=160144 queues=0x7
+kdc_bench: DONE
+kdc_init: BENCH_EXIT 0
+ACPI: PM: Preparing to enter system sleep state S5
+reboot: Power down

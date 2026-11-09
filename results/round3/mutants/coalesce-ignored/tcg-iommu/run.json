@@ -1,0 +1,97 @@
+{
+  "utc": "2026-11-08T20:54:06+00:00",
+  "accel": "tcg",
+  "iommu": true,
+  "qemu": "release",
+  "kernel": "kasan",
+  "argv": [
+    "/home/postedism/Desktop/driver-firnware-runtime/A-kernel-device-contract-lab/.cache/build/qemu/qemu-system-x86_64",
+    "-machine",
+    "q35",
+    "-accel",
+    "tcg",
+    "-cpu",
+    "max",
+    "-m",
+    "2048",
+    "-smp",
+    "4",
+    "-nodefaults",
+    "-display",
+    "none",
+    "-serial",
+    "stdio",
+    "-monitor",
+    "none",
+    "-no-reboot",
+    "-nic",
+    "none",
+    "-device",
+    "intel-iommu",
+    "-device",
+    "pcie-root-port,id=rp0,bus=pcie.0,chassis=1,addr=0x2",
+    "-device",
+    "kdc-dma,id=kdc0,bus=rp0,queues=4",
+    "-device",
+    "pcie-root-port,id=rp1,bus=pcie.0,chassis=2,addr=0x3",
+    "-device",
+    "kdc-dma,id=kdc1,bus=rp1,queues=2",
+    "-qmp",
+    "unix:/tmp/kdc-run-7l0qipy1/qmp.sock,server=on,wait=off",
+    "-kernel",
+    "/home/postedism/Desktop/driver-firnware-runtime/A-kernel-device-contract-lab/build/kernel/arch/x86/boot/bzImage",
+    "-initrd",
+    "/home/postedism/Desktop/driver-firnware-runtime/A-kernel-device-contract-lab/build/initramfs.cpio.gz",
+    "-append",
+    "console=ttyS0 panic=-1 oops=panic panic_on_warn=1 nokaslr printk.devkmsg=on intel_iommu=on iommu.strict=1"
+  ],
+  "qemu_version": "QEMU emulator version 10.2.1",
+  "mutant": "coalesce-ignored",
+  "kernel_sha256": "c009f93ae8695ef208207106fe204dfbe27e197e8a55d9b71917801cf925b973",
+  "client_sha256": "03d41a39ee41003262ff1c40a25f8731ba8a58e900d0c0673c11d0bb777ad82f",
+  "load_average": [
+    "3.08",
+    "3.94",
+    "4.39"
+  ],
+  "passed": false,
+  "host_actions": [],
+  "returncode": 0,
+  "seconds": 24.2,
+  "expectations": [],
+  "kmemleak_records": 0,
+  "kmemleak_driver_records": 0,
+  "cases": [
+    [
+      "device_info",
+      "3"
+    ],
+    [
+      "abi_validation",
+      "80"
+    ],
+    [
+      "data_integrity",
+      "370"
+    ],
+    [
+      "nop_and_batch_read",
+      "3"
+    ],
+    [
+      "queue_selection",
+      "11"
+    ],
+    [
+      "batch_flush",
+      "78"
+    ]
+  ],
+  "counts": [
+    "  data_integrity: 84 copies verified (dst bytes, guard bytes, CRC32C)\r"
+  ],
+  "problems": [
+    "report: [    7.961156] kdc_test: FAIL coalescing:760: read_knob(0, \"device_irqs\") == irqs + 1 (errno=14 Bad address)",
+    "report: [   23.003484] kdc_init: KDC_GUEST_FAILURE exit=1"
+  ]
+}

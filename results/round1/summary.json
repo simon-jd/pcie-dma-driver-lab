@@ -1,0 +1,59 @@
+{
+  "qtest": {
+    "asan": {
+      "passed": true,
+      "log": "qtest-asan.log"
+    },
+    "release": {
+      "passed": true,
+      "log": "qtest-release.log"
+    }
+  },
+  "guest": {
+    "kvm-iommu": {
+      "skipped": "/dev/kvm is not readable and writable by this user"
+    },
+    "kvm-noiommu": {
+      "skipped": "/dev/kvm is not readable and writable by this user"
+    },
+    "tcg-iommu": {
+      "passed": true,
+      "seconds": 10.5,
+      "problems": [],
+      "qemu_version": "QEMU emulator version 10.2.1",
+      "kernel_sha256": "b85ab8fb5c208a1b32a86bfde3b09aecb8b54c37d46845873f980ec16abfa2f1",
+      "load_average": [
+        "11.40",
+        "7.59",
+        "5.01"
+      ],
+      "client_cases": 19
+    },
+    "tcg-noiommu": {
+      "passed": true,
+      "seconds": 9.8,
+      "problems": [],
+      "qemu_version": "QEMU emulator version 10.2.1",
+      "kernel_sha256": "b85ab8fb5c208a1b32a86bfde3b09aecb8b54c37d46845873f980ec16abfa2f1",
+      "load_average": [
+        "11.73",
+        "7.79",
+        "5.10"
+      ],
+      "client_cases": 19
+    },
+    "tcg-iommu-asanqemu": {
+      "passed": true,
+      "seconds": 189.5,
+      "problems": [],
+      "qemu_version": "QEMU emulator version 10.2.1",
+      "kernel_sha256": "b85ab8fb5c208a1b32a86bfde3b09aecb8b54c37d46845873f980ec16abfa2f1",
+      "load_average": [
+        "11.56",
+        "7.88",
+        "5.16"
+      ],
+      "client_cases": 19
+    }
+  }
+}

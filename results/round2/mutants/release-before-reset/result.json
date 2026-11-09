@@ -1,0 +1,20 @@
+{
+  "mutant": "release-before-reset",
+  "file": "build/linux-6.12.41/drivers/misc/kdc/kdc_recover.c",
+  "runs": [
+    {
+      "config": "tcg-iommu",
+      "failed": true,
+      "first_failed_assertion": "FAIL timeout_reset:1361:",
+      "allowed": [
+        "FAIL timeout_reset:",
+        "FAIL timeout_escalation:"
+      ],
+      "evidence_required": [],
+      "evidence_seen": [],
+      "caught": true
+    }
+  ],
+  "caught": true,
+  "restored_build_ok": true
+}

@@ -1,0 +1,37 @@
+{
+  "boots": [
+    {
+      "config": "noiommu",
+      "boot": 0,
+      "seconds": 28.7,
+      "windows": 22,
+      "rejected": 2,
+      "bench_exit": "0"
+    },
+    {
+      "config": "tablecrc",
+      "boot": 1,
+      "seconds": 28.5,
+      "windows": 22,
+      "rejected": 2,
+      "bench_exit": "0"
+    },
+    {
+      "config": "noiommu",
+      "boot": 2,
+      "seconds": 26.3,
+      "windows": 20,
+      "rejected": 0,
+      "bench_exit": "0"
+    },
+    {
+      "config": "tablecrc",
+      "boot": 3,
+      "seconds": 29.7,
+      "windows": 23,
+      "rejected": 3,
+      "bench_exit": "0"
+    }
+  ],
+  "problems": []
+}

@@ -1,0 +1,12 @@
+commit c392dbd Add a CI workflow: QEMU build, qtest, kernel build and the TCG guest run
+STEP build_qemu 170 s
+STEP qtest_asan 4 s
+STEP qtest_release 1 s
+STEP fetch_kernel 10 s
+STEP build_kernel 107 s
+STEP tcg_guest 71 s
+TOTAL 363 s on CPUs 12-15 (32 online, 13th Gen Intel(R) Core(TM) i9-13900K)
+KDC_QTEST PASS tests=17 failures=0
+KDC_QTEST PASS tests=17 failures=0
+PASS tcg iommu=True qemu=release kernel=kasan 70.3s, 34 client cases; logs in /home/postedism/.cache/kl-ci/repo/logs/tcg-iommu
+EXIT 0

@@ -1,0 +1,2 @@
+qemu-system-x86_64: vtd_iova_to_slpte: detected slpte permission error (iova=0xffff3000, level=0x1, slpte=0x0, write=0, pasid=0xffffffff)
+qemu-system-x86_64: vtd_iommu_translate: detected translation failure (dev=01:00:00, iova=0xffff3000)

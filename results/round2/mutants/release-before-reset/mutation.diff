@@ -1,0 +1,24 @@
+--- kdc_recover.c
+-			case KDC_WATCH_RESET:
+				reset = true;
+				break;
++			case KDC_WATCH_RESET:
+				reset = true;
+				/* deliberate bug: hand the buffers back once the abort timed out */
+				q->slots[tag] = NULL;
+				__clear_bit(tag, q->tag_map);
+				q->outstanding--;
+				kdc_cmd_end(cmd, -ETIMEDOUT, &early);
+				break;
+--- kdc_recover.c
+-	bool busy = false, reset = false;
++	bool busy = false, reset = false;
+	LIST_HEAD(early);
+--- kdc_recover.c
+-		spin_unlock(&q->lock);
+	}
+	if (reset)
++		spin_unlock(&q->lock);
+	}
+	kdc_end_list(kdev, &early);
+	if (reset)

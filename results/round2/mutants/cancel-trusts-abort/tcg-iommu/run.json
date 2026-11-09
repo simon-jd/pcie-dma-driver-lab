@@ -1,0 +1,109 @@
+{
+  "utc": "2026-11-07T15:29:12+00:00",
+  "accel": "tcg",
+  "iommu": true,
+  "qemu": "release",
+  "kernel": "kasan",
+  "argv": [
+    "/home/postedism/Desktop/driver-firnware-runtime/A-kernel-device-contract-lab/.cache/build/qemu/qemu-system-x86_64",
+    "-machine",
+    "q35",
+    "-accel",
+    "tcg",
+    "-cpu",
+    "max",
+    "-m",
+    "2048",
+    "-smp",
+    "4",
+    "-nodefaults",
+    "-display",
+    "none",
+    "-serial",
+    "stdio",
+    "-monitor",
+    "none",
+    "-no-reboot",
+    "-nic",
+    "none",
+    "-device",
+    "intel-iommu",
+    "-device",
+    "pcie-root-port,id=rp0,bus=pcie.0,chassis=1,addr=0x2",
+    "-device",
+    "kdc-dma,id=kdc0,bus=rp0,queues=4",
+    "-device",
+    "pcie-root-port,id=rp1,bus=pcie.0,chassis=2,addr=0x3",
+    "-device",
+    "kdc-dma,id=kdc1,bus=rp1,queues=2",
+    "-qmp",
+    "unix:/tmp/kdc-run-59t516vk/qmp.sock,server=on,wait=off",
+    "-kernel",
+    "/home/postedism/Desktop/driver-firnware-runtime/A-kernel-device-contract-lab/build/kernel/arch/x86/boot/bzImage",
+    "-initrd",
+    "/home/postedism/Desktop/driver-firnware-runtime/A-kernel-device-contract-lab/build/initramfs.cpio.gz",
+    "-append",
+    "console=ttyS0 panic=-1 oops=panic panic_on_warn=1 nokaslr printk.devkmsg=on intel_iommu=on iommu.strict=1"
+  ],
+  "qemu_version": "QEMU emulator version 10.2.1",
+  "mutant": "cancel-trusts-abort",
+  "kernel_sha256": "50c8aeb1e27afe89d5d7a6fa4edd7d0cc63cf6d4bee9b5531981bc4d78dfe573",
+  "client_sha256": "7150d1076e7fdebd5f952f4a5e333050cc1108420bc4254d57d983f853d870a1",
+  "load_average": [
+    "7.77",
+    "5.86",
+    "5.27"
+  ],
+  "passed": false,
+  "host_actions": [],
+  "returncode": 0,
+  "seconds": 9.0,
+  "expectations": [],
+  "kmemleak_records": 0,
+  "kmemleak_driver_records": 0,
+  "cases": [
+    [
+      "device_info",
+      "7"
+    ],
+    [
+      "abi_validation",
+      "65"
+    ],
+    [
+      "data_integrity",
+      "336"
+    ],
+    [
+      "nop_and_batch_read",
+      "3"
+    ],
+    [
+      "queue_selection",
+      "9"
+    ],
+    [
+      "batch_flush",
+      "61"
+    ],
+    [
+      "pinned_page_not_recycled",
+      "618"
+    ],
+    [
+      "cancel_driver_owned",
+      "83"
+    ]
+  ],
+  "counts": [
+    "  data_integrity: 75 copies verified (dst bytes, guard bytes, CRC32C)\r"
+  ],
+  "problems": [
+    "report: [    7.984568] kdc_test: FAIL cancel_device_owned:854: cancel(fd, 9, epoch) == -1 && errno == EINPROGRESS (errno=0 Success)",
+    "report: [    7.989596] list_add corruption. prev->next should be next (ff110000063be4b8), but was ff110000063bf000. (prev=ff110000063bf000).",
+    "report: [    7.990678] WARNING: CPU: 0 PID: 46 at lib/list_debug.c:32 __list_add_valid_or_report+0xc7/0xf0",
+    "report: [    7.993932] Call Trace:",
+    "report: [    7.996041] Kernel panic - not syncing: kernel: panic_on_warn set ...",
+    "report: [    7.996506] Call Trace:"
+  ]
+}

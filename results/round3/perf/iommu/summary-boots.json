@@ -1,0 +1,77 @@
+{
+  "boots": [
+    {
+      "config": "noiommu",
+      "boot": 0,
+      "seconds": 46.6,
+      "windows": 37,
+      "rejected": 2,
+      "bench_exit": "0"
+    },
+    {
+      "config": "iommu-strict",
+      "boot": 1,
+      "seconds": 48.8,
+      "windows": 39,
+      "rejected": 4,
+      "bench_exit": "0"
+    },
+    {
+      "config": "iommu-lazy",
+      "boot": 2,
+      "seconds": 52.5,
+      "windows": 42,
+      "rejected": 7,
+      "bench_exit": "0"
+    },
+    {
+      "config": "noiommu",
+      "boot": 3,
+      "seconds": 51.4,
+      "windows": 41,
+      "rejected": 6,
+      "bench_exit": "0"
+    },
+    {
+      "config": "iommu-strict",
+      "boot": 4,
+      "seconds": 47.6,
+      "windows": 38,
+      "rejected": 3,
+      "bench_exit": "0"
+    },
+    {
+      "config": "iommu-lazy",
+      "boot": 5,
+      "seconds": 53.7,
+      "windows": 43,
+      "rejected": 8,
+      "bench_exit": "0"
+    },
+    {
+      "config": "noiommu",
+      "boot": 6,
+      "seconds": 49.0,
+      "windows": 39,
+      "rejected": 5,
+      "bench_exit": "0"
+    },
+    {
+      "config": "iommu-strict",
+      "boot": 7,
+      "seconds": 65.5,
+      "windows": 53,
+      "rejected": 18,
+      "bench_exit": "0"
+    },
+    {
+      "config": "iommu-lazy",
+      "boot": 8,
+      "seconds": 60.8,
+      "windows": 49,
+      "rejected": 14,
+      "bench_exit": "0"
+    }
+  ],
+  "problems": []
+}

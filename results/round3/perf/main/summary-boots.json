@@ -1,0 +1,21 @@
+{
+  "boots": [
+    {
+      "config": "noiommu",
+      "boot": 0,
+      "seconds": 773.5,
+      "windows": 644,
+      "rejected": 327,
+      "bench_exit": "0"
+    },
+    {
+      "config": "noiommu",
+      "boot": 1,
+      "seconds": 582.0,
+      "windows": 484,
+      "rejected": 120,
+      "bench_exit": "0"
+    }
+  ],
+  "problems": []
+}

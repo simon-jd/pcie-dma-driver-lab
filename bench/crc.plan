@@ -1,0 +1,7 @@
+reps 5
+# Run with --configs noiommu,tablecrc: the device model's CRC32C with the SSE4.2
+# instruction (default) and with QEMU's byte-wise table (hw-crc=off).
+zc4k-qd1             mode=zc size=4096 qd=1
+zc64k-qd1            mode=zc size=65536 qd=1
+zc4k-qd32-batch      mode=zc size=4096 qd=32 batch=1
+zc64k-qd8-batch      mode=zc size=65536 qd=8 batch=1

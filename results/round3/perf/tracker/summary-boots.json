@@ -1,0 +1,53 @@
+{
+  "boots": [
+    {
+      "config": "noiommu",
+      "boot": 0,
+      "seconds": 69.1,
+      "windows": 55,
+      "rejected": 30,
+      "bench_exit": "0"
+    },
+    {
+      "config": "notrack",
+      "boot": 1,
+      "seconds": 53.1,
+      "windows": 42,
+      "rejected": 13,
+      "bench_exit": "0"
+    },
+    {
+      "config": "noiommu",
+      "boot": 2,
+      "seconds": 71.4,
+      "windows": 57,
+      "rejected": 30,
+      "bench_exit": "0"
+    },
+    {
+      "config": "notrack",
+      "boot": 3,
+      "seconds": 56.9,
+      "windows": 45,
+      "rejected": 17,
+      "bench_exit": "0"
+    },
+    {
+      "config": "noiommu",
+      "boot": 4,
+      "seconds": 43.5,
+      "windows": 34,
+      "rejected": 4,
+      "bench_exit": "0"
+    },
+    {
+      "config": "notrack",
+      "boot": 5,
+      "seconds": 46.1,
+      "windows": 36,
+      "rejected": 6,
+      "bench_exit": "0"
+    }
+  ],
+  "problems": []
+}

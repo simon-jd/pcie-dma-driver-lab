@@ -1,0 +1,244 @@
+{
+  "utc": "2026-11-07T15:33:04+00:00",
+  "accel": "tcg",
+  "iommu": true,
+  "qemu": "release",
+  "kernel": "kasan",
+  "argv": [
+    "/home/postedism/Desktop/driver-firnware-runtime/A-kernel-device-contract-lab/.cache/build/qemu/qemu-system-x86_64",
+    "-machine",
+    "q35",
+    "-accel",
+    "tcg",
+    "-cpu",
+    "max",
+    "-m",
+    "2048",
+    "-smp",
+    "4",
+    "-nodefaults",
+    "-display",
+    "none",
+    "-serial",
+    "stdio",
+    "-monitor",
+    "none",
+    "-no-reboot",
+    "-nic",
+    "none",
+    "-device",
+    "intel-iommu",
+    "-device",
+    "pcie-root-port,id=rp0,bus=pcie.0,chassis=1,addr=0x2",
+    "-device",
+    "kdc-dma,id=kdc0,bus=rp0,queues=4",
+    "-device",
+    "pcie-root-port,id=rp1,bus=pcie.0,chassis=2,addr=0x3",
+    "-device",
+    "kdc-dma,id=kdc1,bus=rp1,queues=2",
+    "-qmp",
+    "unix:/tmp/kdc-run-mavvbzmc/qmp.sock,server=on,wait=off",
+    "-kernel",
+    "/home/postedism/Desktop/driver-firnware-runtime/A-kernel-device-contract-lab/build/kernel/arch/x86/boot/bzImage",
+    "-initrd",
+    "/home/postedism/Desktop/driver-firnware-runtime/A-kernel-device-contract-lab/build/initramfs.cpio.gz",
+    "-append",
+    "console=ttyS0 panic=-1 oops=panic panic_on_warn=1 nokaslr printk.devkmsg=on intel_iommu=on iommu.strict=1"
+  ],
+  "qemu_version": "QEMU emulator version 10.2.1",
+  "mutant": "overlap-check-off",
+  "kernel_sha256": "c4092befc7db35a8b5066e289c929d8f7b699f723f25bca0b5a15d9263c7c197",
+  "client_sha256": "7150d1076e7fdebd5f952f4a5e333050cc1108420bc4254d57d983f853d870a1",
+  "load_average": [
+    "6.73",
+    "5.42",
+    "5.15"
+  ],
+  "passed": false,
+  "host_actions": [],
+  "returncode": 0,
+  "seconds": 42.0,
+  "expectations": [
+    {
+      "tag": "timeout-abort",
+      "pattern": "timed out after",
+      "matched": 1
+    },
+    {
+      "tag": "timeout-reset",
+      "pattern": "timed out after|resetting controller",
+      "matched": 2
+    },
+    {
+      "tag": "escalation",
+      "pattern": "timed out after|resetting controller|controller reset failed",
+      "matched": 3
+    },
+    {
+      "tag": "failure",
+      "pattern": "timed out after|resetting controller|controller reset failed|recovery failed",
+      "matched": 4
+    },
+    {
+      "tag": "revive",
+      "pattern": "working again",
+      "matched": 1
+    },
+    {
+      "tag": "fatal",
+      "pattern": "device error|resetting controller",
+      "matched": 2
+    },
+    {
+      "tag": "lost",
+      "pattern": "timed out after|resetting controller|completion for unknown cid",
+      "matched": 5
+    },
+    {
+      "tag": "bounded",
+      "pattern": "resetting controller",
+      "matched": 2
+    },
+    {
+      "tag": "dmar-zerocopy",
+      "pattern": "DMAR: (\\[DMA Write|DRHD: handling fault)",
+      "matched": 2
+    },
+    {
+      "tag": "dmar-bounce",
+      "pattern": "DMAR: (\\[DMA Write|DRHD: handling fault)",
+      "matched": 2
+    }
+  ],
+  "kmemleak_records": 0,
+  "kmemleak_driver_records": 0,
+  "cases": [
+    [
+      "device_info",
+      "8"
+    ],
+    [
+      "abi_validation",
+      "76"
+    ],
+    [
+      "data_integrity",
+      "370"
+    ],
+    [
+      "nop_and_batch_read",
+      "4"
+    ],
+    [
+      "queue_selection",
+      "8"
+    ],
+    [
+      "batch_flush",
+      "61"
+    ],
+    [
+      "pinned_page_not_recycled",
+      "671"
+    ],
+    [
+      "cancel_driver_owned",
+      "118"
+    ],
+    [
+      "cancel_device_owned",
+      "72"
+    ],
+    [
+      "cancel_race",
+      "2498"
+    ],
+    [
+      "close_with_inflight",
+      "238"
+    ],
+    [
+      "reset_semantics",
+      "19"
+    ],
+    [
+      "quotas",
+      "71"
+    ],
+    [
+      "file_isolation",
+      "5"
+    ],
+    [
+      "concurrency",
+      "627"
+    ],
+    [
+      "shared_file",
+      "176"
+    ],
+    [
+      "ring_overflow_all_queues",
+      "222"
+    ],
+    [
+      "second_device",
+      "7"
+    ],
+    [
+      "unbind_rebind",
+      "227"
+    ],
+    [
+      "timeout_abort",
+      "216"
+    ],
+    [
+      "timeout_reset",
+      "782"
+    ],
+    [
+      "timeout_escalation",
+      "1893"
+    ],
+    [
+      "recovery_failure",
+      "3053"
+    ],
+    [
+      "sysfs_reset_under_load",
+      "459"
+    ],
+    [
+      "fatal_recovery",
+      "62"
+    ],
+    [
+      "lost_completions",
+      "1726"
+    ],
+    [
+      "bounded_close_and_reset",
+      "1130"
+    ],
+    [
+      "dma_fault",
+      "236"
+    ]
+  ],
+  "counts": [
+    "  data_integrity: 75 copies verified (dst bytes, guard bytes, CRC32C)\r",
+    "  cancel_race: 1 cancelled before the doorbell, 907 aborted by the device, 592 completed first; 40 more aborted while held device-owned\r",
+    "  concurrency: 4 threads x 250 verified copies, own files\r",
+    "  timeout_abort: answered after 208 ms\r",
+    "  timeout_reset: ended after 757 ms, 1 command reissued\r",
+    "  sysfs_reset_under_load: 3 resets, 219 verified copies, 19 reissued\r",
+    "  fatal_recovery: 16 commands completed, 16 reissued after the reset\r",
+    "  bounded_close_and_reset: close returned after 569 ms, reset after 544 ms\r",
+    "  dma_fault: 2 faulting copies ended with -EIO (IOMMU fault reported)\r"
+  ],
+  "problems": [
+    "report: [   22.374397] kdc_test: FAIL dst_overlap:1751: (sub(a, 2, src, dst + 99, 100, 0x2)) == -1 (errno=0 Success)",
+    "report: [   39.796176] kdc_init: KDC_GUEST_FAILURE exit=1"
+  ]
+}

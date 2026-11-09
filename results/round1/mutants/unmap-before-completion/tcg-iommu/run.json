@@ -1,0 +1,75 @@
+{
+  "utc": "2026-11-07T09:58:30+00:00",
+  "accel": "tcg",
+  "iommu": true,
+  "qemu": "release",
+  "argv": [
+    "/home/postedism/Desktop/driver-firnware-runtime/A-kernel-device-contract-lab/.cache/build/qemu/qemu-system-x86_64",
+    "-machine",
+    "q35",
+    "-accel",
+    "tcg",
+    "-cpu",
+    "max",
+    "-m",
+    "2048",
+    "-smp",
+    "4",
+    "-nodefaults",
+    "-display",
+    "none",
+    "-serial",
+    "stdio",
+    "-monitor",
+    "none",
+    "-no-reboot",
+    "-nic",
+    "none",
+    "-device",
+    "intel-iommu",
+    "-device",
+    "pcie-root-port,id=rp0,bus=pcie.0,chassis=1,addr=0x2",
+    "-device",
+    "kdc-dma,id=kdc0,bus=rp0,queues=4",
+    "-device",
+    "pcie-root-port,id=rp1,bus=pcie.0,chassis=2,addr=0x3",
+    "-device",
+    "kdc-dma,id=kdc1,bus=rp1,queues=2",
+    "-qmp",
+    "unix:/tmp/kdc-qmp-tcg-iommu.sock,server=on,wait=off",
+    "-kernel",
+    "/home/postedism/Desktop/driver-firnware-runtime/A-kernel-device-contract-lab/build/kernel/arch/x86/boot/bzImage",
+    "-initrd",
+    "/home/postedism/Desktop/driver-firnware-runtime/A-kernel-device-contract-lab/build/initramfs.cpio.gz",
+    "-append",
+    "console=ttyS0 panic=-1 oops=panic panic_on_warn=1 nokaslr intel_iommu=on iommu.strict=1"
+  ],
+  "qemu_version": "QEMU emulator version 10.2.1",
+  "mutant": "unmap-before-completion",
+  "kernel_sha256": "8c54ea3eb9d243e47b56ccea46cb1f90856e8a8d176aa3e5e7a050834e260a37",
+  "client_sha256": "7edf2a40146f340b11ff557517cbf5ee704d892decc5b1da6af996ba2515a79e",
+  "load_average": [
+    "5.14",
+    "7.18",
+    "5.45"
+  ],
+  "passed": false,
+  "returncode": 0,
+  "seconds": 5.1,
+  "cases": [
+    [
+      "device_info",
+      "3"
+    ],
+    [
+      "abi_validation",
+      "63"
+    ]
+  ],
+  "problems": [
+    "forbidden: [    4.145107] DMAR: DRHD: handling fault status reg 2",
+    "forbidden: [    4.145629] DMAR: [DMA Read NO_PASID] Request device [01:00.0] fault addr 0xffff3000 [fault reason 0x06] PTE Read access is not set",
+    "forbidden: FAIL check_copy:329: c.id == id && c.status == 0 && c.hw_status == 0 (errno=14 Bad address)",
+    "forbidden: KDC_GUEST_FAILURE exit=1"
+  ]
+}

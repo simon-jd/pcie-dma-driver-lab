@@ -1,0 +1,65 @@
+reps 7
+# Each line is one arm (see tests/kdc_bench.c). 4 KiB zero-copy unless the name says otherwise;
+# coalesce = usecs << 16 | count (655364 = 4 or 10 us, 3276816 = 16 or 50 us).
+idle                 threads=1 qd=0 mode=nop
+# per-command cost, one command in flight
+nop-qd1              mode=nop qd=1
+zc4k-qd1             mode=zc size=4096 qd=1
+bounce4k-qd1         mode=bounce size=4096 qd=1
+# queue depth: one thread, one queue, one doorbell per command
+nop-qd4              mode=nop qd=4
+nop-qd16             mode=nop qd=16
+zc4k-qd2             mode=zc size=4096 qd=2
+zc4k-qd4             mode=zc size=4096 qd=4
+zc4k-qd8             mode=zc size=4096 qd=8
+zc4k-qd16            mode=zc size=4096 qd=16
+zc4k-qd32            mode=zc size=4096 qd=32
+# doorbell batching: everything a read() returned is resubmitted staged, then one FLUSH
+zc4k-qd4-batch       mode=zc size=4096 qd=4 batch=1
+zc4k-qd8-batch       mode=zc size=4096 qd=8 batch=1
+zc4k-qd16-batch      mode=zc size=4096 qd=16 batch=1
+zc4k-qd32-batch      mode=zc size=4096 qd=32 batch=1
+# interrupt coalescing
+zc4k-qd1-c4          mode=zc size=4096 qd=1 coalesce=655364
+zc4k-qd32-c4         mode=zc size=4096 qd=32 coalesce=655364
+zc4k-qd32-c16        mode=zc size=4096 qd=32 coalesce=3276816
+zc4k-qd32-batch-c4   mode=zc size=4096 qd=32 batch=1 coalesce=655364
+zc4k-qd32-batch-c16  mode=zc size=4096 qd=32 batch=1 coalesce=3276816
+# zero-copy vs bounce, one command in flight
+zc512-qd1            mode=zc size=512 qd=1
+bounce512-qd1        mode=bounce size=512 qd=1
+zc1k-qd1             mode=zc size=1024 qd=1
+bounce1k-qd1         mode=bounce size=1024 qd=1
+zc2k-qd1             mode=zc size=2048 qd=1
+bounce2k-qd1         mode=bounce size=2048 qd=1
+zc8k-qd1             mode=zc size=8192 qd=1
+bounce8k-qd1         mode=bounce size=8192 qd=1
+zc16k-qd1            mode=zc size=16384 qd=1
+bounce16k-qd1        mode=bounce size=16384 qd=1
+zc32k-qd1            mode=zc size=32768 qd=1
+bounce32k-qd1        mode=bounce size=32768 qd=1
+zc64k-qd1            mode=zc size=65536 qd=1
+bounce64k-qd1        mode=bounce size=65536 qd=1
+# zero-copy vs bounce, 8 in flight with batching (guest CPU per command matters here)
+zc1k-qd8-batch       mode=zc size=1024 qd=8 batch=1
+bounce1k-qd8-batch   mode=bounce size=1024 qd=8 batch=1
+bounce4k-qd8-batch   mode=bounce size=4096 qd=8 batch=1
+zc16k-qd8-batch      mode=zc size=16384 qd=8 batch=1
+bounce16k-qd8-batch  mode=bounce size=16384 qd=8 batch=1
+zc64k-qd8-batch      mode=zc size=65536 qd=8 batch=1
+bounce64k-qd8-batch  mode=bounce size=65536 qd=8 batch=1
+# scaling: one thread per vCPU, each with its own file and the queue of its CPU
+nop-t1-qd8           mode=nop threads=1 qd=8
+nop-t2-qd8           mode=nop threads=2 qd=8
+nop-t3-qd8           mode=nop threads=3 qd=8
+zc4k-t2-qd8          mode=zc size=4096 threads=2 qd=8
+zc4k-t3-qd8          mode=zc size=4096 threads=3 qd=8
+zc4k-t3-qd8-batch    mode=zc size=4096 threads=3 qd=8 batch=1
+# scaling with shared state: all threads on queue 0, or all on one open file
+nop-t3-qd8-onequeue  mode=nop threads=3 qd=8 queues=one
+nop-t3-qd8-sharedfile mode=nop threads=3 qd=8 files=shared
+zc4k-t3-qd8-onequeue mode=zc size=4096 threads=3 qd=8 queues=one
+zc4k-t3-qd8-sharedfile mode=zc size=4096 threads=3 qd=8 files=shared
+# a modeled device service time of 10 us per command (per queue)
+zc4k-qd32-batch-svc10us    mode=zc size=4096 qd=32 batch=1 service_ns=10000
+zc4k-t3-qd32-batch-svc10us mode=zc size=4096 threads=3 qd=32 batch=1 service_ns=10000

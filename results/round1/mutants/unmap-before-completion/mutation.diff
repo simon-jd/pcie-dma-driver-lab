@@ -1,0 +1,12 @@
+--- kdc_cmd.c
+-	cmd->sqe.dst_nents = cpu_to_le16(ndst);
+	return 0;
++	cmd->sqe.dst_nents = cpu_to_le16(ndst);
+	{ /* deliberate bug: release data buffers before the device used them */
+		void *keep = cmd->sgl;
+
+		cmd->sgl = NULL;
+		kdc_cmd_release(kdev, cmd, false);
+		cmd->sgl = keep;
+	}
+	return 0;

@@ -1,0 +1,164 @@
+{
+  "utc": "2026-11-07T15:29:43+00:00",
+  "accel": "tcg",
+  "iommu": true,
+  "qemu": "release",
+  "kernel": "kasan",
+  "argv": [
+    "/home/postedism/Desktop/driver-firnware-runtime/A-kernel-device-contract-lab/.cache/build/qemu/qemu-system-x86_64",
+    "-machine",
+    "q35",
+    "-accel",
+    "tcg",
+    "-cpu",
+    "max",
+    "-m",
+    "2048",
+    "-smp",
+    "4",
+    "-nodefaults",
+    "-display",
+    "none",
+    "-serial",
+    "stdio",
+    "-monitor",
+    "none",
+    "-no-reboot",
+    "-nic",
+    "none",
+    "-device",
+    "intel-iommu",
+    "-device",
+    "pcie-root-port,id=rp0,bus=pcie.0,chassis=1,addr=0x2",
+    "-device",
+    "kdc-dma,id=kdc0,bus=rp0,queues=4",
+    "-device",
+    "pcie-root-port,id=rp1,bus=pcie.0,chassis=2,addr=0x3",
+    "-device",
+    "kdc-dma,id=kdc1,bus=rp1,queues=2",
+    "-qmp",
+    "unix:/tmp/kdc-run-x70up937/qmp.sock,server=on,wait=off",
+    "-kernel",
+    "/home/postedism/Desktop/driver-firnware-runtime/A-kernel-device-contract-lab/build/kernel/arch/x86/boot/bzImage",
+    "-initrd",
+    "/home/postedism/Desktop/driver-firnware-runtime/A-kernel-device-contract-lab/build/initramfs.cpio.gz",
+    "-append",
+    "console=ttyS0 panic=-1 oops=panic panic_on_warn=1 nokaslr printk.devkmsg=on intel_iommu=on iommu.strict=1"
+  ],
+  "qemu_version": "QEMU emulator version 10.2.1",
+  "mutant": "release-before-reset",
+  "kernel_sha256": "88c45900d10a343523e9ac875d69e0493b2294b858cddcccd7a02f0232ff7bcf",
+  "client_sha256": "7150d1076e7fdebd5f952f4a5e333050cc1108420bc4254d57d983f853d870a1",
+  "load_average": [
+    "5.77",
+    "5.55",
+    "5.19"
+  ],
+  "passed": false,
+  "host_actions": [],
+  "returncode": 0,
+  "seconds": 41.0,
+  "expectations": [
+    {
+      "tag": "timeout-abort",
+      "pattern": "timed out after",
+      "matched": 1
+    }
+  ],
+  "kmemleak_records": 0,
+  "kmemleak_driver_records": 0,
+  "cases": [
+    [
+      "device_info",
+      "3"
+    ],
+    [
+      "abi_validation",
+      "64"
+    ],
+    [
+      "data_integrity",
+      "366"
+    ],
+    [
+      "nop_and_batch_read",
+      "2"
+    ],
+    [
+      "queue_selection",
+      "7"
+    ],
+    [
+      "batch_flush",
+      "67"
+    ],
+    [
+      "pinned_page_not_recycled",
+      "597"
+    ],
+    [
+      "cancel_driver_owned",
+      "89"
+    ],
+    [
+      "cancel_device_owned",
+      "63"
+    ],
+    [
+      "cancel_race",
+      "1979"
+    ],
+    [
+      "close_with_inflight",
+      "218"
+    ],
+    [
+      "reset_semantics",
+      "14"
+    ],
+    [
+      "quotas",
+      "55"
+    ],
+    [
+      "file_isolation",
+      "3"
+    ],
+    [
+      "concurrency",
+      "620"
+    ],
+    [
+      "shared_file",
+      "156"
+    ],
+    [
+      "ring_overflow_all_queues",
+      "224"
+    ],
+    [
+      "second_device",
+      "7"
+    ],
+    [
+      "unbind_rebind",
+      "215"
+    ],
+    [
+      "timeout_abort",
+      "220"
+    ]
+  ],
+  "counts": [
+    "  data_integrity: 75 copies verified (dst bytes, guard bytes, CRC32C)\r",
+    "  cancel_race: 3 cancelled before the doorbell, 1047 aborted by the device, 450 completed first; 40 more aborted while held device-owned\r",
+    "  concurrency: 4 threads x 250 verified copies, own files\r",
+    "  timeout_abort: answered after 213 ms\r"
+  ],
+  "problems": [
+    "report: [   24.294170] kdc_test: FAIL timeout_reset:1361: wait_ready(fd, 10000) (errno=2 No such file or directory)",
+    "report: [   24.302395] kdc 0000:01:00.0: queue 0: completion for unknown cid 0x3000",
+    "report: [   40.009020] kdc_init: KDC_GUEST_FAILURE exit=1",
+    "expectation window left open: timeout-reset"
+  ]
+}

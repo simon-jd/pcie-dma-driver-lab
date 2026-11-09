@@ -1,0 +1,51 @@
+make: Entering directory '/home/postedism/Desktop/driver-firnware-runtime/A-kernel-device-contract-lab/build/linux-6.12.41'
+make[1]: Entering directory '/home/postedism/Desktop/driver-firnware-runtime/A-kernel-device-contract-lab/build/kernel'
+  GEN     Makefile
+  DESCEND objtool
+  CALL    /home/postedism/Desktop/driver-firnware-runtime/A-kernel-device-contract-lab/build/linux-6.12.41/scripts/checksyscalls.sh
+  INSTALL libsubcmd_headers
+  CC      drivers/misc/kdc/kdc_pci.o
+  CC      drivers/misc/kdc/kdc_cmd.o
+  CC      drivers/misc/kdc/kdc_fops.o
+  CC      drivers/misc/kdc/kdc_recover.o
+  CC      drivers/misc/kdc/kdc_kunit.o
+  AR      drivers/misc/kdc/built-in.a
+  AR      drivers/misc/built-in.a
+  AR      drivers/built-in.a
+  AR      built-in.a
+  AR      vmlinux.a
+  LD      vmlinux.o
+  OBJCOPY modules.builtin.modinfo
+  GEN     modules.builtin
+  MODPOST vmlinux.symvers
+  KSYMS   .tmp_vmlinux0.kallsyms.S
+  AS      .tmp_vmlinux0.kallsyms.o
+  LD      .tmp_vmlinux1
+  NM      .tmp_vmlinux1.syms
+  KSYMS   .tmp_vmlinux1.kallsyms.S
+  AS      .tmp_vmlinux1.kallsyms.o
+  LD      .tmp_vmlinux2
+  NM      .tmp_vmlinux2.syms
+  KSYMS   .tmp_vmlinux2.kallsyms.S
+  AS      .tmp_vmlinux2.kallsyms.o
+  LD      vmlinux
+  NM      System.map
+  SORTTAB vmlinux
+  RELOCS  arch/x86/boot/compressed/vmlinux.relocs
+  RSTRIP  vmlinux
+  VOFFSET arch/x86/boot/compressed/../voffset.h
+  OBJCOPY arch/x86/boot/compressed/vmlinux.bin
+  XZKERN  arch/x86/boot/compressed/vmlinux.bin.xz
+  CC      arch/x86/boot/compressed/misc.o
+  MKPIGGY arch/x86/boot/compressed/piggy.S
+  AS      arch/x86/boot/compressed/piggy.o
+  LD      arch/x86/boot/compressed/vmlinux
+  ZOFFSET arch/x86/boot/zoffset.h
+  OBJCOPY arch/x86/boot/vmlinux.bin
+  AS      arch/x86/boot/header.o
+  LD      arch/x86/boot/setup.elf
+  OBJCOPY arch/x86/boot/setup.bin
+  BUILD   arch/x86/boot/bzImage
+Kernel: arch/x86/boot/bzImage is ready  (#1)
+make[1]: Leaving directory '/home/postedism/Desktop/driver-firnware-runtime/A-kernel-device-contract-lab/build/kernel'
+make: Leaving directory '/home/postedism/Desktop/driver-firnware-runtime/A-kernel-device-contract-lab/build/linux-6.12.41'

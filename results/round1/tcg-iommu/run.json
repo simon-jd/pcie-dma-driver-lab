@@ -1,0 +1,138 @@
+{
+  "utc": "2026-11-07T09:54:51+00:00",
+  "accel": "tcg",
+  "iommu": true,
+  "qemu": "release",
+  "argv": [
+    "/home/postedism/Desktop/driver-firnware-runtime/A-kernel-device-contract-lab/.cache/build/qemu/qemu-system-x86_64",
+    "-machine",
+    "q35",
+    "-accel",
+    "tcg",
+    "-cpu",
+    "max",
+    "-m",
+    "2048",
+    "-smp",
+    "4",
+    "-nodefaults",
+    "-display",
+    "none",
+    "-serial",
+    "stdio",
+    "-monitor",
+    "none",
+    "-no-reboot",
+    "-nic",
+    "none",
+    "-device",
+    "intel-iommu",
+    "-device",
+    "pcie-root-port,id=rp0,bus=pcie.0,chassis=1,addr=0x2",
+    "-device",
+    "kdc-dma,id=kdc0,bus=rp0,queues=4",
+    "-device",
+    "pcie-root-port,id=rp1,bus=pcie.0,chassis=2,addr=0x3",
+    "-device",
+    "kdc-dma,id=kdc1,bus=rp1,queues=2",
+    "-qmp",
+    "unix:/tmp/kdc-qmp-tcg-iommu.sock,server=on,wait=off",
+    "-kernel",
+    "/home/postedism/Desktop/driver-firnware-runtime/A-kernel-device-contract-lab/build/kernel/arch/x86/boot/bzImage",
+    "-initrd",
+    "/home/postedism/Desktop/driver-firnware-runtime/A-kernel-device-contract-lab/build/initramfs.cpio.gz",
+    "-append",
+    "console=ttyS0 panic=-1 oops=panic panic_on_warn=1 nokaslr intel_iommu=on iommu.strict=1"
+  ],
+  "qemu_version": "QEMU emulator version 10.2.1",
+  "mutant": null,
+  "kernel_sha256": "b85ab8fb5c208a1b32a86bfde3b09aecb8b54c37d46845873f980ec16abfa2f1",
+  "client_sha256": "7edf2a40146f340b11ff557517cbf5ee704d892decc5b1da6af996ba2515a79e",
+  "load_average": [
+    "11.40",
+    "7.59",
+    "5.01"
+  ],
+  "passed": true,
+  "returncode": 0,
+  "seconds": 10.5,
+  "cases": [
+    [
+      "device_info",
+      "3"
+    ],
+    [
+      "abi_validation",
+      "63"
+    ],
+    [
+      "data_integrity",
+      "250"
+    ],
+    [
+      "nop_and_batch_read",
+      "2"
+    ],
+    [
+      "queue_selection",
+      "8"
+    ],
+    [
+      "batch_flush",
+      "60"
+    ],
+    [
+      "pinned_page_not_recycled",
+      "599"
+    ],
+    [
+      "cancel_driver_owned",
+      "61"
+    ],
+    [
+      "cancel_device_owned",
+      "61"
+    ],
+    [
+      "cancel_race",
+      "1255"
+    ],
+    [
+      "close_with_inflight",
+      "213"
+    ],
+    [
+      "reset_semantics",
+      "11"
+    ],
+    [
+      "quotas",
+      "43"
+    ],
+    [
+      "file_isolation",
+      "2"
+    ],
+    [
+      "concurrency",
+      "436"
+    ],
+    [
+      "shared_file",
+      "84"
+    ],
+    [
+      "ring_overflow_all_queues",
+      "186"
+    ],
+    [
+      "second_device",
+      "9"
+    ],
+    [
+      "unbind_rebind",
+      "244"
+    ]
+  ],
+  "problems": []
+}

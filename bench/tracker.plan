@@ -1,0 +1,8 @@
+reps 5
+# Run with --configs noiommu,notrack: the destination-overlap tracker on (default) and off.
+zc4k-qd1             mode=zc size=4096 qd=1
+bounce512-qd32-batch mode=bounce size=512 qd=32 batch=1
+zc4k-qd32-batch      mode=zc size=4096 qd=32 batch=1
+zc4k-t3-qd8          mode=zc size=4096 threads=3 qd=8
+zc4k-t3-qd8-batch    mode=zc size=4096 threads=3 qd=8 batch=1
+bounce512-t3-qd8-batch mode=bounce size=512 threads=3 qd=8 batch=1

@@ -1,0 +1,971 @@
+[    0.000000] Linux version 6.12.41 (kdc@local) (gcc (Ubuntu 15.2.0-16ubuntu1) 15.2.0, GNU ld (GNU Binutils for Ubuntu) 2.46) #1 SMP 2026-11-06 00:00:00 +0000
+[    0.000000] Command line: console=ttyS0 panic=-1 oops=panic panic_on_warn=1 nokaslr printk.devkmsg=on intel_iommu=on iommu.strict=1
+[    0.000000] BIOS-provided physical RAM map:
+[    0.000000] BIOS-e820: [mem 0x0000000000000000-0x000000000009fbff] usable
+[    0.000000] BIOS-e820: [mem 0x000000000009fc00-0x000000000009ffff] reserved
+[    0.000000] BIOS-e820: [mem 0x00000000000f0000-0x00000000000fffff] reserved
+[    0.000000] BIOS-e820: [mem 0x0000000000100000-0x000000007ffdffff] usable
+[    0.000000] BIOS-e820: [mem 0x000000007ffe0000-0x000000007fffffff] reserved
+[    0.000000] BIOS-e820: [mem 0x00000000b0000000-0x00000000bfffffff] reserved
+[    0.000000] BIOS-e820: [mem 0x00000000fed1c000-0x00000000fed1ffff] reserved
+[    0.000000] BIOS-e820: [mem 0x00000000fffc0000-0x00000000ffffffff] reserved
+[    0.000000] BIOS-e820: [mem 0x000000fd00000000-0x000000ffffffffff] reserved
+[    0.000000] NX (Execute Disable) protection: active
+[    0.000000] APIC: Static calls initialized
+[    0.000000] tsc: Fast TSC calibration using PIT
+[    0.000000] tsc: Detected 2995.250 MHz processor
+[    0.003861] last_pfn = 0x7ffe0 max_arch_pfn = 0x10000000000
+[    0.003901] x86/PAT: PAT support disabled because CONFIG_X86_PAT is disabled in the kernel.
+[    0.004051] x86/PAT: Configuration [0-7]: WB  WT  UC- UC  WB  WT  UC- UC  
+[    0.014798] found SMP MP-table at [mem 0x000f54b0-0x000f54bf]
+[    0.016574] Using GB pages for direct mapping
+[    0.022915] RAMDISK: [mem 0x7fe31000-0x7ffdffff]
+[    0.023260] ACPI: Early table checksum verification disabled
+[    0.023717] ACPI: RSDP 0x00000000000F52D0 000014 (v00 BOCHS )
+[    0.024096] ACPI: RSDT 0x000000007FFE2626 00003C (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+[    0.025050] ACPI: FACP 0x000000007FFE238E 0000F4 (v03 BOCHS  BXPC     00000001 BXPC 00000001)
+[    0.025922] ACPI: DSDT 0x000000007FFE0040 00234E (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+[    0.026103] ACPI: FACS 0x000000007FFE0000 000040
+[    0.026170] ACPI: APIC 0x000000007FFE2482 000090 (v03 BOCHS  BXPC     00000001 BXPC 00000001)
+[    0.026201] ACPI: HPET 0x000000007FFE2512 000038 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+[    0.026229] ACPI: MCFG 0x000000007FFE254A 00003C (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+[    0.026292] ACPI: DMAR 0x000000007FFE2586 000078 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+[    0.026323] ACPI: WAET 0x000000007FFE25FE 000028 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+[    0.026399] ACPI: Reserving FACP table memory at [mem 0x7ffe238e-0x7ffe2481]
+[    0.026433] ACPI: Reserving DSDT table memory at [mem 0x7ffe0040-0x7ffe238d]
+[    0.026446] ACPI: Reserving FACS table memory at [mem 0x7ffe0000-0x7ffe003f]
+[    0.026456] ACPI: Reserving APIC table memory at [mem 0x7ffe2482-0x7ffe2511]
+[    0.026467] ACPI: Reserving HPET table memory at [mem 0x7ffe2512-0x7ffe2549]
+[    0.026477] ACPI: Reserving MCFG table memory at [mem 0x7ffe254a-0x7ffe2585]
+[    0.026487] ACPI: Reserving DMAR table memory at [mem 0x7ffe2586-0x7ffe25fd]
+[    0.026496] ACPI: Reserving WAET table memory at [mem 0x7ffe25fe-0x7ffe2625]
+[    0.030283] Zone ranges:
+[    0.030314]   DMA32    [mem 0x0000000000001000-0x000000007ffdffff]
+[    0.030412]   Normal   empty
+[    0.030433] Movable zone start for each node
+[    0.030457] Early memory node ranges
+[    0.030481]   node   0: [mem 0x0000000000001000-0x000000000009efff]
+[    0.030615]   node   0: [mem 0x0000000000100000-0x000000007ffdffff]
+[    0.030791] Initmem setup node 0 [mem 0x0000000000001000-0x000000007ffdffff]
+[    0.032173] On node 0, zone DMA32: 1 pages in unavailable ranges
+[    0.122585] On node 0, zone DMA32: 97 pages in unavailable ranges
+[    0.122713] On node 0, zone DMA32: 32 pages in unavailable ranges
+[    0.168627] kasan: KernelAddressSanitizer initialized
+[    0.169312] ACPI: PM-Timer IO Port: 0x608
+[    0.169946] ACPI: LAPIC_NMI (acpi_id[0xff] dfl dfl lint[0x1])
+[    0.170834] IOAPIC[0]: apic_id 0, version 32, address 0xfec00000, GSI 0-23
+[    0.171049] ACPI: INT_SRC_OVR (bus 0 bus_irq 0 global_irq 2 dfl dfl)
+[    0.171498] ACPI: INT_SRC_OVR (bus 0 bus_irq 5 global_irq 5 high level)
+[    0.171562] ACPI: INT_SRC_OVR (bus 0 bus_irq 9 global_irq 9 high level)
+[    0.171681] ACPI: INT_SRC_OVR (bus 0 bus_irq 10 global_irq 10 high level)
+[    0.171695] ACPI: INT_SRC_OVR (bus 0 bus_irq 11 global_irq 11 high level)
+[    0.171993] ACPI: Using ACPI (MADT) for SMP configuration information
+[    0.172115] ACPI: HPET id: 0x8086a201 base: 0xfed00000
+[    0.172588] CPU topo: Max. logical packages:   1
+[    0.172605] CPU topo: Max. logical dies:       1
+[    0.172625] CPU topo: Max. dies per package:   1
+[    0.172673] CPU topo: Max. threads per core:   1
+[    0.172883] CPU topo: Num. cores per package:     4
+[    0.172910] CPU topo: Num. threads per package:   4
+[    0.172920] CPU topo: Allowing 4 present CPUs plus 0 hotplug CPUs
+[    0.173754] [mem 0xc0000000-0xfed1bfff] available for PCI devices
+[    0.174193] clocksource: refined-jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 19112604462750000 ns
+[    0.182136] setup_percpu: NR_CPUS:4 nr_cpumask_bits:4 nr_cpu_ids:4 nr_node_ids:1
+[    0.185117] percpu: Embedded 63 pages/cpu s226776 r0 d31272 u524288
+[    0.188123] Kernel command line: console=ttyS0 panic=-1 oops=panic panic_on_warn=1 nokaslr printk.devkmsg=on intel_iommu=on iommu.strict=1
+[    0.189562] DMAR: IOMMU enabled
+[    0.189810] Unknown kernel command line parameters "nokaslr", will be passed to user space.
+[    0.192173] random: crng init done
+[    0.192769] Dentry cache hash table entries: 262144 (order: 9, 2097152 bytes, linear)
+[    0.193204] Inode-cache hash table entries: 131072 (order: 8, 1048576 bytes, linear)
+[    0.195830] Built 1 zonelists, mobility grouping on.  Total pages: 524158
+[    0.196166] mem auto-init: stack:all(zero), heap alloc:off, heap free:off
+[    0.196210] stackdepot: allocating hash table via alloc_large_system_hash
+[    0.196266] stackdepot hash table entries: 1048576 (order: 12, 16777216 bytes, linear)
+[    0.376644] SLUB: HWalign=64, Order=0-3, MinObjects=0, CPUs=4, Nodes=1
+[    0.409566] Running RCU self tests
+[    0.409599] Running RCU synchronous self tests
+[    0.410986] rcu: Hierarchical RCU implementation.
+[    0.411006] rcu: 	RCU lockdep checking is enabled.
+[    0.411237] rcu: RCU calculated value of scheduler-enlistment delay is 10 jiffies.
+[    0.414305] Running RCU synchronous self tests
+[    0.459084] NR_IRQS: 4352, nr_irqs: 456, preallocated irqs: 16
+[    0.474084] rcu: srcu_init: Setting srcu_struct sizes based on contention.
+[    0.487458] Console: colour *CGA 80x25
+[    0.491171] printk: legacy console [ttyS0] enabled
+[    0.499005] Lock dependency validator: Copyright (c) 2006 Red Hat, Inc., Ingo Molnar
+[    0.499162] ... MAX_LOCKDEP_SUBCLASSES:  8
+[    0.499237] ... MAX_LOCK_DEPTH:          48
+[    0.499309] ... MAX_LOCKDEP_KEYS:        8192
+[    0.499381] ... CLASSHASH_SIZE:          4096
+[    0.499452] ... MAX_LOCKDEP_ENTRIES:     32768
+[    0.499523] ... MAX_LOCKDEP_CHAINS:      65536
+[    0.499593] ... CHAINHASH_SIZE:          32768
+[    0.499665]  memory used by lock dependency info: 6429 kB
+[    0.499746]  memory used for stack traces: 4224 kB
+[    0.499820]  per task-struct memory footprint: 1920 bytes
+[    0.500497] ACPI: Core revision 20240827
+[    0.512620] clocksource: hpet: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 19112604467 ns
+[    0.521520] APIC: Switch to symmetric I/O mode setup
+[    0.531724] ..TIMER: vector=0x30 apic1=0 pin1=2 apic2=-1 pin2=-1
+[    0.574662] clocksource: tsc-early: mask: 0xffffffffffffffff max_cycles: 0x2b2cbe1cae8, max_idle_ns: 440795224430 ns
+[    0.575382] Calibrating delay loop (skipped), value calculated using timer frequency.. 5990.50 BogoMIPS (lpj=29952500)
+[    0.578186] Last level iTLB entries: 4KB 0, 2MB 0, 4MB 0
+[    0.584044] Last level dTLB entries: 4KB 0, 2MB 0, 4MB 0, 1GB 0
+[    0.589913] Speculative Store Bypass: Vulnerable
+[    0.597132] x86/fpu: Supporting XSAVE feature 0x001: 'x87 floating point registers'
+[    0.601989] x86/fpu: Supporting XSAVE feature 0x002: 'SSE registers'
+[    0.602138] x86/fpu: Supporting XSAVE feature 0x004: 'AVX registers'
+[    0.605169] x86/fpu: Supporting XSAVE feature 0x008: 'MPX bounds registers'
+[    0.605305] x86/fpu: Supporting XSAVE feature 0x010: 'MPX CSR'
+[    0.605482] x86/fpu: Supporting XSAVE feature 0x200: 'Protection Keys User registers'
+[    0.605784] x86/fpu: xstate_offset[2]:  576, xstate_sizes[2]:  256
+[    0.606008] x86/fpu: xstate_offset[3]:  960, xstate_sizes[3]:   64
+[    0.606125] x86/fpu: xstate_offset[4]: 1024, xstate_sizes[4]:   64
+[    0.606252] x86/fpu: xstate_offset[9]: 2688, xstate_sizes[9]:    8
+[    0.606403] x86/fpu: Enabled xstate features 0x21f, context size is 2696 bytes, using 'standard' format.
+[    0.638639] Freeing SMP alternatives memory: 8K
+[    0.638979] pid_max: default: 32768 minimum: 301
+[    0.650751] Mount-cache hash table entries: 4096 (order: 3, 32768 bytes, linear)
+[    0.651093] Mountpoint-cache hash table entries: 4096 (order: 3, 32768 bytes, linear)
+[    0.685943] Running RCU synchronous self tests
+[    0.686219] Running RCU synchronous self tests
+[    0.825097] smpboot: CPU0: AMD QEMU TCG CPU version 2.5+ (family: 0x6, model: 0x6, stepping: 0x3)
+[    0.846755] Performance Events: PMU not available due to virtualization, using software events only.
+[    0.848288] signal: max sigframe size: 3232
+[    0.851929] rcu: Hierarchical SRCU implementation.
+[    0.852047] rcu: 	Max phase no-delay instances is 1000.
+[    0.867492] smp: Bringing up secondary CPUs ...
+[    0.880906] smpboot: x86: Booting SMP configuration:
+[    0.881193] .... node  #0, CPUs:      #1 #2 #3
+[    1.396958] smp: Brought up 1 node, 4 CPUs
+[    1.397586] smpboot: Total of 4 processors activated (23947.88 BogoMIPS)
+[    1.418832] Memory: 1728956K/2096632K available (10240K kernel code, 3171K rwdata, 3056K rodata, 1280K init, 17872K bss, 362828K reserved, 0K cma-reserved)
+[    1.446103] devtmpfs: initialized
+[    1.490637] Running RCU synchronous self tests
+[    1.491130] Running RCU synchronous self tests
+[    1.520146] DMA-API: preallocated 65536 debug entries
+[    1.520331] DMA-API: debugging enabled by kernel config
+[    1.520711] clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 19112604462750000 ns
+[    1.521632] futex hash table entries: 1024 (order: 5, 131072 bytes, linear)
+[    1.567388] thermal_sys: Registered thermal governor 'step_wise'
+[    1.567511] thermal_sys: Registered thermal governor 'user_space'
+[    1.569605] cpuidle: using governor ladder
+[    1.572093] acpiphp: ACPI Hot Plug PCI Controller Driver version: 0.5
+[    1.578853] PCI: ECAM [mem 0xb0000000-0xbfffffff] (base 0xb0000000) for domain 0000 [bus 00-ff]
+[    1.579890] PCI: ECAM [mem 0xb0000000-0xbfffffff] reserved as E820 entry
+[    1.583047] PCI: Using configuration type 1 for base access
+[    1.604026] ACPI: Added _OSI(Module Device)
+[    1.604193] ACPI: Added _OSI(Processor Device)
+[    1.604302] ACPI: Added _OSI(Processor Aggregator Device)
+[    2.632421] ACPI: 1 ACPI AML tables successfully acquired and loaded
+[    2.845736] ACPI: Interpreter enabled
+[    2.847767] ACPI: PM: (supports S0 S5)
+[    2.847990] ACPI: Using IOAPIC for interrupt routing
+[    2.853058] PCI: Using host bridge windows from ACPI; if necessary, use "pci=nocrs" and report a bug
+[    2.853210] PCI: Using E820 reservations for host bridge windows
+[    2.881011] ACPI: Enabled 2 GPEs in block 00 to 3F
+[    3.627841] ACPI: PCI Root Bridge [PCI0] (domain 0000 [bus 00-ff])
+[    3.629023] acpi PNP0A08:00: _OSC: OS supports [ExtendedConfig ASPM ClockPM Segments MSI HPX-Type3]
+[    3.656476] acpi PNP0A08:00: _OSC: platform does not support [PCIeHotplug LTR]
+[    3.703353] acpi PNP0A08:00: _OSC: OS now controls [PME PCIeCapability]
+[    3.730891] PCI host bridge to bus 0000:00
+[    3.732954] pci_bus 0000:00: root bus resource [io  0x0000-0x0cf7 window]
+[    3.733200] pci_bus 0000:00: root bus resource [io  0x0d00-0xffff window]
+[    3.733393] pci_bus 0000:00: root bus resource [mem 0x000a0000-0x000bffff window]
+[    3.733587] pci_bus 0000:00: root bus resource [mem 0x80000000-0xafffffff window]
+[    3.733778] pci_bus 0000:00: root bus resource [mem 0xc0000000-0xfebfffff window]
+[    3.733970] pci_bus 0000:00: root bus resource [mem 0x100000000-0x8ffffffff window]
+[    3.734328] pci_bus 0000:00: root bus resource [bus 00-ff]
+[    3.738063] pci 0000:00:00.0: [8086:29c0] type 00 class 0x060000 conventional PCI endpoint
+[    3.754387] pci 0000:00:02.0: [1b36:000c] type 01 class 0x060400 PCIe Root Port
+[    3.757066] pci 0000:00:02.0: BAR 0 [mem 0xfe600000-0xfe600fff]
+[    3.758786] pci 0000:00:02.0: PCI bridge to [bus 01]
+[    3.759321] pci 0000:00:02.0:   bridge window [mem 0xfe400000-0xfe5fffff]
+[    3.760093] pci 0000:00:02.0:   bridge window [mem 0xfea00000-0xfebfffff 64bit pref]
+[    3.760500] pci 0000:00:02.0: enabling Extended Tags
+[    3.772254] pci 0000:00:03.0: [1b36:000c] type 01 class 0x060400 PCIe Root Port
+[    3.773367] pci 0000:00:03.0: BAR 0 [mem 0xfe601000-0xfe601fff]
+[    3.776270] pci 0000:00:03.0: PCI bridge to [bus 02]
+[    3.776417] pci 0000:00:03.0:   bridge window [mem 0xfe200000-0xfe3fffff]
+[    3.776857] pci 0000:00:03.0:   bridge window [mem 0xfe800000-0xfe9fffff 64bit pref]
+[    3.777032] pci 0000:00:03.0: enabling Extended Tags
+[    3.788371] pci 0000:00:1f.0: [8086:2918] type 00 class 0x060100 conventional PCI endpoint
+[    3.789671] pci 0000:00:1f.0: quirk: [io  0x0600-0x067f] claimed by ICH6 ACPI/GPIO/TCO
+[    3.798704] pci 0000:00:1f.2: [8086:2922] type 00 class 0x010601 conventional PCI endpoint
+[    3.802175] pci 0000:00:1f.2: BAR 4 [io  0xc040-0xc05f]
+[    3.803304] pci 0000:00:1f.2: BAR 5 [mem 0xfe602000-0xfe602fff]
+[    3.813896] pci 0000:00:1f.3: [8086:2930] type 00 class 0x0c0500 conventional PCI endpoint
+[    3.816754] pci 0000:00:1f.3: BAR 4 [io  0x0700-0x073f]
+[    3.834246] acpiphp: Slot [0] registered
+[    3.836005] pci 0000:01:00.0: [1234:4b44] type 00 class 0x088000 PCIe Endpoint
+[    3.836832] pci 0000:01:00.0: BAR 0 [mem 0xfe400000-0xfe403fff 64bit]
+[    3.837546] pci 0000:01:00.0: BAR 2 [mem 0xfe404000-0xfe404fff]
+[    3.840278] pci 0000:01:00.0: enabling Extended Tags
+[    3.981503] pci 0000:00:02.0: PCI bridge to [bus 01]
+[    3.988898] acpiphp: Slot [0-1] registered
+[    3.989332] pci 0000:02:00.0: [1234:4b44] type 00 class 0x088000 PCIe Endpoint
+[    3.990247] pci 0000:02:00.0: BAR 0 [mem 0xfe200000-0xfe203fff 64bit]
+[    3.990985] pci 0000:02:00.0: BAR 2 [mem 0xfe204000-0xfe204fff]
+[    3.996067] pci 0000:02:00.0: enabling Extended Tags
+[    4.132819] pci 0000:00:03.0: PCI bridge to [bus 02]
+[    4.174751] ACPI: PCI: Interrupt link LNKA configured for IRQ 10
+[    4.194460] ACPI: PCI: Interrupt link LNKB configured for IRQ 10
+[    4.213907] ACPI: PCI: Interrupt link LNKC configured for IRQ 11
+[    4.233595] ACPI: PCI: Interrupt link LNKD configured for IRQ 11
+[    4.253285] ACPI: PCI: Interrupt link LNKE configured for IRQ 10
+[    4.272926] ACPI: PCI: Interrupt link LNKF configured for IRQ 10
+[    4.292290] ACPI: PCI: Interrupt link LNKG configured for IRQ 11
+[    4.311264] ACPI: PCI: Interrupt link LNKH configured for IRQ 11
+[    4.316319] ACPI: PCI: Interrupt link GSIA configured for IRQ 16
+[    4.318768] ACPI: PCI: Interrupt link GSIB configured for IRQ 17
+[    4.321172] ACPI: PCI: Interrupt link GSIC configured for IRQ 18
+[    4.323603] ACPI: PCI: Interrupt link GSID configured for IRQ 19
+[    4.326964] ACPI: PCI: Interrupt link GSIE configured for IRQ 20
+[    4.329371] ACPI: PCI: Interrupt link GSIF configured for IRQ 21
+[    4.331832] ACPI: PCI: Interrupt link GSIG configured for IRQ 22
+[    4.334281] ACPI: PCI: Interrupt link GSIH configured for IRQ 23
+[    4.414200] iommu: Default domain type: Translated
+[    4.414345] iommu: DMA domain TLB invalidation policy: strict mode (set via kernel command line)
+[    4.417452] PCI: Using ACPI for IRQ routing
+[    4.446047] vgaarb: loaded
+[    4.453421] clocksource: Switched to clocksource tsc-early
+[    4.464605] ACPI: Failed to create genetlink family for ACPI event
+[    4.466263] pnp: PnP ACPI init
+[    4.503918] system 00:04: [mem 0xb0000000-0xbfffffff window] has been reserved
+[    4.562827] pnp: PnP ACPI: found 5 devices
+[    4.710477] clocksource: acpi_pm: mask: 0xffffff max_cycles: 0xffffff, max_idle_ns: 2085701024 ns
+[    4.711607] pci 0000:00:02.0: bridge window [io  0x1000-0x0fff] to [bus 01] add_size 1000
+[    4.711991] pci 0000:00:03.0: bridge window [io  0x1000-0x0fff] to [bus 02] add_size 1000
+[    4.713803] pci 0000:00:02.0: bridge window [io  0x1000-0x1fff]: assigned
+[    4.713966] pci 0000:00:03.0: bridge window [io  0x2000-0x2fff]: assigned
+[    4.714660] pci 0000:00:02.0: PCI bridge to [bus 01]
+[    4.714856] pci 0000:00:02.0:   bridge window [io  0x1000-0x1fff]
+[    4.715977] pci 0000:00:02.0:   bridge window [mem 0xfe400000-0xfe5fffff]
+[    4.716817] pci 0000:00:02.0:   bridge window [mem 0xfea00000-0xfebfffff 64bit pref]
+[    4.718478] pci 0000:00:03.0: PCI bridge to [bus 02]
+[    4.718617] pci 0000:00:03.0:   bridge window [io  0x2000-0x2fff]
+[    4.719579] pci 0000:00:03.0:   bridge window [mem 0xfe200000-0xfe3fffff]
+[    4.720344] pci 0000:00:03.0:   bridge window [mem 0xfe800000-0xfe9fffff 64bit pref]
+[    4.721692] pci_bus 0000:00: resource 4 [io  0x0000-0x0cf7 window]
+[    4.721828] pci_bus 0000:00: resource 5 [io  0x0d00-0xffff window]
+[    4.721926] pci_bus 0000:00: resource 6 [mem 0x000a0000-0x000bffff window]
+[    4.722025] pci_bus 0000:00: resource 7 [mem 0x80000000-0xafffffff window]
+[    4.722126] pci_bus 0000:00: resource 8 [mem 0xc0000000-0xfebfffff window]
+[    4.722222] pci_bus 0000:00: resource 9 [mem 0x100000000-0x8ffffffff window]
+[    4.722356] pci_bus 0000:01: resource 0 [io  0x1000-0x1fff]
+[    4.722449] pci_bus 0000:01: resource 1 [mem 0xfe400000-0xfe5fffff]
+[    4.722540] pci_bus 0000:01: resource 2 [mem 0xfea00000-0xfebfffff 64bit pref]
+[    4.722644] pci_bus 0000:02: resource 0 [io  0x2000-0x2fff]
+[    4.722729] pci_bus 0000:02: resource 1 [mem 0xfe200000-0xfe3fffff]
+[    4.722817] pci_bus 0000:02: resource 2 [mem 0xfe800000-0xfe9fffff 64bit pref]
+[    4.725991] PCI: CLS 0 bytes, default 64
+[    4.727553] DMAR: Host address width 48
+[    4.728202] DMAR: DRHD base: 0x000000fed90000 flags: 0x0
+[    4.730250] DMAR: dmar0: reg_base_addr fed90000 ver 1:0 cap 80d2008c222f0606 ecap f00f4a
+[    4.731902] DMAR: No RMRR found
+[    4.731990] DMAR: No ATSR found
+[    4.732061] DMAR: No SATC found
+[    4.733326] DMAR: dmar0: Using Queued invalidation
+[    4.736090] Unpacking initramfs...
+[    4.754309] pci 0000:00:00.0: Adding to iommu group 0
+[    4.756161] pci 0000:00:02.0: Adding to iommu group 1
+[    4.757529] pci 0000:00:03.0: Adding to iommu group 2
+[    4.759886] pci 0000:00:1f.0: Adding to iommu group 3
+[    4.760839] pci 0000:00:1f.2: Adding to iommu group 3
+[    4.761769] pci 0000:00:1f.3: Adding to iommu group 3
+[    4.763733] pci 0000:01:00.0: Adding to iommu group 4
+[    4.765180] pci 0000:02:00.0: Adding to iommu group 5
+[    4.867337] DMAR: Intel(R) Virtualization Technology for Directed I/O
+[    4.888277] workingset: timestamp_bits=62 max_order=19 bucket_order=0
+[    4.904247] Freeing initrd memory: 1724K
+[    5.057185] ACPI: \_SB_.GSIG: Enabled at IRQ 22
+[    5.201534] ACPI: \_SB_.GSIH: Enabled at IRQ 23
+[    5.219058] input: Power Button as /devices/LNXSYSTM:00/LNXPWRBN:00/input/input0
+[    5.220424] ACPI: button: Power Button [PWRF]
+[    5.938811] tsc: Refined TSC clocksource calibration: 2995.216 MHz
+[    5.939405] clocksource: tsc: mask: 0xffffffffffffffff max_cycles: 0x2b2c9dcd011, max_idle_ns: 440795230803 ns
+[    5.941023] clocksource: Switched to clocksource tsc
+[    5.974629] Serial: 8250/16550 driver, 1 ports, IRQ sharing disabled
+[    5.984630] 00:02: ttyS0 at I/O 0x3f8 (irq = 4, base_baud = 115200) is a 16550A
+[    6.071112] kdc 0000:01:00.0: kdc0: 4 queues x 64 entries, bounce <= 4096 bytes
+[    6.091051] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[    6.094612] i8042: PNP: PS/2 Controller [PNP0303:KBD,PNP0f13:MOU] at 0x60,0x64 irq 1,12
+[    6.101368] serio: i8042 KBD port at 0x60,0x64 irq 1
+[    6.102258] serio: i8042 AUX port at 0x60,0x64 irq 12
+[    6.105183] amd_pstate: the _CPC object is not present in SBIOS or ACPI disabled
+[    6.108640] IPI shorthand broadcast: enabled
+[    6.228637] sched_clock: Marking stable (6189950282, 30007151)->(6236958638, -17001205)
+[    6.246735] input: AT Translated Set 2 keyboard as /devices/platform/i8042/serio0/input/input1
+[    6.383486] kmemleak: Kernel memory leak detector initialized (mem pool available: 14998)
+[    6.390347] KTAP version 1
+[    6.390458] 1..1
+[    6.390898]     KTAP version 1
+[    6.391845]     # Subtest: kdc
+[    6.392422]     # module: kdc_kunit
+[    6.392543]     1..12
+[    6.399303]     ok 1 cid_generation
+[    6.402850]     ok 2 ring_math
+[    6.405980]     ok 3 phase_flips_on_wrap
+[    6.408758]     ok 4 page_span_and_overlap
+[    6.410959]     ok 5 cancel_by_ownership
+[    6.413256]     ok 6 status_mapping
+[    6.415479]     ok 7 watchdog_and_reclaim
+[    6.417442]     ok 8 dst_split
+[    6.419779]     ok 9 admission_and_quota
+[    6.422755]     ok 10 submit_field_checks
+[    6.425642]     ok 11 sgl_from_dma_segments
+[    6.427851]     ok 12 hw_layout
+[    6.427982] # kdc: pass:12 fail:0 skip:0 total:12
+[    6.428215] # Totals: pass:12 fail:0 skip:0 total:12
+[    6.428413] ok 1 kdc
+[    6.679154] Freeing unused kernel image (initmem) memory: 1280K
+[    6.679465] Write protecting the kernel read-only data: 14336k
+[    6.686647] Freeing unused kernel image (rodata/data gap) memory: 1040K
+[    6.687100] Run /init as init process
+[    6.745662] input: ImExPS/2 Generic Explorer Mouse as /devices/platform/i8042/serio1/input/input3
+[    6.923607] kdc_init: KDC_GUEST_START
+[    6.956045] kdc_test: PASS device_info (3 ms)
+[    7.020171] kdc_test: PASS abi_validation (64 ms)
+[    7.363885] kdc_test:   data_integrity: 75 copies verified (dst bytes, guard bytes, CRC32C)
+[    7.364153] kdc_test: PASS data_integrity (344 ms)
+[    7.366880] kdc_test: PASS nop_and_batch_read (2 ms)
+[    7.376615] kdc_test: PASS queue_selection (9 ms)
+[    7.451417] kdc_test: PASS batch_flush (75 ms)
+[    8.061088] kdc_test: PASS pinned_page_not_recycled (610 ms)
+[    8.143873] kdc_test: PASS cancel_driver_owned (82 ms)
+[    8.210888] kdc_test: PASS cancel_device_owned (66 ms)
+[   10.271807] kdc_test:   cancel_race: 4 cancelled before the doorbell, 1150 aborted by the device, 346 completed first; 40 more aborted while held device-owned
+[   10.272253] kdc_test: PASS cancel_race (2061 ms)
+[   10.494658] kdc_test: PASS close_with_inflight (222 ms)
+[   10.510973] kdc_test: PASS reset_semantics (16 ms)
+[   10.547355] kdc_test: PASS quotas (36 ms)
+[   10.549810] kdc_test: PASS file_isolation (2 ms)
+[   11.089078] kdc_test:   concurrency: 4 threads x 250 verified copies, own files
+[   11.089327] kdc_test: PASS concurrency (540 ms)
+[   11.207301] kdc_test: PASS shared_file (118 ms)
+[   11.426889] kdc_test: PASS ring_overflow_all_queues (218 ms)
+[   11.434507] kdc_test: PASS second_device (7 ms)
+[   11.610477] kdc 0000:01:00.0: kdc0: 4 queues x 64 entries, bounce <= 4096 bytes
+[   11.620246] kdc_test: PASS unbind_rebind (186 ms)
+[   11.622900] kdc_test: EXPECT_BEGIN timeout-abort timed out after
+[   11.828828] kdc 0000:01:00.0: queue 1 cid 0x1000 timed out after 200 ms; aborting
+[   11.832156] kdc_test: EXPECT_END timeout-abort
+[   11.833164] kdc_test:   timeout_abort: answered after 207 ms
+[   11.833331] kdc_test: PASS timeout_abort (213 ms)
+[   11.835815] kdc_test: EXPECT_BEGIN timeout-reset timed out after|resetting controller
+[   12.048248] kdc 0000:01:00.0: queue 0 cid 0x3000 timed out after 200 ms; aborting
+[   12.599253] kdc 0000:01:00.0: resetting controller
+[   12.602937] kdc_test: EXPECT_END timeout-reset
+[   12.613369] kdc_test:   timeout_reset: ended after 766 ms, 1 command reissued
+[   12.613587] kdc_test: PASS timeout_reset (780 ms)
+[   12.615879] kdc_test: EXPECT_BEGIN escalation timed out after|resetting controller|controller reset failed
+[   12.818068] kdc 0000:01:00.0: queue 2 cid 0x1000 timed out after 200 ms; aborting
+[   13.368391] kdc 0000:01:00.0: resetting controller
+[   14.377978] kdc 0000:01:00.0: controller reset failed; trying a function reset
+[   14.491570] kdc_test: EXPECT_END escalation
+[   14.502847] kdc_test: PASS timeout_escalation (1889 ms)
+[   14.509514] kdc_test: EXPECT_BEGIN failure timed out after|resetting controller|controller reset failed|recovery failed
+[   14.728088] kdc 0000:02:00.0: queue 0 cid 0x1000 timed out after 200 ms; aborting
+[   15.278221] kdc 0000:02:00.0: resetting controller
+[   16.287973] kdc 0000:02:00.0: controller reset failed; trying a function reset
+[   17.408381] kdc 0000:02:00.0: recovery failed; device disabled until reset or rebind
+[   17.410108] kdc_test: EXPECT_END failure
+[   17.412030] kdc_test: EXPECT_BEGIN revive working again
+[   17.519950] kdc 0000:02:00.0: device working again after reset
+[   17.521549] kdc_test: EXPECT_END revive
+[   17.543790] kdc_test: PASS recovery_failure (3040 ms)
+[   17.987627] kdc_test:   sysfs_reset_under_load: 3 resets, 202 verified copies, 18 reissued
+[   17.988350] kdc_test: PASS sysfs_reset_under_load (444 ms)
+[   17.997225] kdc_test: EXPECT_BEGIN fatal device error|resetting controller
+[   18.015342] kdc 0000:01:00.0: device error 0x8 (queue 0, status 0x3)
+[   18.015976] kdc 0000:01:00.0: resetting controller
+[   18.040390] kdc_test: EXPECT_END fatal
+[   18.042726] kdc_test:   fatal_recovery: 16 commands completed, 16 reissued after the reset
+[   18.043154] kdc_test: PASS fatal_recovery (55 ms)
+[   18.045826] kdc_test: EXPECT_BEGIN lost timed out after|resetting controller|completion for unknown cid
+[   18.360490] kdc 0000:01:00.0: queue 0 cid 0x8000 timed out after 300 ms; aborting
+[   18.908489] kdc 0000:01:00.0: resetting controller
+[   18.911938] kdc 0000:01:00.0: queue 0: completion for unknown cid 0x9fff
+[   19.238326] kdc 0000:01:00.0: queue 0 cid 0x9000 timed out after 300 ms; aborting
+[   19.790464] kdc 0000:01:00.0: resetting controller
+[   19.791278] kdc_test: EXPECT_END lost
+[   19.792180] kdc_test: PASS lost_completions (1749 ms)
+[   19.803243] kdc_test: EXPECT_BEGIN bounded resetting controller
+[   20.350369] kdc 0000:01:00.0: resetting controller
+[   20.908445] kdc 0000:01:00.0: resetting controller
+[   20.909846] kdc_test: EXPECT_END bounded
+[   20.910904] kdc_test:   bounded_close_and_reset: close returned after 549 ms, reset after 549 ms
+[   20.911255] kdc_test: PASS bounded_close_and_reset (1119 ms)
+[   20.918564] kdc_test: EXPECT_BEGIN dmar-zerocopy DMAR: (\[DMA Write|DRHD: handling fault)
+[   21.021379] DMAR: DRHD: handling fault status reg 2
+[   21.021857] DMAR: [DMA Write NO_PASID] Request device [01:00.0] fault addr 0xfffffffffff00000 [fault reason 0x04] Access beyond MGAW
+[   21.022790] kdc_test: EXPECT_END dmar-zerocopy
+[   21.023863] kdc_test: EXPECT_BEGIN dmar-bounce DMAR: (\[DMA Write|DRHD: handling fault)
+[   21.125405] DMAR: DRHD: handling fault status reg 2
+[   21.125538] DMAR: [DMA Write NO_PASID] Request device [01:00.0] fault addr 0xfffffffffff00000 [fault reason 0x04] Access beyond MGAW
+[   21.126329] kdc_test: EXPECT_END dmar-bounce
+[   21.135776] kdc_test:   dma_fault: 2 faulting copies ended with -EIO (IOMMU fault reported)
+[   21.135985] kdc_test: PASS dma_fault (224 ms)
+[   21.159887] kdc_test:   dst_overlap: 7 overlapping submits refused, 6 adjacent ones completed
+[   21.160096] kdc_test: PASS dst_overlap (24 ms)
+[   21.256303] kdc_test:   adjacent_destinations: 96 small and 6 large adjacent copies in flight together
+[   21.256579] kdc_test: PASS adjacent_destinations (96 ms)
+[   21.819707] kdc_test: EXPECT_BEGIN probe-failures probe with driver kdc failed|really_probe: driver_sysfs_add failed
+[   21.845900] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   21.911363] kdc 0000:02:00.0: really_probe: driver_sysfs_add failed
+[   21.935726] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   22.000331] kdc 0000:02:00.0: really_probe: driver_sysfs_add failed
+[   22.026387] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   22.115938] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   22.202483] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   22.270124] kdc 0000:02:00.0: really_probe: driver_sysfs_add failed
+[   22.295122] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   22.365212] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[   22.371299] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[   22.377061] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[   22.412324] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   22.482315] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[   22.506940] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   22.601302] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   22.696995] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   22.769013] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[   22.797531] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   22.889151] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   22.960111] kdc 0000:02:00.0: probe with driver kdc failed with error -16
+[   22.984169] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   23.073524] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   23.176929] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   23.266054] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   23.332515] kmemleak: Cannot allocate a scan area, scanning the full object
+[   23.352397] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   23.439233] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   23.523751] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   23.591432] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[   23.614798] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   23.674788] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[   23.703284] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   23.783243] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   23.845548] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[   23.867137] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   23.953716] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   24.037990] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   24.125176] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   24.221935] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   24.306065] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   24.390865] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   24.456791] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[   24.481933] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   24.573168] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   24.640114] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[   24.669239] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   24.754615] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   24.836897] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   24.922036] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   25.004948] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   25.088243] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   25.171714] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   25.256000] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   25.338834] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   25.421652] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   25.505376] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   25.592332] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   25.656864] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[   25.680793] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   25.750558] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[   25.759312] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[   25.766498] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[   25.789796] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   25.852951] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[   25.875816] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   25.963370] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   26.031552] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[   26.054969] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   26.115286] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[   26.139369] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   26.207857] kdc 0000:02:00.0: probe with driver kdc failed with error -28
+[   26.231101] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   26.312608] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   26.397635] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   26.482538] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   26.561485] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   26.624871] kobject: can not set name properly!
+[   26.625286] Failed to add kobject for irq 32
+[   26.639229] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   26.701781] kobject: can not set name properly!
+[   26.701920] Failed to add kobject for irq 32
+[   26.716253] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   26.796126] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   26.875439] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   26.941778] kobject: kobject_add_internal failed for 32 (error: -12 parent: irq)
+[   26.941954] Failed to add kobject for irq 32
+[   26.956047] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   27.022076] kobject: kobject_add_internal failed for 32 (error: -12 parent: irq)
+[   27.022234] Failed to add kobject for irq 32
+[   27.036176] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   27.100523] kobject: kobject_add_internal failed for 32 (error: -12 parent: irq)
+[   27.100676] Failed to add kobject for irq 32
+[   27.114769] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   27.178744] kobject: kobject_add_internal failed for 32 (error: -12 parent: irq)
+[   27.178901] Failed to add kobject for irq 32
+[   27.195345] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   27.279628] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   27.365792] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   27.450634] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   27.525737] kobject: kobject_add_internal failed for 32 (error: -12 parent: irq)
+[   27.525916] Failed to add kobject for irq 32
+[   27.542311] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   27.630294] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   27.700942] kobject: kobject_add_internal failed for 32 (error: -12 parent: irq)
+[   27.701104] Failed to add kobject for irq 32
+[   27.716033] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   27.803677] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   27.891831] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   27.979534] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   28.047022] kobject: kobject_add_internal failed for 32 (error: -12 parent: irq)
+[   28.047189] Failed to add kobject for irq 32
+[   28.062658] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   28.150949] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   28.238763] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   28.323556] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   28.394012] kdc 0000:02:00.0: probe with driver kdc failed with error -28
+[   28.404724] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[   28.414675] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[   28.439782] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   28.523519] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[   28.550512] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   28.624917] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[   28.660927] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   28.739808] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[   28.766332] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   28.842541] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[   28.867075] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   28.951553] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   29.035179] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   29.121655] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   29.209947] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   29.304095] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   29.378361] kobject: can not set name properly!
+[   29.378510] Failed to add kobject for irq 33
+[   29.392850] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   29.479413] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   29.552663] kobject: kobject_add_internal failed for 33 (error: -12 parent: irq)
+[   29.552838] Failed to add kobject for irq 33
+[   29.566460] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   29.648952] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   29.734455] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   29.822957] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   29.908942] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   29.995090] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   30.065317] kobject: kobject_add_internal failed for 33 (error: -12 parent: irq)
+[   30.065479] Failed to add kobject for irq 33
+[   30.086717] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   30.188199] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   30.256255] kobject: kobject_add_internal failed for 33 (error: -12 parent: irq)
+[   30.256439] Failed to add kobject for irq 33
+[   30.270637] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   30.357455] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   30.500256] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   30.646052] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   30.798764] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   30.897806] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   30.982057] kobject: kobject_add_internal failed for 33 (error: -12 parent: irq)
+[   30.982294] Failed to add kobject for irq 33
+[   30.997826] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   31.087046] kobject: kobject_add_internal failed for 33 (error: -12 parent: irq)
+[   31.087362] Failed to add kobject for irq 33
+[   31.111041] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   31.251337] kobject: kobject_add_internal failed for 33 (error: -12 parent: irq)
+[   31.251739] Failed to add kobject for irq 33
+[   31.273837] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   31.433897] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   31.558357] kdc 0000:02:00.0: probe with driver kdc failed with error -28
+[   31.576014] kdc 0000:02:00.0: probe with driver kdc failed with error -28
+[   31.595572] kdc 0000:02:00.0: probe with driver kdc failed with error -28
+[   31.630960] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   31.719637] kdc 0000:02:00.0: probe with driver kdc failed with error -28
+[   31.735441] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[   31.764471] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   31.924420] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   32.089727] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   32.193067] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[   32.210883] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[   32.245454] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   32.382338] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   32.553494] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[   32.603542] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   32.758327] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[   32.806529] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   32.930203] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[   32.983507] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   33.208500] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   33.357954] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   33.455413] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   33.537324] kobject: can not set name properly!
+[   33.537630] Failed to add kobject for irq 34
+[   33.552381] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   33.632094] kobject: kobject_add_internal failed for 34 (error: -12 parent: irq)
+[   33.632281] Failed to add kobject for irq 34
+[   33.646848] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   33.764697] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   33.842955] kobject: kobject_add_internal failed for 34 (error: -12 parent: irq)
+[   33.843154] Failed to add kobject for irq 34
+[   33.857035] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   33.955798] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   34.039376] kobject: kobject_add_internal failed for 34 (error: -12 parent: irq)
+[   34.039582] Failed to add kobject for irq 34
+[   34.055196] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   34.157080] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   34.258848] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   34.343114] kobject: kobject_add_internal failed for 34 (error: -12 parent: irq)
+[   34.343302] Failed to add kobject for irq 34
+[   34.358334] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   34.455616] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   34.546346] kobject: kobject_add_internal failed for 34 (error: -12 parent: irq)
+[   34.546701] Failed to add kobject for irq 34
+[   34.573179] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   34.703302] kobject: kobject_add_internal failed for 34 (error: -12 parent: irq)
+[   34.703489] Failed to add kobject for irq 34
+[   34.717334] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   34.799091] kobject: kobject_add_internal failed for 34 (error: -12 parent: irq)
+[   34.799273] Failed to add kobject for irq 34
+[   34.812793] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   34.891201] kobject: kobject_add_internal failed for 34 (error: -12 parent: irq)
+[   34.891380] Failed to add kobject for irq 34
+[   34.904607] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   34.993697] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   35.070483] kobject: kobject_add_internal failed for 34 (error: -12 parent: irq)
+[   35.070660] Failed to add kobject for irq 34
+[   35.083322] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   35.186953] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   35.318709] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   35.407579] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   35.511477] kdc 0000:02:00.0: kdc1: 1 queues x 64 entries, bounce <= 4096 bytes
+[   35.642584] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   35.730996] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   35.828212] kdc 0000:02:00.0: kdc1: 1 queues x 64 entries, bounce <= 4096 bytes
+[   35.914255] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[   35.959813] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   36.080175] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[   36.106787] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   36.191444] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[   36.218674] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   36.311608] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[   36.357037] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   36.494076] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[   36.535005] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   36.666934] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   36.754321] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   36.847228] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[   36.879910] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[   36.928309] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   37.062027] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   37.142350] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[   37.170954] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   37.308492] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[   37.363585] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   37.517180] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[   37.553058] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[   37.608560] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   37.766818] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   37.927541] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   38.083996] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   38.321084] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[   38.352287] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[   38.398172] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   38.542032] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[   38.589910] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   38.734218] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   38.884682] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   39.020655] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[   39.062888] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   39.214756] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   39.370851] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   39.509383] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   39.611166] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   39.761574] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   39.854958] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   39.953659] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   40.054432] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[   40.100923] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   40.218168] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[   40.265806] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   40.438605] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[   40.514295] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   40.686674] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[   40.744083] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   40.951927] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   41.242339] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   41.393156] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[   41.428818] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[   41.474346] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   41.632010] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   41.783518] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   41.931056] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   42.078874] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   42.214338] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[   42.256098] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   42.402009] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[   42.445005] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   42.588511] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[   42.631521] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   42.768092] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[   42.809876] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   42.958806] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   43.099563] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   43.245361] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   43.380768] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   43.483613] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   43.613343] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   43.705268] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   43.803730] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[   43.845621] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   43.976809] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   44.056068] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[   44.080823] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[   44.121019] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   44.266218] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   44.412535] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   44.553984] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[   44.597633] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   44.751529] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   44.898227] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   45.043017] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[   45.086882] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   45.227467] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[   45.272730] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   45.438447] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[   45.491631] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[   45.541335] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[   45.593876] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   45.759378] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[   45.807263] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   45.979065] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[   46.036875] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   46.231629] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[   46.275314] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   46.419892] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   46.564522] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   46.717243] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[   46.761267] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   46.914389] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[   46.965095] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   47.106388] kobject: kobject_add_internal failed for kdc (error: -12 parent: 0000:02:00.0)
+[   47.119123] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[   47.168743] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   47.326308] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[   47.370443] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   47.512142] kobject: kobject_add_internal failed for kdc1 (error: -12 parent: kdc)
+[   47.524879] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[   47.570638] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   47.719226] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   47.870047] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   48.013269] kobject: kobject_add_internal failed for kdc1 (error: -12 parent: kdc)
+[   48.024191] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[   48.074672] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   48.226350] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[   48.276294] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[   48.334541] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[   48.377089] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   48.532161] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[   48.592264] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[   48.637164] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   48.784700] kobject: kobject_add_internal failed for kdc1 (error: -12 parent: kdc)
+[   48.796277] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[   48.856410] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[   48.902047] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   49.042865] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   49.197239] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[   49.251690] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[   49.311320] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[   49.364408] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   49.524169] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[   49.580455] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   49.721052] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   49.855282] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   49.954169] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   50.054124] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   50.150931] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   50.245455] debugfs: out of free dentries, can not create directory 'kdc1'
+[   50.245959] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   50.346882] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   50.445835] debugfs: out of free dentries, can not create directory 'kdc1'
+[   50.446084] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   50.548732] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   50.700196] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   50.861527] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   50.961804] debugfs: out of free dentries, can not create file 'service_ns'
+[   50.962995] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   51.065582] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   51.234149] debugfs: out of free dentries, can not create file 'service_ns'
+[   51.235234] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   51.323001] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   51.412420] debugfs: out of free dentries, can not create file 'service_ns'
+[   51.413509] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   51.502724] debugfs: out of free dentries, can not create file 'service_ns'
+[   51.503794] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   51.592404] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   51.684075] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   51.777323] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   51.869394] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   51.962025] debugfs: out of free dentries, can not create file 'fault_drop'
+[   51.962846] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   52.048749] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   52.137985] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   52.238571] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   52.339275] debugfs: out of free dentries, can not create file 'fault_bad_dma'
+[   52.339831] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   52.440446] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   52.537110] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   52.638765] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   52.738059] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   52.837641] debugfs: out of free dentries, can not create file 'device_aborted'
+[   52.838091] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   52.937454] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   53.035809] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   53.135495] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   53.235503] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   53.336840] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   53.438021] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   53.538484] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   53.644894] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   53.786862] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 4096 bytes
+[   53.788070] kdc_test: EXPECT_END probe-failures
+[   53.805859] kdc_test:   fault_injection: 28 submit and 357 probe allocation failures, all unwound
+[   53.806336] kdc_test: PASS fault_injection (32550 ms)
+[   53.890334] kdc_test: KDC_HOST device_del kdc1
+[   54.020143] ==================================================================
+[   54.020718] BUG: KASAN: slab-use-after-free in kdc_read+0x448/0x7c0
+[   54.021388] Read of size 2 at addr ff11000005f6e4d0 by task kdc_test/81
+[   54.021548] 
+[   54.022327] CPU: 3 UID: 0 PID: 81 Comm: kdc_test Tainted: G                 N 6.12.41 #1
+[   54.022866] Tainted: [N]=TEST
+[   54.023156] Call Trace:
+[   54.023260]  <TASK>
+[   54.023392]  dump_stack_lvl+0x5d/0x80
+[   54.023509]  ? kdc_read+0x448/0x7c0
+[   54.023549]  print_report+0x151/0x4c0
+[   54.023581]  ? kdc_read+0x448/0x7c0
+[   54.023611]  ? rcu_read_unlock_sched+0x56/0x60
+[   54.023645]  ? __virt_addr_valid+0x27e/0x290
+[   54.023675]  ? kdc_read+0x448/0x7c0
+[   54.023703]  kasan_report+0xa0/0xd0
+[   54.023739]  ? kdc_read+0x448/0x7c0
+[   54.023770]  kdc_read+0x448/0x7c0
+[   54.023801]  ? __x64_sys_close+0x83/0xb0
+[   54.023832]  ? __list_del_entry+0xa0/0xa0
+[   54.023865]  vfs_read+0x139/0x290
+[   54.023896]  ? kernel_read+0x50/0x50
+[   54.023928]  ? __fget_light+0x49/0x170
+[   54.023959]  ksys_read+0xee/0x160
+[   54.023995]  ? vfs_write+0x310/0x310
+[   54.024027]  do_syscall_64+0x6b/0xd0
+[   54.024055]  entry_SYSCALL_64_after_hwframe+0x4b/0x53
+[   54.024174] RIP: 0033:0x4827b2
+[   54.024454] Code: 08 0f 85 e1 df ff ff 49 89 fb 48 89 f0 48 89 d7 48 89 ce 4c 89 c2 4d 89 ca 4c 8b 44 24 08 4c 8b 4c 24 10 4c 89 5c 24 08 0f 05 <c3> 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 f3 0f 1e fa 55 48 89 e5
+[   54.024859] RSP: 002b:00007ffd59d85a18 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
+[   54.024975] RAX: ffffffffffffffda RBX: 000000000000000b RCX: 00000000004827b2
+[   54.025057] RDX: 0000000000000028 RSI: 00007ffd59d85ac0 RDI: 0000000000000005
+[   54.025115] RBP: 00007ffd59d85a40 R08: 0000000000000000 R09: 0000000000000000
+[   54.025172] R10: 0000000000000000 R11: 0000000000000246 R12: 00007ffd59d85b60
+[   54.025230] R13: 000000000000000f R14: 00000000339924a8 R15: 00007ffd59d85b08
+[   54.025297]  </TASK>
+[   54.025379] 
+[   54.028552] Allocated by task 81:
+[   54.028880]  kasan_save_stack+0x2f/0x50
+[   54.029038]  kasan_save_track+0x14/0x30
+[   54.029170]  __kasan_kmalloc+0x35/0x40
+[   54.029297]  __kmalloc_noprof+0x1ad/0x1e0
+[   54.029424]  kdc_probe+0x8db/0x1780
+[   54.029540]  pci_device_probe+0x172/0x260
+[   54.029671]  really_probe+0x21e/0x4b0
+[   54.029793]  device_driver_attach+0x47/0xa0
+[   54.029920]  bind_store+0xc8/0x110
+[   54.030067]  kernfs_fop_write_iter+0x29e/0x350
+[   54.030209]  vfs_write+0x240/0x310
+[   54.030328]  ksys_write+0xee/0x160
+[   54.030445]  do_syscall_64+0x6b/0xd0
+[   54.030564]  entry_SYSCALL_64_after_hwframe+0x4b/0x53
+[   54.030731] 
+[   54.030823] Freed by task 11:
+[   54.030928]  kasan_save_stack+0x2f/0x50
+[   54.031061]  kasan_save_track+0x14/0x30
+[   54.031187]  kasan_save_free_info+0x3d/0x50
+[   54.031319]  __kasan_slab_free+0x36/0x50
+[   54.031448]  kfree+0x1c4/0x230
+[   54.031558]  kdc_remove+0x259/0x2d0
+[   54.031676]  pci_device_remove+0x64/0xe0
+[   54.031800]  device_release_driver_internal+0xce/0x1a0
+[   54.031944]  pci_stop_bus_device+0x14e/0x180
+[   54.032078]  pci_stop_and_remove_bus_device+0xd/0x20
+[   54.032219]  disable_slot+0xdc/0x1b0
+[   54.032338]  acpiphp_disable_and_eject_slot+0x51/0x150
+[   54.032482]  acpiphp_hotplug_notify+0x180/0x1d0
+[   54.032615]  acpi_device_hotplug+0x57c/0x650
+[   54.032752]  acpi_hotplug_work_fn+0x5f/0x70
+[   54.032882]  process_scheduled_works+0x72f/0xba0
+[   54.033024]  worker_thread+0x36e/0x460
+[   54.033146]  kthread+0x256/0x270
+[   54.033259]  ret_from_fork+0x20/0x60
+[   54.033379]  ret_from_fork_asm+0x11/0x20
+[   54.033519] 
+[   54.033647] The buggy address belongs to the object at ff11000005f6e400
+[   54.033647]  which belongs to the cache kmalloc-512 of size 512
+[   54.033983] The buggy address is located 208 bytes inside of
+[   54.033983]  freed 512-byte region [ff11000005f6e400, ff11000005f6e600)
+[   54.034278] 
+[   54.034417] The buggy address belongs to the physical page:
+[   54.034808] page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x5f6c
+[   54.035196] head: order:2 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+[   54.035402] anon flags: 0x40(head|zone=0)
+[   54.036065] page_type: f5(slab)
+[   54.036519] raw: 0000000000000040 ff1100000013cc80 0000000000000000 dead000000000001
+[   54.036711] raw: 0000000000000000 0000000000100010 00000001f5000000 0000000000000000
+[   54.036938] head: 0000000000000040 ff1100000013cc80 0000000000000000 dead000000000001
+[   54.037117] head: 0000000000000000 0000000000100010 00000001f5000000 0000000000000000
+[   54.037299] head: 0000000000000002 ffd400000017db01 ffffffffffffffff 0000000000000000
+[   54.037466] head: 0000000000000004 0000000000000000 00000000ffffffff 0000000000000000
+[   54.037783] page dumped because: kasan: bad access detected
+[   54.037933] 
+[   54.038031] Memory state around the buggy address:
+[   54.038407]  ff11000005f6e380: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+[   54.038619]  ff11000005f6e400: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+[   54.038780] >ff11000005f6e480: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+[   54.038951]                                                  ^
+[   54.039142]  ff11000005f6e500: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+[   54.039301]  ff11000005f6e580: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+[   54.039520] ==================================================================
+[   54.040716] Kernel panic - not syncing: KASAN: panic_on_warn set ...
+[   54.041151] CPU: 3 UID: 0 PID: 81 Comm: kdc_test Tainted: G                 N 6.12.41 #1
+[   54.041346] Tainted: [N]=TEST
+[   54.041441] Call Trace:
+[   54.041527]  <TASK>
+[   54.041606]  dump_stack_lvl+0x5d/0x80
+[   54.041734]  panic+0x212/0x470
+[   54.041846]  ? panic_print_sys_info.part.0+0x70/0x70
+[   54.041983]  ? asm_sysvec_apic_timer_interrupt+0x1a/0x20
+[   54.042131]  ? kdc_read+0x448/0x7c0
+[   54.042245]  check_panic_on_warn+0x26/0x70
+[   54.042369]  end_report+0xbd/0x110
+[   54.042483]  kasan_report+0xb0/0xd0
+[   54.042598]  ? kdc_read+0x448/0x7c0
+[   54.042710]  kdc_read+0x448/0x7c0
+[   54.042823]  ? __x64_sys_close+0x83/0xb0
+[   54.042942]  ? __list_del_entry+0xa0/0xa0
+[   54.043069]  vfs_read+0x139/0x290
+[   54.043183]  ? kernel_read+0x50/0x50
+[   54.043299]  ? __fget_light+0x49/0x170
+[   54.043417]  ksys_read+0xee/0x160
+[   54.043528]  ? vfs_write+0x310/0x310
+[   54.043644]  do_syscall_64+0x6b/0xd0
+[   54.043757]  entry_SYSCALL_64_after_hwframe+0x4b/0x53
+[   54.043896] RIP: 0033:0x4827b2
+[   54.044004] Code: 08 0f 85 e1 df ff ff 49 89 fb 48 89 f0 48 89 d7 48 89 ce 4c 89 c2 4d 89 ca 4c 8b 44 24 08 4c 8b 4c 24 10 4c 89 5c 24 08 0f 05 <c3> 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 f3 0f 1e fa 55 48 89 e5
+[   54.044336] RSP: 002b:00007ffd59d85a18 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
+[   54.044531] RAX: ffffffffffffffda RBX: 000000000000000b RCX: 00000000004827b2
+[   54.044685] RDX: 0000000000000028 RSI: 00007ffd59d85ac0 RDI: 0000000000000005
+[   54.044843] RBP: 00007ffd59d85a40 R08: 0000000000000000 R09: 0000000000000000
+[   54.045001] R10: 0000000000000000 R11: 0000000000000246 R12: 00007ffd59d85b60
+[   54.045154] R13: 000000000000000f R14: 00000000339924a8 R15: 00007ffd59d85b08
+[   54.045310]  </TASK>
+[   54.046659] Kernel Offset: disabled

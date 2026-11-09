@@ -1,0 +1,6 @@
+--- kdc_recover.c
+-			case KDC_WATCH_RESET:
+				reset = true;
+				break;
++			case KDC_WATCH_RESET:
+				break; /* deliberate bug: an unanswered abort is never escalated */

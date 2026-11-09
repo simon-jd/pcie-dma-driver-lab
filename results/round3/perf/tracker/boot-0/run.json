@@ -1,0 +1,116 @@
+{
+  "config": "noiommu",
+  "boot": 0,
+  "argv": [
+    "taskset",
+    "-c",
+    "8",
+    "nice",
+    "-n",
+    "10",
+    "/home/postedism/Desktop/driver-firnware-runtime/A-kernel-device-contract-lab/.cache/build/qemu/qemu-system-x86_64",
+    "-machine",
+    "q35",
+    "-accel",
+    "kvm",
+    "-cpu",
+    "host",
+    "-m",
+    "2048",
+    "-smp",
+    "3",
+    "-nodefaults",
+    "-display",
+    "none",
+    "-serial",
+    "stdio",
+    "-monitor",
+    "none",
+    "-no-reboot",
+    "-nic",
+    "none",
+    "-device",
+    "pcie-root-port,id=rp0,bus=pcie.0,chassis=1,addr=0x2",
+    "-device",
+    "kdc-dma,id=kdc0,bus=rp0,queues=4",
+    "-qmp",
+    "unix:/tmp/kdc-bench-sr6gh11i/qmp.sock,server=on,wait=off",
+    "-kernel",
+    "/home/postedism/Desktop/driver-firnware-runtime/A-kernel-device-contract-lab/build/kernel-perf/arch/x86/boot/bzImage",
+    "-initrd",
+    "/tmp/kdc-bench-sr6gh11i/initramfs.cpio.gz",
+    "-append",
+    "console=ttyS0 panic=-1 nokaslr printk.devkmsg=on printk.time=0 kdc.bounce_max=65536"
+  ],
+  "utc_start": "2026-11-08T16:22:11+00:00",
+  "qemu_version": "QEMU emulator version 10.2.1",
+  "kernel_sha256": "354f68a2bb8e94793fa11c773cd68952b7c93333f23371941eff4abf3aa49732",
+  "bench_sha256": "4bb21f9277eb4dcc230252caade4ea0593a8e2c322d15d2589dd8c4096685dc7",
+  "vcpu_cpus": [
+    2,
+    4,
+    6
+  ],
+  "main_cpu": 8,
+  "watch_cpus": [
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "max_foreign_ms_per_s": 1500.0,
+  "max_qemu_wait_ms_per_s": 25.0,
+  "nice": 10,
+  "load_average_start": [
+    "4.01",
+    "3.35",
+    "4.01"
+  ],
+  "host_kernel": "7.0.0-42-generic",
+  "kvm_halt_poll_ns": 200000,
+  "governor": "powersave",
+  "quiet_marker": "kernel-lab 07:51 09:11",
+  "affinity_after_pinning": {
+    "1658080 qemu-system-x86": [
+      8
+    ],
+    "1658081 qemu-system-x86": [
+      8
+    ],
+    "1658082 qemu-system-x86": [
+      8
+    ],
+    "1658083 qemu-system-x86": [
+      2
+    ],
+    "1658084 qemu-system-x86": [
+      4
+    ],
+    "1658085 qemu-system-x86": [
+      6
+    ],
+    "1658087 kvm-nx-lpage-re": [
+      8
+    ]
+  },
+  "vcpu_tids": [
+    "1658083",
+    "1658084",
+    "1658085"
+  ],
+  "affinity_at_exit_note": "threads listed after pinning; QEMU has exited",
+  "seconds": 69.1,
+  "returncode": 0,
+  "load_average_end": [
+    "5.11",
+    "3.81",
+    "4.12"
+  ],
+  "bench_exit": "0",
+  "windows": 55,
+  "rejected": 30
+}

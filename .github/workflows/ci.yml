@@ -1,0 +1,54 @@
+# Build QEMU with the kdc-dma device and run the qtest device suite, build the
+# pinned Linux kernel with the driver and the in-guest clients, and run the guest
+# suite under TCG. QEMU, glib and Linux are the versions and SHA256 checksums
+# pinned in scripts/; the actions are pinned by commit. The runner has no KVM,
+# so nothing here is timed. scripts/ci_local.sh runs the same steps locally.
+name: ci
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            ninja-build pkg-config python3-venv flex bison bc libelf-dev libssl-dev busybox-static
+
+      - name: Build QEMU 10.2.1 with the device (release and ASan/UBSan)
+        run: python3 scripts/build_qemu.py --jobs 4
+
+      - name: qtest device suite (ASan/UBSan QEMU)
+        run: python3 tests/qtest/kdc_qtest.py --qemu .cache/build/qemu-asan/qemu-system-x86_64 --log logs/qtest-asan.log
+
+      - name: qtest device suite (release QEMU)
+        run: python3 tests/qtest/kdc_qtest.py --qemu .cache/build/qemu/qemu-system-x86_64 --log logs/qtest-release.log
+
+      - name: Fetch Linux 6.12.41
+        run: python3 scripts/fetch_kernel.py
+
+      - name: Build the KASAN kernel with the driver, and the guest clients
+        run: python3 scripts/build_kernel.py --jobs 4
+
+      - name: Guest suite under TCG with a strict IOMMU
+        run: python3 scripts/run_vm.py --accel tcg --iommu --out logs/tcg-iommu
+
+      - name: Keep logs
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: logs
+          path: |
+            logs/
+            build/kernel-build-*.log
+          if-no-files-found: ignore

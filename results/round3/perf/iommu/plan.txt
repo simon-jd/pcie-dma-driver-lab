@@ -1,0 +1,10 @@
+reps 5
+# Run with --configs noiommu,iommu-strict,iommu-lazy: the same arms under no IOMMU,
+# an emulated Intel IOMMU with strict invalidation, and with lazy (batched) invalidation.
+nop-qd1              mode=nop qd=1
+zc4k-qd1             mode=zc size=4096 qd=1
+bounce4k-qd1         mode=bounce size=4096 qd=1
+zc64k-qd1            mode=zc size=65536 qd=1
+bounce64k-qd1        mode=bounce size=65536 qd=1
+zc4k-qd32-batch      mode=zc size=4096 qd=32 batch=1
+bounce4k-qd32-batch  mode=bounce size=4096 qd=32 batch=1

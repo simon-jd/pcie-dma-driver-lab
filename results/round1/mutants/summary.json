@@ -1,0 +1,73 @@
+{
+  "mutants": [
+    {
+      "mutant": "unmap-before-completion",
+      "file": "build/linux-6.12.41/drivers/misc/kdc/kdc_cmd.c",
+      "runs": [
+        {
+          "config": "tcg-iommu",
+          "failed": true,
+          "first_failed_assertion": "FAIL check_copy:329:",
+          "allowed": [
+            "FAIL check_copy:"
+          ],
+          "evidence_required": [
+            "DMAR: [DMA Read"
+          ],
+          "evidence_seen": [
+            "DMAR: [DMA Read"
+          ],
+          "caught": true
+        },
+        {
+          "config": "tcg-noiommu",
+          "failed": true,
+          "first_failed_assertion": "FAIL pinned_page_not_recycled:515:",
+          "allowed": [
+            "FAIL pinned_page_not_recycled:"
+          ],
+          "evidence_required": [],
+          "evidence_seen": [],
+          "caught": true
+        }
+      ],
+      "caught": true,
+      "restored_build_ok": true
+    },
+    {
+      "mutant": "cancel-trusts-abort",
+      "file": "build/linux-6.12.41/drivers/misc/kdc/kdc_fops.c",
+      "runs": [
+        {
+          "config": "tcg-iommu",
+          "failed": true,
+          "first_failed_assertion": "FAIL cancel_device_owned:591:",
+          "allowed": [
+            "FAIL cancel_device_owned:"
+          ],
+          "evidence_required": [],
+          "evidence_seen": [],
+          "caught": true
+        }
+      ],
+      "caught": true,
+      "restored_build_ok": true
+    },
+    {
+      "mutant": "device-skips-sgl-sum",
+      "file": ".cache/src/qemu-10.2.1/hw/misc/kdc_dma.c",
+      "runs": [
+        {
+          "config": "qtest-asan",
+          "failed": true,
+          "expected": "entries short of length",
+          "caught": true
+        }
+      ],
+      "caught": true,
+      "restored_build_ok": true
+    }
+  ],
+  "restored_guest_passed": true,
+  "restored_qtest_passed": true
+}
