@@ -27,6 +27,11 @@ QEMU threads spent more than --max-qemu-wait waiting for a CPU (both in ms per
 second of window): the guest is told so through the scratch register and runs
 the window again (up to 4 times). The thresholds are recorded with each boot.
 
+A/B runs: --builds names frozen builds from scripts/snapshot_build.py
+(.cache/ab/<name>/: QEMU, perf kernel, benchmark client); "tree" is this
+checkout's own build. Boots go round by round, configuration by configuration,
+build by build, so the compared builds alternate within one session.
+
 Output in --out: serial.log, windows.jsonl (one record per window, rejected
 ones included), run.json per boot under boot-<n>/, and plan.txt.
 """
@@ -86,13 +91,41 @@ def cpu_list(text):
     return cpus
 
 
-def initramfs(plan, path):
+class Build:
+    """The QEMU binary, perf kernel and benchmark client one boot uses."""
+
+    def __init__(self, name, qemu_flavor):
+        self.name = name
+        if name == "tree":
+            self.qemu, self.bench = QEMU[qemu_flavor], ROOT / "build/kdc_bench"
+            self.kernel = KERNELS["perf"][0] / "arch/x86/boot/bzImage"
+            record = json.loads(KERNELS["perf"][1].read_text())
+            if record["inputs"] != inputs("perf") or record["kernel_sha256"] != sha256(self.kernel) or \
+                    record.get("bench_sha256") != sha256(self.bench):
+                raise RuntimeError("Sources changed since the recorded perf build; rebuild first")
+            self.info = {"name": "tree", "inputs": record["inputs"]}
+        else:
+            d = ROOT / ".cache/ab" / name
+            self.qemu, self.kernel, self.bench = d / "qemu-system-x86_64", d / "bzImage", d / "kdc_bench"
+            self.info = json.loads((d / "build.json").read_text())
+            for f, digest in self.info["files"].items():
+                if sha256(d / f) != digest:
+                    raise RuntimeError(f"{d / f} changed since the snapshot")
+        self.info |= {"kernel_sha256": sha256(self.kernel), "bench_sha256": sha256(self.bench),
+                      "qemu_sha256": sha256(self.qemu)}
+
+
+def sha256(path):
+    return hashlib.sha256(pathlib.Path(path).read_bytes()).hexdigest()
+
+
+def initramfs(plan, path, bench):
     cpio = bytearray()
     for name in (".", "bin", "dev", "proc", "sys", "tmp"):
         cpio += newc_entry(name, stat.S_IFDIR | 0o755)
     cpio += newc_entry("bin/busybox", stat.S_IFREG | 0o755, pathlib.Path(shutil.which("busybox")).read_bytes())
     cpio += newc_entry("bin/sh", stat.S_IFLNK | 0o777, b"busybox")
-    cpio += newc_entry("bin/kdc_bench", stat.S_IFREG | 0o755, (ROOT / "build/kdc_bench").read_bytes())
+    cpio += newc_entry("bin/kdc_bench", stat.S_IFREG | 0o755, bench.read_bytes())
     cpio += newc_entry("plan.txt", stat.S_IFREG | 0o644, plan.encode())
     cpio += newc_entry("init", stat.S_IFREG | 0o755, INIT)
     cpio += newc_entry("TRAILER!!!", 0)
@@ -236,28 +269,22 @@ def delta(a, b, window_ns, host, vcpu_tids):
     return d
 
 
-def boot(args, config, index, plan_text, out, windows_out, serial_out):
-    kernel = KERNELS["perf"][0] / "arch/x86/boot/bzImage"
-    record = json.loads(KERNELS["perf"][1].read_text())
-    kernel_sha = hashlib.sha256(kernel.read_bytes()).hexdigest()
-    bench_sha = hashlib.sha256((ROOT / "build/kdc_bench").read_bytes()).hexdigest()
-    if record["inputs"] != inputs("perf") or record["kernel_sha256"] != kernel_sha or \
-            record.get("bench_sha256") != bench_sha:
-        raise RuntimeError("Sources changed since the recorded perf build; rebuild first")
+def boot(args, build, config, index, plan_text, out, windows_out, serial_out):
+    kernel, qemu = build.kernel, build.qemu
     bdir = out / f"boot-{index}"
     bdir.mkdir()
     tmp = pathlib.Path(tempfile.mkdtemp(prefix="kdc-bench-"))
     ramdisk = tmp / "initramfs.cpio.gz"
-    initramfs(plan_text, ramdisk)
+    initramfs(plan_text, ramdisk, build.bench)
     qmp_path = str(tmp / "qmp.sock")
-    qemu = QEMU[args.qemu]
     vcpus = cpu_list(args.vcpus)
     command = qemu_command(qemu, kernel, ramdisk, config, len(vcpus), qmp_path)
     launch = ["taskset", "-c", str(args.main_cpu), "nice", "-n", str(args.nice)] + command
-    info = {"config": config, "boot": index, "argv": launch,
+    info = {"config": config, "build": build.name, "boot": index, "argv": launch, "build_info": build.info,
             "utc_start": datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds"),
             "qemu_version": subprocess.check_output([str(qemu), "--version"], text=True).splitlines()[0],
-            "kernel_sha256": kernel_sha, "bench_sha256": bench_sha, "vcpu_cpus": vcpus, "main_cpu": args.main_cpu,
+            "kernel_sha256": build.info["kernel_sha256"], "bench_sha256": build.info["bench_sha256"],
+            "vcpu_cpus": vcpus, "main_cpu": args.main_cpu,
             "watch_cpus": cpu_list(args.watch_cpus), "max_foreign_ms_per_s": args.max_foreign,
             "max_qemu_wait_ms_per_s": args.max_qemu_wait, "nice": args.nice,
             "load_average_start": open("/proc/loadavg").read().split()[:3],
@@ -301,7 +328,7 @@ def boot(args, config, index, plan_text, out, windows_out, serial_out):
                     a = marks.pop(token - 1)
                     d = delta(a, snap, snap["t_ns"] - a["t_ns"], host, vcpu_tids)
                     d["qemu_wait_ms_per_s"] = d["ours_wait_ms"] / (d["host_ns"] / 1e9)
-                    d.update(token=token, config=config, boot=index,
+                    d.update(token=token, config=config, build=build.name, boot=index,
                              accepted=d["foreign_ms_per_s"] <= args.max_foreign and
                              d["qemu_wait_ms_per_s"] <= args.max_qemu_wait)
                     if not d["accepted"]:
@@ -329,7 +356,7 @@ def boot(args, config, index, plan_text, out, windows_out, serial_out):
     info["windows"] = len(windows)
     info["rejected"] = sum(not w["accepted"] for w in windows)
     (bdir / "run.json").write_text(json.dumps(info, indent=2) + "\n")
-    serial_out.write(f"===== boot {index} ({config}) =====\n" + serial)
+    serial_out.write(f"===== boot {index} ({config}, {build.name}) =====\n" + serial)
     for w in windows:
         windows_out.write(json.dumps(w) + "\n")
     problems = []
@@ -347,7 +374,8 @@ def main():
     p.add_argument("--plan", required=True, type=pathlib.Path)
     p.add_argument("--out", required=True, type=pathlib.Path)
     p.add_argument("--configs", default="noiommu", help=f"comma-separated, alternated per round: {sorted(CONFIGS)}")
-    p.add_argument("--rounds", type=int, default=1, help="boots per configuration")
+    p.add_argument("--rounds", type=int, default=1, help="boots per configuration and build")
+    p.add_argument("--builds", default="tree", help="comma-separated: tree (this checkout) or names under .cache/ab/")
     p.add_argument("--vcpus", default="2,4,6", help="host CPU per vCPU (also sets the vCPU count)")
     p.add_argument("--main-cpu", type=int, default=8, help="host CPU for QEMU's main loop and helper threads")
     p.add_argument("--watch-cpus", default="2-9", help="CPUs whose foreign load is checked (VM CPUs + siblings)")
@@ -355,13 +383,14 @@ def main():
                    help="ms of foreign CPU time on the watched CPUs per s of window")
     p.add_argument("--max-qemu-wait", type=float, default=25.0,
                    help="ms the QEMU threads spent runnable but not running, per s of window")
-    p.add_argument("--nice", type=int, default=10)
+    p.add_argument("--nice", type=int, default=0, help="niceness of QEMU (0: timing runs own their CPUs)")
     p.add_argument("--qemu", choices=tuple(QEMU), default="release")
     args = p.parse_args()
     configs = args.configs.split(",")
     for c in configs:
         if c not in CONFIGS:
             raise SystemExit(f"unknown configuration {c}")
+    builds = [Build(b, args.qemu) for b in args.builds.split(",")]
     if not os.access("/dev/kvm", os.R_OK | os.W_OK):
         raise SystemExit("/dev/kvm is not readable and writable by this user")
     out = args.out.resolve()
@@ -373,13 +402,15 @@ def main():
         index = 0
         for _ in range(args.rounds):
             for config in configs:
-                info, probs = boot(args, config, index, plan_text, out, windows_out, serial_out)
-                windows_out.flush()
-                boots.append({k: info[k] for k in ("config", "boot", "seconds", "windows", "rejected", "bench_exit")})
-                problems += [f"boot {index}: {x}" for x in probs]
-                print(f"boot {index} {config}: {info['windows']} windows, {info['rejected']} rejected, "
-                      f"{info['seconds']} s, client exit {info['bench_exit']}", flush=True)
-                index += 1
+                for build in builds:
+                    info, probs = boot(args, build, config, index, plan_text, out, windows_out, serial_out)
+                    windows_out.flush()
+                    boots.append({k: info[k] for k in ("config", "build", "boot", "seconds", "windows", "rejected",
+                                                       "bench_exit")})
+                    problems += [f"boot {index}: {x}" for x in probs]
+                    print(f"boot {index} {config} {build.name}: {info['windows']} windows, {info['rejected']} "
+                          f"rejected, {info['seconds']} s, client exit {info['bench_exit']}", flush=True)
+                    index += 1
     (out / "summary-boots.json").write_text(json.dumps({"boots": boots, "problems": problems}, indent=2) + "\n")
     for x in problems:
         print("  " + x)
