@@ -28,6 +28,8 @@ Mutants:
                            control for the kmemleak scan after the suite)
   coalesce-ignored         the debugfs coalescing setting is stored but never
                            written to the queues
+  cq-head-never-written    the driver counts reaped completions toward the
+                           batched CQ head doorbell but never writes the head
 """
 import argparse
 import json
@@ -118,6 +120,11 @@ MUTANTS = {
                 "\t\t\tkdc_wr(kdev, KDC_QREG(i, KDC_Q_COALESCE), val);\n",
                 "\t\ti = 0; /* deliberate bug: the setting never reaches the queues */\n")],
         runs=[("tcg-iommu", True, ["FAIL coalescing:"], [])]),
+    "cq-head-never-written": dict(
+        file=KDC_TREE / "kdc_pci.c",
+        edits=[("\t\twritel(q->cq_head, q->cq_db);\n\t\tq->cq_head_db = q->cq_head;\n",
+                "\t\tq->cq_head_db = q->cq_head; /* deliberate bug: the head never reaches the device */\n")],
+        runs=[("tcg-iommu", True, ["FAIL cq_head_batching:"], [])]),
 }
 
 

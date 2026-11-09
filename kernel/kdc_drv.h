@@ -52,6 +52,7 @@ struct kdc_queue {
 	void __iomem *sq_db, *cq_db, *abort_reg;
 	spinlock_t lock;
 	u16 sq_tail, cq_head, outstanding;
+	u16 cq_head_db; /* last value written to the CQ head doorbell */
 	u8 phase;
 	bool stopped; /* no doorbells: recovery, failure or removal */
 	struct kdc_cmd **slots; /* by tag: commands the device owns */
@@ -74,6 +75,7 @@ struct kdc_dev {
 	int minor;
 	unsigned int nr_queues, depth, bounce_max;
 	u32 coalesce; /* KDC_Q_COALESCE value for every queue: usecs << 16 | count */
+	u32 cq_head_batch; /* reaped entries per CQ head doorbell, 1..depth - 1 */
 	struct kdc_queue *queues;
 	unsigned int *cpu_queue;
 	struct dma_pool *sgl_pool, *bounce_pool;

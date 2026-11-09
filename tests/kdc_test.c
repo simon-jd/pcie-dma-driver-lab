@@ -726,20 +726,82 @@ static void batch_flush(void)
 }
 
 /*
+ * The completion-queue head reaches the device only every cq_head_batch reaped
+ * entries (default: a quarter of the ring). One command at a time, the device's
+ * own count of head writes must be exactly one per batch. Then the largest
+ * batch (depth - 1) with the ring kept full from one file: the device often
+ * finds every completion entry in use from its point of view and must still
+ * finish everything, with no timeout and no reset.
+ */
+static void cq_head_batching(void)
+{
+	enum { ROUNDS = 4 };
+	int fd = open_dev(0);
+	struct kdc_stats before = stats(fd);
+	unsigned depth = before.queue_depth, batch = read_knob(0, "cq_head_batch");
+	struct kdc_completion cs[KDC_MAX_CMDS_PER_FILE];
+	struct kdc_submit s = req(fd, 1, NULL, NULL, 0);
+
+	CHECK(batch == depth / 4);
+	s.flags = KDC_SUBMIT_NOP;
+	s.queue = 2;
+	s.timeout_ms = 2000;
+	/* batch 1 for one command: nothing reaped on queue 2 is left unreported */
+	knob(0, "cq_head_batch", 1);
+	CHECK(submit(fd, &s) == 0);
+	CHECK(completion(fd).status == 0);
+	knob(0, "cq_head_batch", batch);
+	unsigned long cq = read_knob(0, "device_cq_doorbells");
+	for (unsigned i = 0; i < ROUNDS * depth; i++) {
+		s.id = 100 + i;
+		CHECK(submit(fd, &s) == 0);
+		struct kdc_completion c = completion(fd);
+		CHECK(c.id == s.id && c.status == 0);
+	}
+	CHECK(read_knob(0, "device_cq_doorbells") - cq == ROUNDS * depth / batch);
+	CHECK(stats(fd).dev_timeouts == before.dev_timeouts);
+
+	knob(0, "cq_head_batch", 4 * depth); /* clamped */
+	CHECK(read_knob(0, "cq_head_batch") == depth - 1);
+	unsigned total = ROUNDS * depth, sent = 0, done = 0;
+	while (done < total) {
+		/* keep depth - 1 in flight: every read is refilled at once */
+		while (sent - done < depth - 1 && sent < total) {
+			s.id = 1000 + sent++;
+			CHECK(submit(fd, &s) == 0);
+		}
+		CHECK(wait_ready(fd, 5000));
+		ssize_t n = read(fd, cs, sizeof(cs));
+		CHECK(n > 0 && n % (ssize_t)sizeof(cs[0]) == 0);
+		for (ssize_t k = 0; k < n / (ssize_t)sizeof(cs[0]); k++, done++)
+			CHECK(cs[k].status == 0 && cs[k].queue == 2);
+	}
+	struct kdc_stats after = stats(fd);
+	CHECK(after.dev_timeouts == before.dev_timeouts && after.dev_resets == before.dev_resets);
+	knob(0, "cq_head_batch", batch);
+	baseline(fd);
+	close(fd);
+	say("  cq_head_batching: %u head writes for %u single commands; %u with %u in flight, batch %u",
+	    ROUNDS * depth / batch, ROUNDS * depth, ROUNDS * depth, depth - 1, depth - 1);
+}
+
+/*
  * Interrupt coalescing (debugfs "coalesce" = usecs << 16 | count) as seen in the
  * device's own counters: a flushed batch rings one doorbell and, once the count
  * is reached, raises one interrupt that reaps all of it; a lone command waits
- * for the delay.
+ * for the delay. The CQ head is written after every reap here (cq_head_batch 1).
  */
 static void coalescing(void)
 {
 	int fd = open_dev(0);
 	uint8_t *src = map_pages(8), *dst = map_pages(8);
 	struct kdc_completion cs[8];
+	unsigned long batch = read_knob(0, "cq_head_batch");
 
 	fill_random(src, 8 * PAGE, 9);
 	CHECK(read_knob(0, "coalesce") == 0);
 	knob(0, "coalesce", 50000UL << 16 | 8);
+	knob(0, "cq_head_batch", 1);
 	unsigned long db = read_knob(0, "device_doorbells"), cq = read_knob(0, "device_cq_doorbells");
 	unsigned long irqs = read_knob(0, "device_irqs");
 	for (int i = 0; i < 8; i++) {
@@ -769,6 +831,7 @@ static void coalescing(void)
 	CHECK(c.status == 0 && dt >= 45 && dt < 2000); /* held back by the 50 ms delay */
 	CHECK(read_knob(0, "device_irqs") == irqs + 2);
 	knob(0, "coalesce", 0);
+	knob(0, "cq_head_batch", batch);
 	baseline(fd);
 	close(fd);
 	say("  coalescing: batch of 8 in 1 interrupt, single command waited %ld ms", dt);
@@ -2219,6 +2282,7 @@ int main(void)
 		void (*fn)(void);
 	} cases[] = {
 		{ "device_info", device_info },
+		{ "cq_head_batching", cq_head_batching },
 		{ "abi_validation", abi_validation },
 		{ "data_integrity", data_integrity },
 		{ "nop_and_batch_read", nop_and_batch_read },

@@ -28,6 +28,10 @@ MODULE_PARM_DESC(coalesce_count, "Completions per interrupt (0 or 1: one interru
 static unsigned int coalesce_usecs;
 module_param(coalesce_usecs, uint, 0444);
 MODULE_PARM_DESC(coalesce_usecs, "Longest an interrupt is held back while coalescing, us; read at probe");
+static unsigned int cq_head_batch;
+module_param(cq_head_batch, uint, 0444);
+MODULE_PARM_DESC(cq_head_batch, "Write the completion-queue head to the device after this many reaped entries "
+		 "(1: after every reap; 0: a quarter of the ring); read at probe, debugfs cq_head_batch per device");
 unsigned int cmd_timeout_ms = 5000;
 module_param(cmd_timeout_ms, uint, 0644);
 MODULE_PARM_DESC(cmd_timeout_ms, "Default command timeout from the doorbell, ms");
@@ -166,9 +170,20 @@ void kdc_queue_reap_locked(struct kdc_queue *q, struct list_head *done)
 		WRITE_ONCE(cmd->phase, KDC_COMPLETING);
 		list_add_tail(&cmd->node, done);
 	}
-	/* A stopped queue's ring is reinitialised before it runs again. */
-	if (reaped && !q->stopped)
+	/*
+	 * The device needs the head only to see free completion entries, so it
+	 * is written once cq_head_batch entries have been reaped since the last
+	 * write (one MMIO exit per batch instead of per interrupt). Progress: the
+	 * device stalls only when every entry it can post is in use from its
+	 * point of view; all of those have been posted with an interrupt, and
+	 * reaping them makes the unreported count depth - 1 >= cq_head_batch.
+	 * A stopped queue's ring is reinitialised before it runs again.
+	 */
+	if (reaped && !q->stopped &&
+	    kdc_ring_used(q->cq_head, q->cq_head_db, q->depth) >= READ_ONCE(kdev->cq_head_batch)) {
 		writel(q->cq_head, q->cq_db);
+		q->cq_head_db = q->cq_head;
+	}
 }
 
 /* Commands the device completed: buffers are ours again. */
@@ -382,6 +397,7 @@ static int kdc_queue_hw_setup(struct kdc_dev *kdev, struct kdc_queue *q)
 	memset(q->cq, 0, q->depth * sizeof(*q->cq));
 	q->sq_tail = 0;
 	q->cq_head = 0;
+	q->cq_head_db = 0;
 	q->phase = 1;
 	kdc_wr(kdev, KDC_QREG(qid, KDC_Q_SQ_BASE_LO), lower_32_bits(q->sq_dma));
 	kdc_wr(kdev, KDC_QREG(qid, KDC_Q_SQ_BASE_HI), upper_32_bits(q->sq_dma));
@@ -552,6 +568,25 @@ static int kdc_coalesce_set(void *data, u64 val)
 DEFINE_DEBUGFS_ATTRIBUTE(kdc_coalesce_fops, kdc_coalesce_get, kdc_coalesce_set,
 			 "%llu\n");
 
+static int kdc_cq_head_batch_get(void *data, u64 *val)
+{
+	struct kdc_dev *kdev = data;
+
+	*val = READ_ONCE(kdev->cq_head_batch);
+	return 0;
+}
+
+/* Clamped to 1..depth - 1: a larger batch would never be reached. */
+static int kdc_cq_head_batch_set(void *data, u64 val)
+{
+	struct kdc_dev *kdev = data;
+
+	WRITE_ONCE(kdev->cq_head_batch, clamp_t(u64, val, 1, kdev->depth - 1));
+	return 0;
+}
+DEFINE_DEBUGFS_ATTRIBUTE(kdc_cq_head_batch_fops, kdc_cq_head_batch_get,
+			 kdc_cq_head_batch_set, "%llu\n");
+
 static void kdc_debugfs_init(struct kdc_dev *kdev)
 {
 	static const struct {
@@ -584,6 +619,8 @@ static void kdc_debugfs_init(struct kdc_dev *kdev)
 				   &kdc_inflight_fops);
 	debugfs_create_file_unsafe("coalesce", 0600, kdev->debugfs, kdev,
 				   &kdc_coalesce_fops);
+	debugfs_create_file_unsafe("cq_head_batch", 0600, kdev->debugfs, kdev,
+				   &kdc_cq_head_batch_fops);
 }
 
 /* ---- probe / remove ---- */
@@ -682,6 +719,7 @@ static int kdc_probe(struct pci_dev *pdev, const struct pci_device_id *id)
 	kdev->bounce_max = bounce_max < 0 ? kdc_bounce_default(dev) :
 			   min_t(unsigned int, bounce_max, 65536);
 	kdev->coalesce = min(coalesce_usecs, 0xffffU) << 16 | min(coalesce_count, 0xffffU);
+	kdev->cq_head_batch = clamp(cq_head_batch ?: kdev->depth / 4, 1U, kdev->depth - 1);
 
 	err = kdc_hw_start(kdev);
 	if (err) {
