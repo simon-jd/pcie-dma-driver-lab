@@ -339,8 +339,8 @@ image and are not pinned. It then runs the guest suite under TCG with a strict
 IOMMU. The whole job fits easily in a 30-minute budget: from a fresh clone the
 same steps took 363 s on four threads of the build host with `-j4`
 (`scripts/ci_local.sh`, output in `results/round3/ci-local.txt`; tarballs
-copied in, no apt step). A GitHub runner is slower per thread; its time is not
-known until the workflow first runs there. The runner has no KVM, so CI times
+copied in, no apt step). On a GitHub runner the first run took 21 minutes, all
+steps passing. The runner has no KVM, so CI times
 nothing.
 
 ## Not done
