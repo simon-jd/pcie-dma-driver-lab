@@ -481,7 +481,8 @@ In the earlier session with the same code (`results/perf/chain`, o6 vs o4) that 
 passed and the delayed-coalescing arm missed by a similar margin instead.
 
 The independent check (`results/perf/check-c/`, fresh clones, four more sessions) shows
-the cost is larger than that session suggested and is real. At 32 in flight with a
+the cost is larger than that session suggested and is real. (The improvement round found
+it in the hot functions and moved the fixed path out of them; section 2 there.) At 32 in flight with a
 doorbell each, the final build against o3 had median ratios of 0.991, 0.963, 0.985,
 0.981 and 0.983 in the five sessions, with 1, 0, 2, 3 and 1 of 7 pairs faster: a cost
 of 1-4%, about 2% typically (`vCPU us` per command 1.60 -> 1.65 and 1.58 -> 1.63 in two
@@ -509,6 +510,9 @@ bounce behind the strict IOMMU and 1.14x to 1.74x without one, in the same build
 (`check-c/fixed`); dropping their commit restores o3 exactly.
 
 ### What limits it now, and what was not done
+
+(The improvement round below took up the main loop, the shared file, the removal tests'
+margin and the registered-buffer cost.)
 
 - **QEMU's main loop.** It runs the whole device model in one thread. After change 3,
   three threads with 8 in flight keep it 92% busy (0.98 us per command at 952k/s)
@@ -542,6 +546,243 @@ bounce behind the strict IOMMU and 1.14x to 1.74x without one, in the same build
   flush waits for the whole read batch, which delays resubmission more than the
   doorbells it saves are now worth.
 
+## Improvement round (2026-11-10): what the performance round left open
+
+**Method.** As in the performance round: every build frozen (`scripts/snapshot_build.py`)
+and compared inside one quiet window with the published `main` (frozen as `base`) and
+the previous kept step, seven paired boots, the decision rule written down before the
+runs it judged. Effects under 3% had to hold in two sessions at least an hour apart.
+What the numbers measure is unchanged: the guest driver, KVM exits and QEMU's device
+model (in QEMU's main loop or, new, in IOThreads) around a modeled service time of 0, on
+one host. Sessions, in order: `i2a` (00:17) and `i2b` (04:22), the registered-buffer
+question; `iC` (04:33), the hold knob and the shared file; `iD` (05:38) and `iE`
+(06:02), IOThreads and the before/after; `iCfixed` and `iDfixed` (after `iC` and `iD`
+in the same windows), the registered-buffer arms. Raw data and the comparison tables:
+`results/improve/`.
+
+### 1. A known number of commands held in the device for the removal cases: kept
+
+Under the ASan QEMU `removal_surprise` ended only 9 to 15 of about 70 commands by the
+removal, and in one of the perf round's runs none: whether a command is still in flight
+when the device vanishes depends on how fast the device and the three submitting threads
+are, and with the device that slow they can run dry (that run printed no counts, so this
+is the likely cause, not a shown one). The
+device now has a fault knob, `KDC_REG_FAULT_HOLD` ([15:0] a count, [23:16] a queue + 1 or
+0 for any): the next N commands it fetches on that queue stay device-owned and are never
+serviced; they end only by an abort, a reset or the device going away. Both removal
+cases hold four commands of a separate file on queue 1, wait until the device has
+fetched all four (the count reads 0), and only then remove the device; the submitting
+threads stay on queue 0 and keep running, so completions still race with the removal.
+The checks are now exact for the held commands (each ends once, with `ENODEV` and the
+reset flag, then the file reports `ENODEV`) on top of the old ones (every command ends
+exactly once, open files get `ENODEV`, the module counters return to zero, kmemleak and
+DMA-API debug clean). The knob is queue-specific because a device-wide count was not
+enough: in the first IOThread run a submitting thread's command took one of the holds
+and the holder's own command completed before the removal (`held_ended` failed). qtest
+`fault_hold` checks the knob (held commands not serviced, abortable, cleared by reset,
+a queue-specific hold leaves other queues alone); the `hold-not-honoured` deliberate bug
+(the engine runs held commands) fails it. A held command keeps its slot, so a queue stops
+fetching once a ring's worth of commands is behind it; the tests hold four.
+
+Cost: none measured. `iC`, i1 against r1c, 13 arms: medians 0.991 to 1.011, none below
+r1c's lowest pair (`results/improve/iC/compare-i1-vs-r1c.md`; that build still had a
+device-wide count, the final knob adds one comparison per fetched command).
+
+### 2. The registered-buffer cost: in the hot functions, removed by moving the fixed path out
+
+The question was whether the 1-4% the other paths lost was the added code in submit and
+release or the layout of the kernel image after the driver grew by 3536 bytes of text
+(the scheduler, spinlock, syscall and `memcpy` sections are linked after it). All builds
+here share one QEMU binary; o3 (the step before registered buffers) was rebuilt as
+`o3r`. Two builds separate the two causes:
+
+- `p16`: o3r plus 16 bytes of inert text after the driver. Everything linked after the
+  driver moves by 16 bytes, the same shift modulo 64 as base's, and no instruction on
+  the paths changes. Two more controls were meant to shift by 32 and 3536 bytes, but the
+  pad object was not rebuilt (its source kept an old timestamp, so make saw nothing to
+  do) and both kernels came out byte-identical to p16's (`build_info` in each boot's
+  `run.json`). The sessions therefore booted one binary under three names, which shows
+  what identical builds do in one session.
+- `r1`: the fix candidate. The registered-buffer code in its own file `kdc_fixed.c`,
+  linked last, the other paths' functions as in o3 plus one branch in submit and one in
+  release: `kdc_cmd_prepare`, `kdc_cmd_publish`, `kdc_read`, dispatch and reap have o3's
+  sizes in bytes, `kdc_cmd_release` is 17 and `kdc_ioctl` 81 bytes larger, the 5408 bytes
+  of the fixed path sit in `kdc_fixed.o`, and everything after the driver moves by 5344
+  bytes (32 modulo 64).
+
+Median ratio against o3r over 7 pairs (pairs won):
+
+| arm | session | base | p16 | p16, 2nd copy | p16, 3rd copy | r1 | r1 vs base |
+|---|---|---|---|---|---|---|---|
+| 4 KiB one at a time | i2a | 0.997 (2) | 0.991 (2) | 1.006 (4) | 1.005 (4) | 0.998 (3) | 1.011 (4) |
+|  | i2b | 0.992 (1) | 0.990 (2) | 0.998 (2) | 0.997 (3) | 1.000 (4) | 1.004 (5) |
+| 32 in flight | i2a | 0.995 (3) | 1.007 (4) | 1.013 (6) | 1.017 (4) | 1.004 (5) | 1.015 (5) |
+|  | i2b | 0.981 (3) | 0.993 (3) | 0.997 (3) | 0.998 (3) | 1.002 (4) | 1.008 (5) |
+| 32 batched | i2a | 0.990 (0) | 1.002 (4) | 0.989 (2) | 0.989 (0) | 0.982 (1) | 0.999 (3) |
+|  | i2b | 0.975 (2) | 0.997 (2) | 1.001 (4) | 0.990 (2) | 0.996 (3) | 1.020 (6) |
+| three threads | i2a | 0.993 (2) | 0.991 (2) | 0.991 (2) | 0.989 (3) | 0.996 (3) | 1.005 (4) |
+|  | i2b | 0.976 (1) | 0.978 (3) | 1.000 (3) | 0.994 (0) | 1.004 (5) | 1.032 (6) |
+| three threads, one file, NOP | i2a | 0.983 (3) | 1.004 (4) | 1.005 (4) | 0.966 (1) | 1.018 (5) | 1.013 (4) |
+|  | i2b | 0.957 (0) | 0.979 (2) | 0.998 (3) | 0.977 (3) | 0.968 (1) | 1.024 (4) |
+| three threads, one file, 4 KiB | i2a | 0.983 (3) | 1.030 (4) | 1.004 (4) | 0.989 (2) | 1.016 (4) | 1.034 (7) |
+|  | i2b | 0.991 (2) | 1.006 (5) | 1.009 (5) | 1.018 (5) | 1.015 (5) | 1.022 (7) |
+
+Base was below o3r on every arm in both sessions (12 of 12), by 0.3-1.7% in `i2a` and
+0.8-4.3% in `i2b`. The three names of the p16 binary spread among themselves by up to
+4.1% on the two one-file arms and up to 2.2% on the others, which is the noise any
+single-session comparison here carries; their medians straddle 1.0. (o3r's kernel is
+byte-identical to the perf round's frozen o3; r1 has main's benchmark client, o3r o3's,
+which check C showed not to matter.) r1, whose hot code is o3's but
+whose layout after the driver differs by 5344 bytes, tied o3r within 0.5% on four arms
+in `i2b` (+1.5% and -3.2% on the two one-file arms) and was at 1.004 and 1.002 at 32
+in flight. So most of the cost was the code in the hot functions, not where the code after
+them landed.
+
+A later session (`iF`, 11:07, one session, diagnostic only, rule written before it) added
+`p3536r`, o3r plus a real 3536-byte pad (everything after the driver moved by exactly
+base's 3536 bytes, checked in the symbol table; same QEMU and client as o3r). Against
+o3r: base 0.996, 1.006, 0.988, 0.954, 1.014, 0.987 on the six arms in the table's order;
+p3536r 1.023, 1.036, 0.982, 0.989, 1.065, 1.011; r1c 1.004, 1.009, 1.000, 1.011, 0.986,
+0.976. On 32 batched the pad lost as much as base, on three threads far less, on the
+one-file arms it gained. With identical builds spreading by up to 4% in one session this
+does not separate a placement effect of base's shift; it neither shows one nor rules it
+out. `results/improve/iF/`.
+
+The rule fixed before the runs asked r1 to win at least 6 of 7 pairs against base at 32
+in flight in both sessions: it won 5 and 5, a miss. r1 is kept anyway, stated as a miss:
+against o3r it is at 1.004 and 1.002 there, it is not below base's lowest pair on any arm
+in either session, and against base it won 7 of 7 on 4 KiB with three threads on one
+file in both. The registered-buffer arms (`iCfixed`, `iDfixed`) are in section 5.
+
+### 3. One shared file: an id hash and one lock round per read() batch: kept
+
+Three threads on one file got half of three files (486k vs 952k/s, 4 KiB, in the perf
+round). The file lock was taken five times per command (twice in submit, once when the
+completion is published, twice in `read()`) and held across `kdc_find()`, a walk of the
+live list that every submit does twice. With three threads on one file the list has up to
+24 commands, most last written on another CPU, so the walk is presumably a chain of cache
+misses under the lock the others wait for (no profiler in the guest to show it; KVM offers
+no virtual PMU here: its enable_pmu parameter is off on this host). Now the live commands
+are also in a per-file hash by id (64 buckets), and `read()` takes every completion it can
+return off the done list in one lock round and removes them from the live set in a second,
+instead of two rounds per completion; its semantics (blocks only for the first, each
+completion consumed exactly once, a failed copy puts the rest back in order) are
+unchanged. The two were measured together.
+
+`iC`, i3 against i1: NOPs on one shared file 514.9k -> 749.2k/s (1.45x), 4 KiB 491.0k ->
+616.0k/s (1.29x), 7 of 7 pairs each; vCPU time per command 5.44 -> 3.73 us and 5.28 ->
+4.06 us (three files: 2.76). Also 32 in flight 1.039 (7 of 7), 1.051 in `iD`. The rule's
+second condition missed on one arm: bounce one command at a time 0.992, its median
+(139.0k) just below i1's lowest pair; `iD` measured 1.001 there (4 of 7). A shared file
+still costs a third against three files; what is left is the per-file lock itself (submit
+still takes it twice) and the single done list, which would need per-queue lists or a
+split lock with its own wakeup rules.
+
+### 4. Queues in IOThreads (device model): an option, not the default
+
+QEMU's main loop ran the whole device model and was 92% busy at three threads. With the
+device's `iothreads` property (`-object iothread,id=io0 ... -device kdc-dma,iothreads=io0:io1`,
+queue i in entry i mod n) each queue's bottom halves, timers and doorbell eventfd run in
+an IOThread without the BQL; without the property nothing changes. The design (top of
+`qemu/kdc_dma.c`): a mutex per queue for its rings, slots and counters; device-wide
+changes (enable/disable, reset, FLR, unplug, the fault knobs, status) take every queue
+mutex, so they wait for a pass in progress; the error registers and one-shot fault
+counters that queues write have one more mutex, always taken last. The BAR is lockless,
+so a vCPU's doorbell, CQ head or abort write takes only its queue's mutex; the three
+writes that add or remove an ioeventfd take the BQL first. Nothing in an IOThread takes
+the BQL: device DMA is restricted to RAM (`MemTxAttrs.memory`), so a descriptor aimed at
+any device's registers, the device's own included, fails with a data error instead of
+needing the BQL or re-entering the device (QEMU's re-entrancy guard is per device, not
+per thread, so it cannot be used here); interrupts go through KVM irqfds, with MSI-X
+vector notifiers keeping the routes in step with the guest's masking, or without KVM
+through a main-loop bottom half. Unplug waits for every IOThread once more before
+freeing anything, and lockless MMIO still in flight finds the device marked dead under
+its queue lock. Rejected alternatives: one device mutex for everything (three IOThreads
+would serialise on it); keeping the BAR under the BQL (every CQ head write and abort
+would take the BQL, which a queue mutex held across DMA must never wait for); and
+supporting an emulated IOMMU under TCG (the IOMMU raises its fault interrupt from the
+IOThread without the BQL, which TCG's APIC asserts against): that combination is refused
+at realize.
+
+Tests: every qtest test runs a second time with the queues in two IOThreads (42 runs);
+the matrix gained four IOThread configurations (KVM with the IOMMU and without, KVM with
+the ASan QEMU, TCG without an IOMMU); the `iothread-irq-lost` deliberate bug (an
+interrupt marked pending but never handed to the main loop) fails qtest
+`pass_interrupts_iothreads`.
+
+Where it runs and what it costs (`iE`, the same build in three configurations, 7 pairs
+each; k cmds/s and host CPU time per command of every QEMU thread, vCPUs + main loop +
+IOThreads; session `iD` gives every ratio within 2.5% except 4 KiB on one file with one
+IOThread, 0.880 there):
+
+| arm | main loop | one IOThread (CPU 9) | ratio (pairs won) | three IOThreads (3, 5, 7) | ratio (pairs won) |
+|---|---|---|---|---|---|
+| NOP one at a time | 176.1k, 9.30 us | 212.2k, 6.84 us | 1.210 (7) | 175.1k, 8.24 us | 1.001 (4) |
+| 4 KiB one at a time | 149.3k, 10.86 us | 176.2k, 8.34 us | 1.178 (7) | 151.1k, 9.80 us | 1.011 (4) |
+| 32 in flight | 621.4k, 2.84 us | 522.0k, 3.36 us | 0.846 (0) | 356.3k, 4.89 us | 0.573 (0) |
+| 32 batched | 690.2k, 2.22 us | 710.1k, 2.11 us | 1.020 (4) | 683.9k, 2.25 us | 0.997 (1) |
+| three threads | 938.9k, 3.76 us | 1266.5k, 3.16 us | 1.342 (7) | 812.2k, 6.05 us | 0.869 (1) |
+| three threads batched | 803.7k, 4.38 us | 1245.9k, 3.19 us | 1.516 (7) | 1140.2k, 3.76 us | 1.380 (6) |
+| three threads, one file, NOP | 718.6k, 4.98 us | 568.6k, 6.61 us | 0.790 (0) | 519.6k, 7.93 us | 0.720 (0) |
+| three threads, one file, 4 KiB | 614.5k, 5.61 us | 504.0k, 7.66 us | 0.837 (0) | 453.0k, 9.43 us | 0.734 (0) |
+
+The placement the first rule judged (`iD`), one IOThread per queue on the SMT sibling of
+its vCPU's core (3, 5, 7), lost 13% at three threads: the vCPUs were busy all the time
+(2.94 of 3) on cores they now shared with the IOThreads, and the device, idle between
+commands, took 0.77 doorbells and 1.00 interrupts per command instead of 0.14 and 0.29.
+One IOThread for the device on its own core's free sibling (9; the main loop on 8 is idle
+in this mode), judged by a second rule written before session `iE`, won where the main
+loop was the limit: three threads 1.36x and 1.34x, batched 1.50x and 1.52x, and one command
+at a time 1.15-1.21x, with less host CPU per command than the main loop. The gain one at
+a time is presumably the IOThread's polling: it polls its event sources for up to 32 us
+before it sleeps (QEMU's default `poll-max-ns`), so a doorbell finds it awake; not
+measured separately. It lost where the device had been busy enough to batch for free: 32
+in flight from one thread 0.86x and 0.85x, the shared file 0.79-0.88x. A device that
+keeps up finds its queue empty more often, publishes that, and the driver then rings for
+the next command: doorbells per command at 32 in flight rose from 0.22 to 0.49,
+interrupts from 0.44 to 0.74, and the vCPU, the limit there, paid 1.90 instead of 1.43 us
+per command (one file: 0.40 to 0.90 doorbells, 4.08 to 5.88 us). Device-side polling of
+the shadow tail (an IOThread poll handler that keeps the event index behind while it
+polls) would attack exactly this; not built. The default stays the main loop.
+
+Costs on the main-loop path: none that held. i4 against i3 in the main loop: `iD` NOPs one
+at a time 0.987, just below i3's lowest pair; `iE` 1.008 and no arm below i3's minimum.
+
+### 5. Registered buffers after the move, and the before/after
+
+The fixed path against base (`iCfixed` with r1c, `iDfixed` with i4; 7 pairs; strict
+emulated IOMMU and none): behind the IOMMU every fixed arm within 1% or better (32
+batched 4 KiB 1.048 and 1.012); without an IOMMU the rule's second condition missed once
+in each session on a different arm (`iCfixed` 32 batched fixed 0.985; `iDfixed` 4 KiB
+bounce one at a time 0.988), within 1.5%, not reproduced in the other session.
+
+Before/after against the published `main` (`iE`, and `iD` for the main loop): 32 in
+flight 1.10x and 1.08x, one shared file 1.39x/1.28x (NOP/4 KiB) and 1.45x/1.26x, 32
+batched 1.02x; one command at a time and three threads on their own files unchanged
+(0.98 to 1.01). With one IOThread: one at a time 1.17x-1.21x, three threads 1.38x,
+batched 1.50x; 32 in flight 0.93x.
+
+### What limits it now, and what was not done
+
+- **A device that keeps up loses the free batching.** With the queues in an IOThread the
+  device finds its queue empty more often, so the event index makes the driver ring and
+  the passes post fewer completions per interrupt. Device-side polling of the shadow tail
+  (an IOThread poll handler that keeps the event index behind while it polls, so the
+  driver can skip doorbells) is the next step; not built.
+- **One file** still costs about a third against three files (614.5k vs 938.9k/s, 4 KiB).
+  Submit still takes the file lock twice and every completion goes through one done list
+  and one wait queue; per-queue done lists would need their own wakeup rule (a reader
+  waits on its CPU's queue but must still see the others' completions).
+- **Session noise and code placement.** One binary booted under three names spread by up
+  to 4% on single arms in one session, and a 3536-byte shift of the code after the
+  driver could not be told apart from that (section 2). A kernel built with 64-byte
+  function alignment might make placement effects smaller; not tried, because it changes
+  the timing kernel for every build.
+- **Not done** from the list: the CQ head in the shadow page (at most 0.06 MMIO exits per
+  command), delay-based coalescing only while a queue is deep, a sharded overlap
+  tracker, batching at three threads (still 0.99x of not batching in the main loop; with
+  one IOThread batching is about level with not batching, 1245.9k vs 1266.5k/s).
+
 ## CI
 
 `.github/workflows/ci.yml` (push and pull request, `ubuntu-24.04`) builds QEMU
@@ -553,16 +794,19 @@ packages (compiler, flex, bison, libelf, static BusyBox) come from the runner
 image and are not pinned. It then runs the guest suite under TCG with a strict
 IOMMU. The whole job fits easily in a 30-minute budget: from a fresh clone the
 same steps took 363 s on four threads of the build host with `-j4` for the
-published commit and 360 s for this branch (`scripts/ci_local.sh`, output in
-`results/round3/ci-local.txt` and `results/perf/ci-local.txt`; tarballs copied in,
-no apt step). On a GitHub runner the first run of the published commit took 21
-minutes, all steps passing; this branch has not run there. The runner has no KVM, so CI times
+first published commit, 360 s for the performance round and 407 s for the improvement
+round's code (`fbb9d22`'s parent `b081e53`; the qtest suite now runs twice as many tests)
+(`scripts/ci_local.sh`, output in `results/round3/ci-local.txt`, `results/perf/ci-local.txt`
+and `results/improve/ci-local.txt`; tarballs copied in, no apt step). On a GitHub runner the first run of the published commit took 21
+minutes, all steps passing; the improvement round's branch has not run there. The qtest
+suite now runs every test twice (main loop and IOThreads, 42 runs). The runner has no KVM, so CI times
 nothing.
 
 ## Not done
 
 - Streaming data path (partial writes after an abort), PCIe AER recovery, an
   io_uring `uring_cmd` path.
-- The device model outside QEMU's main loop, delay-based adaptive coalescing, the CQ
-  head in the shadow page and device-side polling (see the performance round).
+- Delay-based adaptive coalescing, the CQ head in the shadow page, device-side polling
+  of the shadow tail (what IOThread mode now needs most), per-queue completion lists in a
+  file, a sharded overlap tracker (see the improvement round).
 - Profiling QEMU on the host (needs perf).

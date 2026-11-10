@@ -1,0 +1,257 @@
+{
+  "boots": [
+    {
+      "config": "noiommu",
+      "build": "base",
+      "boot": 0,
+      "seconds": 17.3,
+      "windows": 13,
+      "rejected": 0,
+      "bench_exit": "0"
+    },
+    {
+      "config": "noiommu",
+      "build": "r1c",
+      "boot": 1,
+      "seconds": 17.3,
+      "windows": 13,
+      "rejected": 0,
+      "bench_exit": "0"
+    },
+    {
+      "config": "iommu-strict",
+      "build": "base",
+      "boot": 2,
+      "seconds": 18.4,
+      "windows": 14,
+      "rejected": 1,
+      "bench_exit": "0"
+    },
+    {
+      "config": "iommu-strict",
+      "build": "r1c",
+      "boot": 3,
+      "seconds": 17.2,
+      "windows": 13,
+      "rejected": 0,
+      "bench_exit": "0"
+    },
+    {
+      "config": "noiommu",
+      "build": "base",
+      "boot": 4,
+      "seconds": 17.2,
+      "windows": 13,
+      "rejected": 0,
+      "bench_exit": "0"
+    },
+    {
+      "config": "noiommu",
+      "build": "r1c",
+      "boot": 5,
+      "seconds": 17.2,
+      "windows": 13,
+      "rejected": 0,
+      "bench_exit": "0"
+    },
+    {
+      "config": "iommu-strict",
+      "build": "base",
+      "boot": 6,
+      "seconds": 20.8,
+      "windows": 16,
+      "rejected": 3,
+      "bench_exit": "0"
+    },
+    {
+      "config": "iommu-strict",
+      "build": "r1c",
+      "boot": 7,
+      "seconds": 17.2,
+      "windows": 13,
+      "rejected": 0,
+      "bench_exit": "0"
+    },
+    {
+      "config": "noiommu",
+      "build": "base",
+      "boot": 8,
+      "seconds": 18.4,
+      "windows": 14,
+      "rejected": 1,
+      "bench_exit": "0"
+    },
+    {
+      "config": "noiommu",
+      "build": "r1c",
+      "boot": 9,
+      "seconds": 17.2,
+      "windows": 13,
+      "rejected": 0,
+      "bench_exit": "0"
+    },
+    {
+      "config": "iommu-strict",
+      "build": "base",
+      "boot": 10,
+      "seconds": 18.4,
+      "windows": 14,
+      "rejected": 1,
+      "bench_exit": "0"
+    },
+    {
+      "config": "iommu-strict",
+      "build": "r1c",
+      "boot": 11,
+      "seconds": 18.4,
+      "windows": 14,
+      "rejected": 1,
+      "bench_exit": "0"
+    },
+    {
+      "config": "noiommu",
+      "build": "base",
+      "boot": 12,
+      "seconds": 17.2,
+      "windows": 13,
+      "rejected": 0,
+      "bench_exit": "0"
+    },
+    {
+      "config": "noiommu",
+      "build": "r1c",
+      "boot": 13,
+      "seconds": 18.4,
+      "windows": 14,
+      "rejected": 1,
+      "bench_exit": "0"
+    },
+    {
+      "config": "iommu-strict",
+      "build": "base",
+      "boot": 14,
+      "seconds": 19.5,
+      "windows": 15,
+      "rejected": 2,
+      "bench_exit": "0"
+    },
+    {
+      "config": "iommu-strict",
+      "build": "r1c",
+      "boot": 15,
+      "seconds": 17.2,
+      "windows": 13,
+      "rejected": 0,
+      "bench_exit": "0"
+    },
+    {
+      "config": "noiommu",
+      "build": "base",
+      "boot": 16,
+      "seconds": 17.2,
+      "windows": 13,
+      "rejected": 0,
+      "bench_exit": "0"
+    },
+    {
+      "config": "noiommu",
+      "build": "r1c",
+      "boot": 17,
+      "seconds": 20.8,
+      "windows": 16,
+      "rejected": 3,
+      "bench_exit": "0"
+    },
+    {
+      "config": "iommu-strict",
+      "build": "base",
+      "boot": 18,
+      "seconds": 18.3,
+      "windows": 14,
+      "rejected": 1,
+      "bench_exit": "0"
+    },
+    {
+      "config": "iommu-strict",
+      "build": "r1c",
+      "boot": 19,
+      "seconds": 18.4,
+      "windows": 14,
+      "rejected": 1,
+      "bench_exit": "0"
+    },
+    {
+      "config": "noiommu",
+      "build": "base",
+      "boot": 20,
+      "seconds": 20.7,
+      "windows": 16,
+      "rejected": 3,
+      "bench_exit": "0"
+    },
+    {
+      "config": "noiommu",
+      "build": "r1c",
+      "boot": 21,
+      "seconds": 19.6,
+      "windows": 15,
+      "rejected": 2,
+      "bench_exit": "0"
+    },
+    {
+      "config": "iommu-strict",
+      "build": "base",
+      "boot": 22,
+      "seconds": 19.5,
+      "windows": 15,
+      "rejected": 2,
+      "bench_exit": "0"
+    },
+    {
+      "config": "iommu-strict",
+      "build": "r1c",
+      "boot": 23,
+      "seconds": 18.9,
+      "windows": 15,
+      "rejected": 2,
+      "bench_exit": "0"
+    },
+    {
+      "config": "noiommu",
+      "build": "base",
+      "boot": 24,
+      "seconds": 19.9,
+      "windows": 17,
+      "rejected": 5,
+      "bench_exit": "0"
+    },
+    {
+      "config": "noiommu",
+      "build": "r1c",
+      "boot": 25,
+      "seconds": 17.2,
+      "windows": 13,
+      "rejected": 0,
+      "bench_exit": "0"
+    },
+    {
+      "config": "iommu-strict",
+      "build": "base",
+      "boot": 26,
+      "seconds": 17.2,
+      "windows": 13,
+      "rejected": 0,
+      "bench_exit": "0"
+    },
+    {
+      "config": "iommu-strict",
+      "build": "r1c",
+      "boot": 27,
+      "seconds": 19.5,
+      "windows": 15,
+      "rejected": 2,
+      "bench_exit": "0"
+    }
+  ],
+  "problems": []
+}

@@ -1,0 +1,10 @@
+reps 1
+# Six arms of bench/ab.plan for questions about the guest kernel's code (check C, the improvement
+# round's layout controls): run with --builds A,B,... --rounds 7.
+warmup               mode=nop qd=1 ms=300
+zc4k-qd1             mode=zc size=4096 qd=1
+zc4k-qd32            mode=zc size=4096 qd=32
+zc4k-qd32-batch      mode=zc size=4096 qd=32 batch=1
+zc4k-t3-qd8          mode=zc size=4096 threads=3 qd=8
+nop-t3-qd8-sharedfile mode=nop threads=3 qd=8 files=shared
+zc4k-t3-qd8-sharedfile mode=zc size=4096 threads=3 qd=8 files=shared

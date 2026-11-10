@@ -1,0 +1,4 @@
+--- kdc_cmd.c
+-		if (interval_tree_iter_first(&kdc_dst_tree, it->start, it->last))
+			break;
++		/* deliberate bug: no overlap check */

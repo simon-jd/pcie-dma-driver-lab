@@ -1,0 +1,6 @@
+# size(1) text of the objects linked into the p3536r driver (kernel/Makefile of o3 plus kdc_pad.o)
+3163 build/kernel-perf/drivers/misc/kdc/kdc_cmd.o
+5355 build/kernel-perf/drivers/misc/kdc/kdc_fops.o
+3568 build/kernel-perf/drivers/misc/kdc/kdc_pad.o
+11982 build/kernel-perf/drivers/misc/kdc/kdc_pci.o
+2607 build/kernel-perf/drivers/misc/kdc/kdc_recover.o

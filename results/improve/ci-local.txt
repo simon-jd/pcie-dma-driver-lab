@@ -1,0 +1,11 @@
+commit b081e53 Run the device's queues in IOThreads, as an option
+STEP build_qemu 171 s
+STEP qtest_asan 24 s
+STEP qtest_release 21 s
+STEP fetch_kernel 10 s
+STEP build_kernel 108 s
+STEP tcg_guest 73 s
+TOTAL 407 s on CPUs 12-15 (32 online, 13th Gen Intel(R) Core(TM) i9-13900K)
+KDC_QTEST PASS tests=42 failures=0
+KDC_QTEST PASS tests=42 failures=0
+PASS tcg iommu=True qemu=release kernel=kasan iothreads=0 72.6s, 37 client cases; logs in /home/postedism/.cache/kl-ci/repo/logs/tcg-iommu

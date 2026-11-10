@@ -1,0 +1,98 @@
+{
+  "utc": "2026-11-10T17:12:22+00:00",
+  "accel": "tcg",
+  "iommu": true,
+  "qemu": "release",
+  "kernel": "kasan",
+  "iothreads": 0,
+  "argv": [
+    "/home/postedism/Desktop/driver-firnware-runtime/A-kernel-device-contract-lab/.cache/build/qemu/qemu-system-x86_64",
+    "-machine",
+    "q35",
+    "-accel",
+    "tcg",
+    "-cpu",
+    "max",
+    "-m",
+    "2048",
+    "-smp",
+    "4",
+    "-nodefaults",
+    "-display",
+    "none",
+    "-serial",
+    "stdio",
+    "-monitor",
+    "none",
+    "-no-reboot",
+    "-nic",
+    "none",
+    "-device",
+    "intel-iommu",
+    "-device",
+    "pcie-root-port,id=rp0,bus=pcie.0,chassis=1,addr=0x2",
+    "-device",
+    "kdc-dma,id=kdc0,bus=rp0,queues=4",
+    "-device",
+    "pcie-root-port,id=rp1,bus=pcie.0,chassis=2,addr=0x3",
+    "-device",
+    "kdc-dma,id=kdc1,bus=rp1,queues=2",
+    "-qmp",
+    "unix:/tmp/kdc-run-edxz_zja/qmp.sock,server=on,wait=off",
+    "-kernel",
+    "/home/postedism/Desktop/driver-firnware-runtime/A-kernel-device-contract-lab/build/kernel/arch/x86/boot/bzImage",
+    "-initrd",
+    "/home/postedism/Desktop/driver-firnware-runtime/A-kernel-device-contract-lab/build/initramfs.cpio.gz",
+    "-append",
+    "console=ttyS0 panic=-1 oops=panic panic_on_warn=1 nokaslr printk.devkmsg=on intel_iommu=on iommu.strict=1"
+  ],
+  "qemu_version": "QEMU emulator version 10.2.1",
+  "mutant": "unregister-in-use",
+  "kernel_sha256": "33151c352b39048fb1ee0f32ed2e5f6b17956d86b7bc38b9e014eb6502638912",
+  "client_sha256": "cf79a2844f5aa9fd08f9576f69e9aa38db4fc97b6e66066f868e22d49d8af4f9",
+  "load_average": [
+    "1.94",
+    "2.61",
+    "4.73"
+  ],
+  "passed": false,
+  "host_actions": [],
+  "returncode": 0,
+  "seconds": 8.5,
+  "expectations": [],
+  "kmemleak_records": 0,
+  "kmemleak_driver_records": 0,
+  "cases": [
+    [
+      "device_info",
+      "7"
+    ],
+    [
+      "shadow_doorbell",
+      "13"
+    ],
+    [
+      "cq_head_batching",
+      "86"
+    ],
+    [
+      "abi_validation",
+      "75"
+    ],
+    [
+      "data_integrity",
+      "349"
+    ]
+  ],
+  "counts": [
+    "  shadow_doorbell: 4 commands behind a stalled engine, each fetched after its doorbell\r",
+    "  cq_head_batching: 16 head writes for 256 single commands; 256 with 63 in flight, batch 63\r",
+    "  data_integrity: 84 copies verified (dst bytes, guard bytes, CRC32C)\r"
+  ],
+  "problems": [
+    "report: [    7.499374] WARNING: CPU: 1 PID: 83 at drivers/misc/kdc/kdc_fixed.c:110 kdc_regbuf_destroy+0x5a/0x2a0",
+    "report: [    7.502501] Call Trace:",
+    "report: [    7.505599] Kernel panic - not syncing: kernel: panic_on_warn set ...",
+    "report: [    7.506031] Call Trace:"
+  ]
+}

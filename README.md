@@ -10,40 +10,36 @@ still write to it.
 Scope: the device model, the driver and their tests (cancel, reset, close,
 timeouts escalating to controller reset and FLR, hot-unplug under load, DMA
 faults with and without an IOMMU, a no-overlapping-destinations rule), a KVM
-study of what each command costs, and a round of optimizations along that path.
+study of what each command costs, and two rounds of optimizations along that path.
 The hardware exists only in QEMU; nothing here ran on a physical device.
 
-| KVM, 4 KiB copies unless noted (commands/s, p50) | published `main` | this branch |
-| --- | --- | --- |
-| one command at a time; NOP | 106.7k, 9.1 us; 115.3k | 152.1k, 6.1 us; 177.2k |
-| 32 in flight: a doorbell each; batched | 133.2k; 559.0k | 577.8k (4.4x); 689.2k (1.2x) |
-| three threads, 8 in flight each: own files; one file | 201.0k; 174.4k | 951.6k (4.7x); 486.3k (2.8x) |
-| VM exits per command, one at a time (to QEMU) | 3.65 (2.00) | 2.70 (0.06) |
-| strict emulated IOMMU, best path: one at a time; 32 batched | bounce 98.1k; 453.3k | registered buffer 148.0k; 660.5k |
-| Losses | | registered-buffer code costs the paths that do not use it 1–4% at 32 in flight (five sessions); one file still half of three; batching now slower than not at three threads (852.2k) |
-| Correctness | | qtest 20/20 on both QEMU builds; KUnit 13/13 and 37/37 client cases on KVM and TCG, IOMMU strict or none, ASan QEMU, KCSAN; 14 of 14 deliberate bugs caught |
+Published `main` against this branch, seven paired boots in one quiet window (session `iE`;
+the IOMMU row `iDfixed`); the queues run in QEMU's main loop unless `iothreads=` is set:
 
-What changed: the CQ head is written every 16 completions; the device sends two
-MSI-X messages per processing pass instead of one per completion; SQ tails go through
-a shadow doorbell page with an event index and an ioeventfd, so a doorbell no longer
-exits to QEMU and a busy device needs none. Each of these beat the previous step in
-seven paired boots in one quiet window. Registered buffers, pinned and mapped once,
-did not: the paths that do not use them got 1–4% slower at 32 in flight in five
-sessions, the cost is in the guest kernel (swapping the QEMU binaries or the benchmark
-clients did not move it), and moving the new fields to the ends of the structs did not
-remove it. They are kept for what they give the paths that use them, 1.1x (4 KiB) to
-1.7x (64 KiB) over bounce in the same build. Waking one reader per completion did not
-pay and was reverted. An independent rerun from fresh clones
-([check C](results/perf/check-c/README.md)) reproduced every before/after ratio in the
-table within 3% and the correctness results. Numbers are the
-guest driver plus KVM exits plus QEMU's device model around a modeled service time of
-0, not device throughput ([design trade-offs](docs/design-tradeoffs.md#performance-round-2026-11-09-optimizing-along-the-command-path),
+| KVM, 4 KiB unless noted | published `main` | this branch | this branch, one IOThread |
+| --- | --- | --- | --- |
+| one at a time; NOP | 150.0k, 6.2 us; 175.4k | 149.3k (0.99x); 176.1k | 176.2k (1.17x), 5.3 us; 212.2k (1.21x) |
+| 32 in flight, a doorbell each; batched | 568.1k; 670.7k | 621.4k (1.10x); 690.2k (1.02x) | 522.0k (0.93x); 710.1k (1.07x) |
+| three threads, 8 in flight each: own files; batched | 923.2k; 830.1k | 938.9k (1.00x); 803.7k (0.99x) | 1266.5k (1.38x); 1245.9k (1.50x) |
+| three threads on one file: NOP; 4 KiB | 512.1k; 484.2k | 718.6k (1.39x); 614.5k (1.28x) | 568.6k (1.10x); 504.0k (1.07x) |
+| strict emulated IOMMU, registered buffers: one at a time; 32 batched | 149.3k; 687.8k | 149.5k (1.00x); 700.7k (1.01x) | not measured |
+| Losses | | three threads 0.98x and batched three threads 0.99x in `iD` (1.00x, 0.99x in `iE`); a 4 KiB bounce one at a time 0.99x in `iDfixed` | 32 in flight 0.93x and one file 1.07-1.10x instead of 1.28-1.39x: a device that keeps up makes the driver ring and interrupt more often |
+| Correctness | | qtest 42/42 on both QEMU builds (21 tests, in the main loop and in IOThreads); KUnit 13/13 and 37/37 client cases in 10 configurations: KVM and TCG, IOMMU strict or none, ASan QEMU, KCSAN, and four with IOThreads; 16 of 16 deliberate bugs caught | in the same matrix |
+
+What changed: the removal tests hold a known number of commands in the device, so they no
+longer depend on timing; the registered-buffer code moved out of the functions the other
+paths run, which took back most of the 1-4% it cost them; a file's commands are found
+through a hash and `read()` takes its completions in one lock round (one shared file
+1.28x-1.39x); and the queues can run in IOThreads without the BQL. One IOThread wins where
+QEMU's main loop was the limit and loses where a busy device used to batch for free, so it
+is an option, not the default. Numbers are the guest driver plus KVM exits plus QEMU's
+device model around a modeled service time of 0, not device throughput; the IOThread
+column uses one more host CPU ([design trade-offs](docs/design-tradeoffs.md#improvement-round-2026-11-10-what-the-performance-round-left-open),
 [results](results/README.md)).
 
-Limitations: emulated device and IOMMU only, one host; QEMU's single main loop runs
-the device model and is 92% busy at three threads, so multi-queue numbers describe
-QEMU as much as the driver; no partial writes after an abort; one Linux version; no
-AER or io_uring path. Details: [driver ownership and recovery](docs/driver-ownership.md),
+Limitations: emulated device and IOMMU only, one host; IOThread mode refuses TCG behind an
+emulated IOMMU and refuses DMA to anything but RAM; no partial writes after an abort; one
+Linux version; no AER or io_uring path. Details: [driver ownership and recovery](docs/driver-ownership.md),
 [device interface](docs/device-interface.md).
 
 ## Layout
@@ -52,8 +48,9 @@ AER or io_uring path. Details: [driver ownership and recovery](docs/driver-owner
 - `include/kdc_hw.h` - register map and descriptor formats, shared by QEMU, the driver and the qtest suite
 - `include/kdc_abi.h` - the `/dev/kdcN` ioctl ABI (version 3, plus registered buffers)
 - `kernel/` - the driver, built into a pinned Linux 6.12.41: `kdc_pci.c` (probe, remove, rings, interrupts),
-  `kdc_recover.c` (timeouts, resets, failure), `kdc_cmd.c` (pinning, DMA mapping, registered buffers, overlap tracker),
-  `kdc_fops.c` (the per-file contract), `kdc_state.h`/`kdc_ring.h` (pure logic) and `kdc_kunit.c`
+  `kdc_recover.c` (timeouts, resets, failure), `kdc_cmd.c` (pinning, DMA mapping, overlap tracker),
+  `kdc_fops.c` (the per-file contract), `kdc_fixed.c` (registered buffers and their commands),
+  `kdc_state.h`/`kdc_ring.h` (pure logic) and `kdc_kunit.c`
 - `tests/qtest/kdc_qtest.py` - device-model tests through QEMU's qtest protocol, no guest kernel
 - `tests/kdc_test.c` - static in-guest test client; `tests/kdc_bench.c` - in-guest benchmark client
 - `scripts/` - fetch and build QEMU and the kernel, boot the guest, run the matrix, the deliberate bugs
@@ -73,7 +70,7 @@ python3 scripts/fetch_kernel.py               # Linux 6.12.41, SHA256-checked (-
 python3 scripts/build_kernel.py               # KASAN kernel + client; add --local-tools DIR if flex/bison/libelf live there
 python3 scripts/build_kernel.py --variant kcsan   # the KCSAN kernel (used by run_matrix.py)
 python3 tests/qtest/kdc_qtest.py --qemu .cache/build/qemu-asan/qemu-system-x86_64 --log /tmp/qtest.log
-python3 scripts/run_vm.py --accel tcg --iommu --out /tmp/kdc-run   # or --no-iommu, --qemu asan, --kernel kcsan, --accel kvm
+python3 scripts/run_vm.py --accel tcg --iommu --out /tmp/kdc-run   # or --no-iommu, --qemu asan, --kernel kcsan, --accel kvm, --iothreads 3
 python3 scripts/run_matrix.py --name my-run   # qtest x2 + every guest configuration into results/my-run/
 python3 scripts/mutation_check.py --out /tmp/mutants   # deliberate bugs must fail named checks
 python3 scripts/build_kernel.py --variant perf    # kernel without debug options, for timing only
@@ -82,20 +79,26 @@ python3 scripts/bench_report.py /tmp/kdc-bench    # medians per arm into summary
 python3 scripts/snapshot_build.py base            # freeze this timing build (QEMU, perf kernel, client) as .cache/ab/base
 python3 scripts/run_bench.py --plan bench/ab.plan --builds base,tree --rounds 7 --out /tmp/kdc-ab   # boots alternate
 python3 scripts/bench_compare.py /tmp/kdc-ab --base base --new tree --target zc4k-qd1   # pairs boots, applies the rule
+python3 scripts/run_bench.py --plan bench/ab.plan --configs noiommu,iothread1 --rounds 7 --out /tmp/kdc-io   # main loop vs IOThread
+python3 scripts/bench_compare.py /tmp/kdc-io --base tree --new tree --new-config iothread1   # pairs the two configurations
 ```
 
 `run_bench.py` pins the vCPUs to host CPUs 2, 4 and 6 and QEMU's main loop to
 CPU 8 by default (`--vcpus`, `--main-cpu`, `--watch-cpus`) and runs QEMU at nice 0;
+the configuration `iothread1` adds one IOThread for the device on CPU 9, `iothreads`
+three (one per vCPU, on CPUs 3, 5, 7, the vCPU cores' SMT siblings);
 `--builds tree` is the checkout's own build. The published runs and their exact
 commands are listed in [results/README.md](results/README.md).
 
 CI (`.github/workflows/ci.yml`, `ubuntu-24.04`) builds QEMU with the device,
-runs the qtest suite on both builds and builds the KASAN kernel with the
-driver and the clients, from the pinned versions and checksums in `scripts/`,
-then runs the guest suite under TCG with a strict IOMMU. From a fresh clone the
-same steps took 360 s on four threads of the build host (`scripts/ci_local.sh`,
-[results/perf/ci-local.txt](results/perf/ci-local.txt)); on a GitHub runner the
-first run of the published commit took 21 minutes.
+runs the qtest suite on both builds (each test in the main loop and with
+IOThreads) and builds the KASAN kernel with the driver and the clients, from the
+pinned versions and checksums in `scripts/`, then runs the guest suite under TCG
+with a strict IOMMU. From a fresh clone the same steps took 407 s on four threads
+of the build host (`scripts/ci_local.sh`,
+[results/improve/ci-local.txt](results/improve/ci-local.txt)); on a GitHub runner
+the first run of the first published commit took 21 minutes; this branch has not
+run there.
 
 A guest run fails on any kernel, sanitizer, lockdep, DMA-API, DMAR or driver
 report outside the windows in which a test expects one, on a kmemleak record

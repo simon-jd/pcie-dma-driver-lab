@@ -1,0 +1,286 @@
+{
+  "utc": "2026-11-10T17:05:25+00:00",
+  "accel": "tcg",
+  "iommu": true,
+  "qemu": "release",
+  "kernel": "kasan",
+  "iothreads": 0,
+  "argv": [
+    "/home/postedism/Desktop/driver-firnware-runtime/A-kernel-device-contract-lab/.cache/build/qemu/qemu-system-x86_64",
+    "-machine",
+    "q35",
+    "-accel",
+    "tcg",
+    "-cpu",
+    "max",
+    "-m",
+    "2048",
+    "-smp",
+    "4",
+    "-nodefaults",
+    "-display",
+    "none",
+    "-serial",
+    "stdio",
+    "-monitor",
+    "none",
+    "-no-reboot",
+    "-nic",
+    "none",
+    "-device",
+    "intel-iommu",
+    "-device",
+    "pcie-root-port,id=rp0,bus=pcie.0,chassis=1,addr=0x2",
+    "-device",
+    "kdc-dma,id=kdc0,bus=rp0,queues=4",
+    "-device",
+    "pcie-root-port,id=rp1,bus=pcie.0,chassis=2,addr=0x3",
+    "-device",
+    "kdc-dma,id=kdc1,bus=rp1,queues=2",
+    "-qmp",
+    "unix:/tmp/kdc-run-qo6szo4g/qmp.sock,server=on,wait=off",
+    "-kernel",
+    "/home/postedism/Desktop/driver-firnware-runtime/A-kernel-device-contract-lab/build/kernel/arch/x86/boot/bzImage",
+    "-initrd",
+    "/home/postedism/Desktop/driver-firnware-runtime/A-kernel-device-contract-lab/build/initramfs.cpio.gz",
+    "-append",
+    "console=ttyS0 panic=-1 oops=panic panic_on_warn=1 nokaslr printk.devkmsg=on intel_iommu=on iommu.strict=1"
+  ],
+  "qemu_version": "QEMU emulator version 10.2.1",
+  "mutant": "read-leaks-command",
+  "kernel_sha256": "69516153e8a6f94f59fbd4f6b919e82ccfd39625bdeb01228165538692655ab9",
+  "client_sha256": "cf79a2844f5aa9fd08f9576f69e9aa38db4fc97b6e66066f868e22d49d8af4f9",
+  "load_average": [
+    "2.48",
+    "4.25",
+    "6.24"
+  ],
+  "passed": false,
+  "host_actions": [],
+  "returncode": 0,
+  "seconds": 215.9,
+  "expectations": [
+    {
+      "tag": "timeout-abort",
+      "pattern": "timed out after",
+      "matched": 1
+    },
+    {
+      "tag": "timeout-reset",
+      "pattern": "timed out after|resetting controller",
+      "matched": 2
+    },
+    {
+      "tag": "escalation",
+      "pattern": "timed out after|resetting controller|controller reset failed",
+      "matched": 3
+    },
+    {
+      "tag": "failure",
+      "pattern": "timed out after|resetting controller|controller reset failed|recovery failed",
+      "matched": 4
+    },
+    {
+      "tag": "revive",
+      "pattern": "working again",
+      "matched": 1
+    },
+    {
+      "tag": "fatal",
+      "pattern": "device error|resetting controller",
+      "matched": 2
+    },
+    {
+      "tag": "lost",
+      "pattern": "timed out after|resetting controller|completion for unknown cid",
+      "matched": 5
+    },
+    {
+      "tag": "bounded",
+      "pattern": "resetting controller",
+      "matched": 2
+    },
+    {
+      "tag": "dmar-zerocopy",
+      "pattern": "DMAR: (\\[DMA Write|DRHD: handling fault)",
+      "matched": 2
+    },
+    {
+      "tag": "dmar-bounce",
+      "pattern": "DMAR: (\\[DMA Write|DRHD: handling fault)",
+      "matched": 2
+    }
+  ],
+  "kmemleak_records": 4709,
+  "kmemleak_driver_records": 4709,
+  "cases": [
+    [
+      "device_info",
+      "4"
+    ],
+    [
+      "shadow_doorbell",
+      "14"
+    ],
+    [
+      "cq_head_batching",
+      "87"
+    ],
+    [
+      "abi_validation",
+      "77"
+    ],
+    [
+      "data_integrity",
+      "360"
+    ],
+    [
+      "fixed_buffers",
+      "184"
+    ],
+    [
+      "nop_and_batch_read",
+      "2"
+    ],
+    [
+      "queue_selection",
+      "8"
+    ],
+    [
+      "batch_flush",
+      "67"
+    ],
+    [
+      "coalescing",
+      "85"
+    ],
+    [
+      "pinned_page_not_recycled",
+      "601"
+    ],
+    [
+      "cancel_driver_owned",
+      "93"
+    ],
+    [
+      "cancel_device_owned",
+      "70"
+    ],
+    [
+      "cancel_race",
+      "1247"
+    ],
+    [
+      "close_with_inflight",
+      "230"
+    ],
+    [
+      "reset_semantics",
+      "24"
+    ],
+    [
+      "quotas",
+      "35"
+    ],
+    [
+      "file_isolation",
+      "2"
+    ],
+    [
+      "concurrency",
+      "344"
+    ],
+    [
+      "shared_file",
+      "94"
+    ],
+    [
+      "ring_overflow_all_queues",
+      "204"
+    ],
+    [
+      "second_device",
+      "6"
+    ],
+    [
+      "unbind_rebind",
+      "197"
+    ],
+    [
+      "timeout_abort",
+      "236"
+    ],
+    [
+      "timeout_reset",
+      "900"
+    ],
+    [
+      "timeout_escalation",
+      "2020"
+    ],
+    [
+      "recovery_failure",
+      "3080"
+    ],
+    [
+      "sysfs_reset_under_load",
+      "495"
+    ],
+    [
+      "fatal_recovery",
+      "40"
+    ],
+    [
+      "lost_completions",
+      "1770"
+    ],
+    [
+      "bounded_close_and_reset",
+      "1167"
+    ],
+    [
+      "dma_fault",
+      "233"
+    ]
+  ],
+  "counts": [
+    "  shadow_doorbell: 4 commands behind a stalled engine, each fetched after its doorbell\r",
+    "  cq_head_batching: 16 head writes for 256 single commands; 256 with 63 in flight, batch 63\r",
+    "  data_integrity: 84 copies verified (dst bytes, guard bytes, CRC32C)\r",
+    "  fixed_buffers: 40 copies through registered buffers verified\r",
+    "  coalescing: batch of 8 in 1 interrupt, single command waited 52 ms\r",
+    "  cancel_race: 1 cancelled before the doorbell, 1368 aborted by the device, 131 completed first; 40 more aborted while held device-owned\r",
+    "  concurrency: 4 threads x 250 verified copies, own files\r",
+    "  timeout_abort: answered after 216 ms\r",
+    "  timeout_reset: ended after 864 ms, 1 command reissued\r",
+    "  sysfs_reset_under_load: 3 resets, 238 verified copies, 21 reissued\r",
+    "  fatal_recovery: 16 commands completed, 16 reissued after the reset\r",
+    "  bounded_close_and_reset: close returned after 568 ms, reset after 553 ms\r",
+    "  dma_fault: 2 faulting copies ended with -EIO (IOMMU fault reported)\r"
+  ],
+  "problems": [
+    "report: [   20.753851] kdc_test: FAIL globals_idle:363: g.cmds == 0 && g.pinned == 0 && g.mapped == 0 && g.ranges == 0 (errno=98 Address already in use)",
+    "report: [  214.798316] kdc_init: KDC_GUEST_FAILURE exit=1",
+    "kmemleak, driver object: unreferenced object 0xff1100000519b800 (size 512): | comm \"kdc_test\", pid 84, jiffies 4294937921 | hex dump (first 32 bytes): | 00 fd 26 04 00 00 11 ff 00 fd 26 04 00 00 11 ff  ..&.......&..... | 00 01 00 00 00 00 ad de 22 01 00 00 00 00 ad de  ........\"....... | backtrace (crc e7268c5c): | __kmalloc_cache_noprof+0x142/0x180 | kdc_cmd_prepare+0x59/0x12a0",
+    "kmemleak, driver object: unreferenced object 0xff1100000519bc00 (size 512): | comm \"kdc_test\", pid 84, jiffies 4294937922 | hex dump (first 32 bytes): | 00 fd 26 04 00 00 11 ff 00 fd 26 04 00 00 11 ff  ..&.......&..... | 00 01 00 00 00 00 ad de 22 01 00 00 00 00 ad de  ........\"....... | backtrace (crc aaba65ca): | __kmalloc_cache_noprof+0x142/0x180 | kdc_cmd_prepare+0x59/0x12a0",
+    "kmemleak, driver object: unreferenced object 0xff1100000519c000 (size 512): | comm \"kdc_test\", pid 84, jiffies 4294937922 | hex dump (first 32 bytes): | 00 fd 26 04 00 00 11 ff 00 fd 26 04 00 00 11 ff  ..&.......&..... | 00 01 00 00 00 00 ad de 22 01 00 00 00 00 ad de  ........\"....... | backtrace (crc 752af586): | __kmalloc_cache_noprof+0x142/0x180 | kdc_cmd_prepare+0x59/0x12a0",
+    "kmemleak, driver object: unreferenced object 0xff1100000519c400 (size 512): | comm \"kdc_test\", pid 84, jiffies 4294937922 | hex dump (first 32 bytes): | 00 fd 26 04 00 00 11 ff 00 fd 26 04 00 00 11 ff  ..&.......&..... | 00 01 00 00 00 00 ad de 22 01 00 00 00 00 ad de  ........\"....... | backtrace (crc 3183b6e6): | __kmalloc_cache_noprof+0x142/0x180 | kdc_cmd_prepare+0x59/0x12a0",
+    "kmemleak, driver object: unreferenced object 0xff1100000519cc00 (size 512): | comm \"kdc_test\", pid 84, jiffies 4294937923 | hex dump (first 32 bytes): | 00 fd 26 04 00 00 11 ff 00 fd 26 04 00 00 11 ff  ..&.......&..... | 00 01 00 00 00 00 ad de 22 01 00 00 00 00 ad de  ........\"....... | backtrace (crc a8513062): | __kmalloc_cache_noprof+0x142/0x180 | kdc_cmd_prepare+0x59/0x12a0",
+    "kmemleak, driver object: unreferenced object 0xff1100000519d400 (size 512): | comm \"kdc_test\", pid 84, jiffies 4294937923 | hex dump (first 32 bytes): | 00 fd 26 04 00 00 11 ff 00 fd 26 04 00 00 11 ff  ..&.......&..... | 00 01 00 00 00 00 ad de 22 01 00 00 00 00 ad de  ........\"....... | backtrace (crc 66c2e65f): | __kmalloc_cache_noprof+0x142/0x180 | kdc_cmd_prepare+0x59/0x12a0",
+    "kmemleak, driver object: unreferenced object 0xff1100000519d800 (size 512): | comm \"kdc_test\", pid 84, jiffies 4294937923 | hex dump (first 32 bytes): | 00 fd 26 04 00 00 11 ff 00 fd 26 04 00 00 11 ff  ..&.......&..... | 00 01 00 00 00 00 ad de 22 01 00 00 00 00 ad de  ........\"....... | backtrace (crc d8ab2b40): | __kmalloc_cache_noprof+0x142/0x180 | kdc_cmd_prepare+0x59/0x12a0",
+    "kmemleak, driver object: unreferenced object 0xff1100000519dc00 (size 512): | comm \"kdc_test\", pid 84, jiffies 4294937923 | hex dump (first 32 bytes): | 00 fd 26 04 00 00 11 ff 00 fd 26 04 00 00 11 ff  ..&.......&..... | 00 01 00 00 00 00 ad de 22 01 00 00 00 00 ad de  ........\"....... | backtrace (crc 5c61ee69): | __kmalloc_cache_noprof+0x142/0x180 | kdc_cmd_prepare+0x59/0x12a0",
+    "kmemleak, driver object: unreferenced object 0xff1100000519e000 (size 512): | comm \"kdc_test\", pid 84, jiffies 4294937923 | hex dump (first 32 bytes): | 00 fd 26 04 00 00 11 ff 00 fd 26 04 00 00 11 ff  ..&.......&..... | 00 01 00 00 00 00 ad de 22 01 00 00 00 00 ad de  ........\"....... | backtrace (crc e2082376): | __kmalloc_cache_noprof+0x142/0x180 | kdc_cmd_prepare+0x59/0x12a0",
+    "kmemleak, driver object: unreferenced object 0xff1100000519e400 (size 512): | comm \"kdc_test\", pid 84, jiffies 4294937923 | hex dump (first 32 bytes): | 00 fd 26 04 00 00 11 ff 00 fd 26 04 00 00 11 ff  ..&.......&..... | 00 01 00 00 00 00 ad de 22 01 00 00 00 00 ad de  ........\"....... | backtrace (crc e09d8d0c): | __kmalloc_cache_noprof+0x142/0x180 | kdc_cmd_prepare+0x59/0x12a0",
+    "kmemleak, driver object: unreferenced object 0xff1100000519e800 (size 512): | comm \"kdc_test\", pid 84, jiffies 4294937923 | hex dump (first 32 bytes): | 00 fd 26 04 00 00 11 ff 00 fd 26 04 00 00 11 ff  ..&.......&..... | 00 01 00 00 00 00 ad de 22 01 00 00 00 00 ad de  ........\"....... | backtrace (crc 5ef44013): | __kmalloc_cache_noprof+0x142/0x180 | kdc_cmd_prepare+0x59/0x12a0",
+    "kmemleak, driver object: unreferenced object 0xff1100000519ec00 (size 512): | comm \"kdc_test\", pid 84, jiffies 4294937923 | hex dump (first 32 bytes): | 00 fd 26 04 00 00 11 ff 00 fd 26 04 00 00 11 ff  ..&.......&..... | 00 01 00 00 00 00 ad de 22 01 00 00 00 00 ad de  ........\"....... | backtrace (crc 3b4cabe9): | __kmalloc_cache_noprof+0x142/0x180 | kdc_cmd_prepare+0x59/0x12a0",
+    "kmemleak, driver object: unreferenced object 0xff1100000519f000 (size 512): | comm \"kdc_test\", pid 84, jiffies 4294937923 | hex dump (first 32 bytes): | 00 fd 26 04 00 00 11 ff 00 fd 26 04 00 00 11 ff  ..&.......&..... | 00 01 00 00 00 00 ad de 22 01 00 00 00 00 ad de  ........\"....... | backtrace (crc 852566f6): | __kmalloc_cache_noprof+0x142/0x180 | kdc_cmd_prepare+0x59/0x12a0",
+    "kmemleak, driver object: unreferenced object 0xff1100000519f400 (size 512): | comm \"kdc_test\", pid 84, jiffies 4294937923 | hex dump (first 32 bytes): | 00 fd 26 04 00 00 11 ff 00 fd 26 04 00 00 11 ff  ..&.......&..... | 00 01 00 00 00 00 ad de 22 01 00 00 00 00 ad de  ........\"....... | backtrace (crc 95db9d60): | __kmalloc_cache_noprof+0x142/0x180 | kdc_cmd_prepare+0x59/0x12a0",
+    "kmemleak, driver object: unreferenced object 0xff1100000519f800 (size 512): | comm \"kdc_test\", pid 84, jiffies 4294937923 | hex dump (first 32 bytes): | 00 fd 26 04 00 00 11 ff 00 fd 26 04 00 00 11 ff  ..&.......&..... | 00 01 00 00 00 00 ad de 22 01 00 00 00 00 ad de  ........\"....... | backtrace (crc 2bb2507f): | __kmalloc_cache_noprof+0x142/0x180 | kdc_cmd_prepare+0x59/0x12a0",
+    "kmemleak, driver object: unreferenced object 0xff1100000519fc00 (size 512): | comm \"kdc_test\", pid 84, jiffies 4294937923 | hex dump (first 32 bytes): | 00 fd 26 04 00 00 11 ff 00 fd 26 04 00 00 11 ff  ..&.......&..... | 00 01 00 00 00 00 ad de 22 01 00 00 00 00 ad de  ........\"....... | backtrace (crc af789556): | __kmalloc_cache_noprof+0x142/0x180 | kdc_cmd_prepare+0x59/0x12a0",
+    "kmemleak, driver object: unreferenced object 0xff110000051a0000 (size 512): | comm \"kdc_test\", pid 84, jiffies 4294937923 | hex dump (first 32 bytes): | 00 fd 26 04 00 00 11 ff 00 fd 26 04 00 00 11 ff  ..&.......&..... | 00 01 00 00 00 00 ad de 22 01 00 00 00 00 ad de  ........\"....... | backtrace (crc 11115849): | __kmalloc_cache_noprof+0x142/0x180 | kdc_cmd_prepare+0x59/0x12a0",
+    "kmemleak, driver object: unreferenced object 0xff110000051a0400 (size 512): | comm \"kdc_test\", pid 84, jiffies 4294937923 | hex dump (first 32 bytes): | 00 fd 26 04 00 00 11 ff 00 fd 26 04 00 00 11 ff  ..&.......&..... | 00 01 00 00 00 00 ad de 22 01 00 00 00 00 ad de  ........\"....... | backtrace (crc 37525deb): | __kmalloc_cache_noprof+0x142/0x180 | kdc_cmd_prepare+0x59/0x12a0",
+    "kmemleak, driver object: unreferenced object 0xff110000051a0800 (size 512): | comm \"kdc_test\", pid 84, jiffies 4294937923 | hex dump (first 32 bytes): | 00 fd 26 04 00 00 11 ff 00 fd 26 04 00 00 11 ff  ..&.......&..... | 00 01 00 00 00 00 ad de 22 01 00 00 00 00 ad de  ........\"....... | backtrace (crc 893b90f4): | __kmalloc_cache_noprof+0x142/0x180 | kdc_cmd_prepare+0x59/0x12a0",
+    "kmemleak, driver object: unreferenced object 0xff110000051a0c00 (size 512): | comm \"kdc_test\", pid 84, jiffies 4294937923 | hex dump (first 32 bytes): | 00 fd 26 04 00 00 11 ff 00 fd 26 04 00 00 11 ff  ..&.......&..... | 00 01 00 00 00 00 ad de 22 01 00 00 00 00 ad de  ........\"....... | backtrace (crc ec837b0e): | __kmalloc_cache_noprof+0x142/0x180 | kdc_cmd_prepare+0x59/0x12a0",
+    "kmemleak: 4689 more driver objects"
+  ]
+}

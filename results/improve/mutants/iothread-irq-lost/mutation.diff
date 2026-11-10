@@ -1,0 +1,4 @@
+--- kdc_dma.c
+-        qatomic_or(&s->irq_pending, 1u << vector);
+        qemu_bh_schedule(s->irq_bh);
++        qatomic_or(&s->irq_pending, 1u << vector); /* deliberate bug: never delivered */

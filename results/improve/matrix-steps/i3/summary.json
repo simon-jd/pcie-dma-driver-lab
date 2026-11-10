@@ -1,0 +1,744 @@
+{
+  "qtest": {
+    "asan": {
+      "passed": true,
+      "log": "qtest-asan.log"
+    },
+    "release": {
+      "passed": true,
+      "log": "qtest-release.log"
+    }
+  },
+  "guest": {
+    "kvm-iommu": {
+      "passed": true,
+      "seconds": 23.9,
+      "problems": [],
+      "qemu_version": "QEMU emulator version 10.2.1",
+      "kernel": "kasan",
+      "kernel_sha256": "f92f0119a07052878f709e31d5b85808dbb90fddf90a1e3977191cc0465b5d0f",
+      "load_average": [
+        "5.68",
+        "5.08",
+        "4.48"
+      ],
+      "expectations": [
+        {
+          "tag": "timeout-abort",
+          "pattern": "timed out after",
+          "matched": 1
+        },
+        {
+          "tag": "timeout-reset",
+          "pattern": "timed out after|resetting controller",
+          "matched": 2
+        },
+        {
+          "tag": "escalation",
+          "pattern": "timed out after|resetting controller|controller reset failed",
+          "matched": 3
+        },
+        {
+          "tag": "failure",
+          "pattern": "timed out after|resetting controller|controller reset failed|recovery failed",
+          "matched": 4
+        },
+        {
+          "tag": "revive",
+          "pattern": "working again",
+          "matched": 1
+        },
+        {
+          "tag": "fatal",
+          "pattern": "device error|resetting controller",
+          "matched": 2
+        },
+        {
+          "tag": "lost",
+          "pattern": "timed out after|resetting controller|completion for unknown cid",
+          "matched": 5
+        },
+        {
+          "tag": "bounded",
+          "pattern": "resetting controller",
+          "matched": 2
+        },
+        {
+          "tag": "dmar-zerocopy",
+          "pattern": "DMAR: (\\[DMA Write|DRHD: handling fault)",
+          "matched": 2
+        },
+        {
+          "tag": "dmar-bounce",
+          "pattern": "DMAR: (\\[DMA Write|DRHD: handling fault)",
+          "matched": 2
+        },
+        {
+          "tag": "probe-failures",
+          "pattern": "probe with driver kdc failed|really_probe: driver_sysfs_add failed",
+          "matched": 86
+        },
+        {
+          "tag": "surprise",
+          "pattern": "device not responding",
+          "matched": 1
+        }
+      ],
+      "kmemleak_records": 0,
+      "kmemleak_driver_records": 0,
+      "iothreads": null,
+      "host_actions": [
+        {
+          "t_seen": 16.87,
+          "request": "KDC_HOST device_del kdc1",
+          "result": "ok",
+          "t_done": 16.87
+        },
+        {
+          "t_seen": 16.9,
+          "request": "KDC_HOST device_add {\"driver\": \"kdc-dma\", \"id\": \"kdc1b\", \"bus\": \"rp1\", \"queues\": 2}",
+          "result": "ok after 0 retries",
+          "t_done": 16.9
+        },
+        {
+          "t_seen": 17.01,
+          "request": "KDC_HOST qom-set kdc1b fault-gone true",
+          "result": "ok",
+          "t_done": 17.01
+        },
+        {
+          "t_seen": 17.05,
+          "request": "KDC_HOST device_del kdc1b",
+          "result": "ok",
+          "t_done": 17.05
+        }
+      ],
+      "counts": [
+        "  shadow_doorbell: 4 commands behind a stalled engine, each fetched after its doorbell\r",
+        "  cq_head_batching: 16 head writes for 256 single commands; 256 with 63 in flight, batch 63\r",
+        "  data_integrity: 84 copies verified (dst bytes, guard bytes, CRC32C)\r",
+        "  fixed_buffers: 40 copies through registered buffers verified\r",
+        "  coalescing: batch of 8 in 1 interrupt, single command waited 50 ms\r",
+        "  cancel_race: 0 cancelled before the doorbell, 1189 aborted by the device, 311 completed first; 40 more aborted while held device-owned\r",
+        "  concurrency: 4 threads x 250 verified copies, own files\r",
+        "  timeout_abort: answered after 235 ms\r",
+        "  timeout_reset: ended after 787 ms, 1 command reissued\r",
+        "  sysfs_reset_under_load: 3 resets, 672 verified copies, 24 reissued\r",
+        "  fatal_recovery: 16 commands completed, 16 reissued after the reset\r",
+        "  bounded_close_and_reset: close returned after 557 ms, reset after 570 ms\r",
+        "  dma_fault: 2 faulting copies ended with -EIO (IOMMU fault reported)\r",
+        "  dst_overlap: 7 overlapping submits refused, 6 adjacent ones completed\r",
+        "  adjacent_destinations: 96 small and 6 large adjacent copies in flight together\r",
+        "  fault_injection: 25 submit and 404 probe allocation failures, all unwound\r",
+        "  removal_orderly: 64 commands from 3 threads, 31 completed, 33 ended with ENODEV, each once; 4 held in the device, each ended with ENODEV\r",
+        "  removal_surprise: 70 commands from 3 threads, 34 completed, 36 ended with ENODEV, each once; 4 held in the device, each ended with ENODEV\r"
+      ],
+      "client_cases": 37
+    },
+    "kvm-noiommu": {
+      "passed": true,
+      "seconds": 22.9,
+      "problems": [],
+      "qemu_version": "QEMU emulator version 10.2.1",
+      "kernel": "kasan",
+      "kernel_sha256": "f92f0119a07052878f709e31d5b85808dbb90fddf90a1e3977191cc0465b5d0f",
+      "load_average": [
+        "5.26",
+        "5.04",
+        "4.49"
+      ],
+      "expectations": [
+        {
+          "tag": "timeout-abort",
+          "pattern": "timed out after",
+          "matched": 1
+        },
+        {
+          "tag": "timeout-reset",
+          "pattern": "timed out after|resetting controller",
+          "matched": 2
+        },
+        {
+          "tag": "escalation",
+          "pattern": "timed out after|resetting controller|controller reset failed",
+          "matched": 3
+        },
+        {
+          "tag": "failure",
+          "pattern": "timed out after|resetting controller|controller reset failed|recovery failed",
+          "matched": 4
+        },
+        {
+          "tag": "revive",
+          "pattern": "working again",
+          "matched": 1
+        },
+        {
+          "tag": "fatal",
+          "pattern": "device error|resetting controller",
+          "matched": 2
+        },
+        {
+          "tag": "lost",
+          "pattern": "timed out after|resetting controller|completion for unknown cid",
+          "matched": 5
+        },
+        {
+          "tag": "bounded",
+          "pattern": "resetting controller",
+          "matched": 2
+        },
+        {
+          "tag": "probe-failures",
+          "pattern": "probe with driver kdc failed|really_probe: driver_sysfs_add failed",
+          "matched": 72
+        },
+        {
+          "tag": "surprise",
+          "pattern": "device not responding",
+          "matched": 1
+        }
+      ],
+      "kmemleak_records": 0,
+      "kmemleak_driver_records": 0,
+      "iothreads": null,
+      "host_actions": [
+        {
+          "t_seen": 15.84,
+          "request": "KDC_HOST device_del kdc1",
+          "result": "ok",
+          "t_done": 15.84
+        },
+        {
+          "t_seen": 15.86,
+          "request": "KDC_HOST device_add {\"driver\": \"kdc-dma\", \"id\": \"kdc1b\", \"bus\": \"rp1\", \"queues\": 2}",
+          "result": "ok after 0 retries",
+          "t_done": 15.86
+        },
+        {
+          "t_seen": 15.98,
+          "request": "KDC_HOST qom-set kdc1b fault-gone true",
+          "result": "ok",
+          "t_done": 15.98
+        },
+        {
+          "t_seen": 16.02,
+          "request": "KDC_HOST device_del kdc1b",
+          "result": "ok",
+          "t_done": 16.02
+        }
+      ],
+      "counts": [
+        "  shadow_doorbell: 4 commands behind a stalled engine, each fetched after its doorbell\r",
+        "  cq_head_batching: 16 head writes for 256 single commands; 256 with 63 in flight, batch 63\r",
+        "  data_integrity: 69 copies verified (dst bytes, guard bytes, CRC32C)\r",
+        "  fixed_buffers: 40 copies through registered buffers verified\r",
+        "  coalescing: batch of 8 in 1 interrupt, single command waited 50 ms\r",
+        "  cancel_race: 0 cancelled before the doorbell, 1278 aborted by the device, 222 completed first; 40 more aborted while held device-owned\r",
+        "  concurrency: 4 threads x 250 verified copies, own files\r",
+        "  timeout_abort: answered after 209 ms\r",
+        "  timeout_reset: ended after 767 ms, 1 command reissued\r",
+        "  sysfs_reset_under_load: 3 resets, 605 verified copies, 24 reissued\r",
+        "  fatal_recovery: 16 commands completed, 16 reissued after the reset\r",
+        "  bounded_close_and_reset: close returned after 587 ms, reset after 571 ms\r",
+        "  dma_fault: 2 faulting copies ended with -EIO (no IOMMU)\r",
+        "  dst_overlap: 7 overlapping submits refused, 6 adjacent ones completed\r",
+        "  adjacent_destinations: 96 small and 6 large adjacent copies in flight together\r",
+        "  fault_injection: 25 submit and 354 probe allocation failures, all unwound\r",
+        "  removal_orderly: 73 commands from 3 threads, 37 completed, 36 ended with ENODEV, each once; 4 held in the device, each ended with ENODEV\r",
+        "  removal_surprise: 74 commands from 3 threads, 38 completed, 36 ended with ENODEV, each once; 4 held in the device, each ended with ENODEV\r"
+      ],
+      "client_cases": 37
+    },
+    "tcg-iommu": {
+      "passed": true,
+      "seconds": 81.4,
+      "problems": [],
+      "qemu_version": "QEMU emulator version 10.2.1",
+      "kernel": "kasan",
+      "kernel_sha256": "f92f0119a07052878f709e31d5b85808dbb90fddf90a1e3977191cc0465b5d0f",
+      "load_average": [
+        "6.01",
+        "5.21",
+        "4.56"
+      ],
+      "expectations": [
+        {
+          "tag": "timeout-abort",
+          "pattern": "timed out after",
+          "matched": 1
+        },
+        {
+          "tag": "timeout-reset",
+          "pattern": "timed out after|resetting controller",
+          "matched": 2
+        },
+        {
+          "tag": "escalation",
+          "pattern": "timed out after|resetting controller|controller reset failed",
+          "matched": 3
+        },
+        {
+          "tag": "failure",
+          "pattern": "timed out after|resetting controller|controller reset failed|recovery failed",
+          "matched": 4
+        },
+        {
+          "tag": "revive",
+          "pattern": "working again",
+          "matched": 1
+        },
+        {
+          "tag": "fatal",
+          "pattern": "device error|resetting controller",
+          "matched": 2
+        },
+        {
+          "tag": "lost",
+          "pattern": "timed out after|resetting controller|completion for unknown cid",
+          "matched": 5
+        },
+        {
+          "tag": "bounded",
+          "pattern": "resetting controller",
+          "matched": 2
+        },
+        {
+          "tag": "dmar-zerocopy",
+          "pattern": "DMAR: (\\[DMA Write|DRHD: handling fault)",
+          "matched": 2
+        },
+        {
+          "tag": "dmar-bounce",
+          "pattern": "DMAR: (\\[DMA Write|DRHD: handling fault)",
+          "matched": 2
+        },
+        {
+          "tag": "probe-failures",
+          "pattern": "probe with driver kdc failed|really_probe: driver_sysfs_add failed",
+          "matched": 103
+        },
+        {
+          "tag": "surprise",
+          "pattern": "device not responding",
+          "matched": 1
+        }
+      ],
+      "kmemleak_records": 0,
+      "kmemleak_driver_records": 0,
+      "iothreads": null,
+      "host_actions": [
+        {
+          "t_seen": 64.26,
+          "request": "KDC_HOST device_del kdc1",
+          "result": "ok",
+          "t_done": 64.26
+        },
+        {
+          "t_seen": 64.46,
+          "request": "KDC_HOST device_add {\"driver\": \"kdc-dma\", \"id\": \"kdc1b\", \"bus\": \"rp1\", \"queues\": 2}",
+          "result": "ok after 1 retries",
+          "t_done": 64.67
+        },
+        {
+          "t_seen": 65.09,
+          "request": "KDC_HOST qom-set kdc1b fault-gone true",
+          "result": "ok",
+          "t_done": 65.09
+        },
+        {
+          "t_seen": 65.21,
+          "request": "KDC_HOST device_del kdc1b",
+          "result": "ok",
+          "t_done": 65.21
+        }
+      ],
+      "counts": [
+        "  shadow_doorbell: 4 commands behind a stalled engine, each fetched after its doorbell\r",
+        "  cq_head_batching: 16 head writes for 256 single commands; 256 with 63 in flight, batch 63\r",
+        "  data_integrity: 84 copies verified (dst bytes, guard bytes, CRC32C)\r",
+        "  fixed_buffers: 40 copies through registered buffers verified\r",
+        "  coalescing: batch of 8 in 1 interrupt, single command waited 51 ms\r",
+        "  cancel_race: 2 cancelled before the doorbell, 929 aborted by the device, 569 completed first; 40 more aborted while held device-owned\r",
+        "  concurrency: 4 threads x 250 verified copies, own files\r",
+        "  timeout_abort: answered after 202 ms\r",
+        "  timeout_reset: ended after 763 ms, 1 command reissued\r",
+        "  sysfs_reset_under_load: 3 resets, 177 verified copies, 21 reissued\r",
+        "  fatal_recovery: 16 commands completed, 16 reissued after the reset\r",
+        "  bounded_close_and_reset: close returned after 549 ms, reset after 553 ms\r",
+        "  dma_fault: 2 faulting copies ended with -EIO (IOMMU fault reported)\r",
+        "  dst_overlap: 7 overlapping submits refused, 6 adjacent ones completed\r",
+        "  adjacent_destinations: 96 small and 6 large adjacent copies in flight together\r",
+        "  fault_injection: 23 submit and 402 probe allocation failures, all unwound\r",
+        "  removal_orderly: 77 commands from 3 threads, 31 completed, 46 ended with ENODEV, each once; 4 held in the device, each ended with ENODEV\r",
+        "  removal_surprise: 88 commands from 3 threads, 40 completed, 48 ended with ENODEV, each once; 4 held in the device, each ended with ENODEV\r"
+      ],
+      "client_cases": 37
+    },
+    "tcg-noiommu": {
+      "passed": true,
+      "seconds": 83.1,
+      "problems": [],
+      "qemu_version": "QEMU emulator version 10.2.1",
+      "kernel": "kasan",
+      "kernel_sha256": "f92f0119a07052878f709e31d5b85808dbb90fddf90a1e3977191cc0465b5d0f",
+      "load_average": [
+        "6.68",
+        "5.66",
+        "4.77"
+      ],
+      "expectations": [
+        {
+          "tag": "timeout-abort",
+          "pattern": "timed out after",
+          "matched": 1
+        },
+        {
+          "tag": "timeout-reset",
+          "pattern": "timed out after|resetting controller",
+          "matched": 2
+        },
+        {
+          "tag": "escalation",
+          "pattern": "timed out after|resetting controller|controller reset failed",
+          "matched": 3
+        },
+        {
+          "tag": "failure",
+          "pattern": "timed out after|resetting controller|controller reset failed|recovery failed",
+          "matched": 4
+        },
+        {
+          "tag": "revive",
+          "pattern": "working again",
+          "matched": 1
+        },
+        {
+          "tag": "fatal",
+          "pattern": "device error|resetting controller",
+          "matched": 2
+        },
+        {
+          "tag": "lost",
+          "pattern": "timed out after|resetting controller|completion for unknown cid",
+          "matched": 5
+        },
+        {
+          "tag": "bounded",
+          "pattern": "resetting controller",
+          "matched": 2
+        },
+        {
+          "tag": "probe-failures",
+          "pattern": "probe with driver kdc failed|really_probe: driver_sysfs_add failed",
+          "matched": 75
+        },
+        {
+          "tag": "surprise",
+          "pattern": "device not responding",
+          "matched": 1
+        }
+      ],
+      "kmemleak_records": 0,
+      "kmemleak_driver_records": 0,
+      "iothreads": null,
+      "host_actions": [
+        {
+          "t_seen": 64.07,
+          "request": "KDC_HOST device_del kdc1",
+          "result": "ok",
+          "t_done": 64.07
+        },
+        {
+          "t_seen": 64.25,
+          "request": "KDC_HOST device_add {\"driver\": \"kdc-dma\", \"id\": \"kdc1b\", \"bus\": \"rp1\", \"queues\": 2}",
+          "result": "ok after 1 retries",
+          "t_done": 64.45
+        },
+        {
+          "t_seen": 64.81,
+          "request": "KDC_HOST qom-set kdc1b fault-gone true",
+          "result": "ok",
+          "t_done": 64.81
+        },
+        {
+          "t_seen": 64.83,
+          "request": "KDC_HOST device_del kdc1b",
+          "result": "ok",
+          "t_done": 64.83
+        }
+      ],
+      "counts": [
+        "  shadow_doorbell: 4 commands behind a stalled engine, each fetched after its doorbell\r",
+        "  cq_head_batching: 16 head writes for 256 single commands; 256 with 63 in flight, batch 63\r",
+        "  data_integrity: 69 copies verified (dst bytes, guard bytes, CRC32C)\r",
+        "  fixed_buffers: 40 copies through registered buffers verified\r",
+        "  coalescing: batch of 8 in 1 interrupt, single command waited 51 ms\r",
+        "  cancel_race: 3 cancelled before the doorbell, 734 aborted by the device, 763 completed first; 40 more aborted while held device-owned\r",
+        "  concurrency: 4 threads x 250 verified copies, own files\r",
+        "  timeout_abort: answered after 200 ms\r",
+        "  timeout_reset: ended after 763 ms, 1 command reissued\r",
+        "  sysfs_reset_under_load: 3 resets, 158 verified copies, 15 reissued\r",
+        "  fatal_recovery: 16 commands completed, 16 reissued after the reset\r",
+        "  bounded_close_and_reset: close returned after 545 ms, reset after 547 ms\r",
+        "  dma_fault: 2 faulting copies ended with -EIO (no IOMMU)\r",
+        "  dst_overlap: 7 overlapping submits refused, 6 adjacent ones completed\r",
+        "  adjacent_destinations: 96 small and 6 large adjacent copies in flight together\r",
+        "  fault_injection: 30 submit and 356 probe allocation failures, all unwound\r",
+        "  removal_orderly: 87 commands from 3 threads, 41 completed, 46 ended with ENODEV, each once; 4 held in the device, each ended with ENODEV\r",
+        "  removal_surprise: 71 commands from 3 threads, 42 completed, 29 ended with ENODEV, each once; 4 held in the device, each ended with ENODEV\r"
+      ],
+      "client_cases": 37
+    },
+    "tcg-iommu-asanqemu": {
+      "passed": true,
+      "seconds": 1306.6,
+      "problems": [],
+      "qemu_version": "QEMU emulator version 10.2.1",
+      "kernel": "kasan",
+      "kernel_sha256": "f92f0119a07052878f709e31d5b85808dbb90fddf90a1e3977191cc0465b5d0f",
+      "load_average": [
+        "8.57",
+        "6.47",
+        "5.13"
+      ],
+      "expectations": [
+        {
+          "tag": "timeout-abort",
+          "pattern": "timed out after",
+          "matched": 1
+        },
+        {
+          "tag": "timeout-reset",
+          "pattern": "timed out after|resetting controller",
+          "matched": 2
+        },
+        {
+          "tag": "escalation",
+          "pattern": "timed out after|resetting controller|controller reset failed",
+          "matched": 3
+        },
+        {
+          "tag": "failure",
+          "pattern": "timed out after|resetting controller|controller reset failed|recovery failed",
+          "matched": 4
+        },
+        {
+          "tag": "revive",
+          "pattern": "working again",
+          "matched": 1
+        },
+        {
+          "tag": "fatal",
+          "pattern": "device error|resetting controller",
+          "matched": 2
+        },
+        {
+          "tag": "lost",
+          "pattern": "timed out after|resetting controller|completion for unknown cid",
+          "matched": 5
+        },
+        {
+          "tag": "bounded",
+          "pattern": "resetting controller",
+          "matched": 2
+        },
+        {
+          "tag": "dmar-zerocopy",
+          "pattern": "DMAR: (\\[DMA Write|DRHD: handling fault)",
+          "matched": 2
+        },
+        {
+          "tag": "dmar-bounce",
+          "pattern": "DMAR: (\\[DMA Write|DRHD: handling fault)",
+          "matched": 2
+        },
+        {
+          "tag": "probe-failures",
+          "pattern": "probe with driver kdc failed|really_probe: driver_sysfs_add failed",
+          "matched": 97
+        },
+        {
+          "tag": "surprise",
+          "pattern": "device not responding",
+          "matched": 1
+        }
+      ],
+      "kmemleak_records": 0,
+      "kmemleak_driver_records": 0,
+      "iothreads": null,
+      "host_actions": [
+        {
+          "t_seen": 1183.55,
+          "request": "KDC_HOST device_del kdc1",
+          "result": "ok",
+          "t_done": 1183.55
+        },
+        {
+          "t_seen": 1187.65,
+          "request": "KDC_HOST device_add {\"driver\": \"kdc-dma\", \"id\": \"kdc1b\", \"bus\": \"rp1\", \"queues\": 2}",
+          "result": "ok after 14 retries",
+          "t_done": 1190.47
+        },
+        {
+          "t_seen": 1198.57,
+          "request": "KDC_HOST qom-set kdc1b fault-gone true",
+          "result": "ok",
+          "t_done": 1198.57
+        },
+        {
+          "t_seen": 1198.71,
+          "request": "KDC_HOST device_del kdc1b",
+          "result": "ok",
+          "t_done": 1198.71
+        }
+      ],
+      "counts": [
+        "  shadow_doorbell: 4 commands behind a stalled engine, each fetched after its doorbell\r",
+        "  cq_head_batching: 16 head writes for 256 single commands; 256 with 63 in flight, batch 63\r",
+        "  data_integrity: 84 copies verified (dst bytes, guard bytes, CRC32C)\r",
+        "  fixed_buffers: 40 copies through registered buffers verified\r",
+        "  coalescing: batch of 8 in 1 interrupt, single command waited 68 ms\r",
+        "  cancel_race: 32 cancelled before the doorbell, 0 aborted by the device, 1468 completed first; 40 more aborted while held device-owned\r",
+        "  concurrency: 4 threads x 250 verified copies, own files\r",
+        "  timeout_abort: answered after 278 ms\r",
+        "  timeout_reset: ended after 899 ms, 1 command reissued\r",
+        "  sysfs_reset_under_load: 3 resets, 80 verified copies, 15 reissued\r",
+        "  fatal_recovery: 16 commands completed, 16 reissued after the reset\r",
+        "  bounded_close_and_reset: close returned after 707 ms, reset after 550 ms\r",
+        "  dma_fault: 2 faulting copies ended with -EIO (IOMMU fault reported)\r",
+        "  dst_overlap: 7 overlapping submits refused, 6 adjacent ones completed\r",
+        "  adjacent_destinations: 96 small and 6 large adjacent copies in flight together\r",
+        "  fault_injection: 29 submit and 400 probe allocation failures, all unwound\r",
+        "  removal_orderly: 150 commands from 3 threads, 102 completed, 48 ended with ENODEV, each once; 4 held in the device, each ended with ENODEV\r",
+        "  removal_surprise: 71 commands from 3 threads, 60 completed, 11 ended with ENODEV, each once; 4 held in the device, each ended with ENODEV\r"
+      ],
+      "client_cases": 37
+    },
+    "tcg-iommu-kcsan": {
+      "passed": true,
+      "seconds": 33.3,
+      "problems": [],
+      "qemu_version": "QEMU emulator version 10.2.1",
+      "kernel": "kcsan",
+      "kernel_sha256": "40940d6c31f4debd39a69b202133cc60e66ca3b78fe42caf7617737bd6d113e9",
+      "load_average": [
+        "7.85",
+        "8.04",
+        "6.72"
+      ],
+      "expectations": [
+        {
+          "tag": "timeout-abort",
+          "pattern": "timed out after",
+          "matched": 1
+        },
+        {
+          "tag": "timeout-reset",
+          "pattern": "timed out after|resetting controller",
+          "matched": 2
+        },
+        {
+          "tag": "escalation",
+          "pattern": "timed out after|resetting controller|controller reset failed",
+          "matched": 3
+        },
+        {
+          "tag": "failure",
+          "pattern": "timed out after|resetting controller|controller reset failed|recovery failed",
+          "matched": 4
+        },
+        {
+          "tag": "revive",
+          "pattern": "working again",
+          "matched": 1
+        },
+        {
+          "tag": "fatal",
+          "pattern": "device error|resetting controller",
+          "matched": 2
+        },
+        {
+          "tag": "lost",
+          "pattern": "timed out after|resetting controller|completion for unknown cid",
+          "matched": 5
+        },
+        {
+          "tag": "bounded",
+          "pattern": "resetting controller",
+          "matched": 2
+        },
+        {
+          "tag": "dmar-zerocopy",
+          "pattern": "DMAR: (\\[DMA Write|DRHD: handling fault)",
+          "matched": 2
+        },
+        {
+          "tag": "dmar-bounce",
+          "pattern": "DMAR: (\\[DMA Write|DRHD: handling fault)",
+          "matched": 2
+        },
+        {
+          "tag": "probe-failures",
+          "pattern": "probe with driver kdc failed|really_probe: driver_sysfs_add failed",
+          "matched": 93
+        },
+        {
+          "tag": "surprise",
+          "pattern": "device not responding",
+          "matched": 1
+        }
+      ],
+      "kmemleak_records": 0,
+      "kmemleak_driver_records": 0,
+      "iothreads": null,
+      "host_actions": [
+        {
+          "t_seen": 32.65,
+          "request": "KDC_HOST device_del kdc1",
+          "result": "ok",
+          "t_done": 32.65
+        },
+        {
+          "t_seen": 32.78,
+          "request": "KDC_HOST device_add {\"driver\": \"kdc-dma\", \"id\": \"kdc1b\", \"bus\": \"rp1\", \"queues\": 2}",
+          "result": "ok after 0 retries",
+          "t_done": 32.78
+        },
+        {
+          "t_seen": 32.95,
+          "request": "KDC_HOST qom-set kdc1b fault-gone true",
+          "result": "ok",
+          "t_done": 32.95
+        },
+        {
+          "t_seen": 32.96,
+          "request": "KDC_HOST device_del kdc1b",
+          "result": "ok",
+          "t_done": 32.96
+        }
+      ],
+      "counts": [
+        "  shadow_doorbell: 4 commands behind a stalled engine, each fetched after its doorbell\r",
+        "  cq_head_batching: 16 head writes for 256 single commands; 256 with 63 in flight, batch 63\r",
+        "  data_integrity: 84 copies verified (dst bytes, guard bytes, CRC32C)\r",
+        "  fixed_buffers: 40 copies through registered buffers verified\r",
+        "  coalescing: batch of 8 in 1 interrupt, single command waited 50 ms\r",
+        "  cancel_race: 24 cancelled before the doorbell, 1214 aborted by the device, 262 completed first; 40 more aborted while held device-owned\r",
+        "  concurrency: 4 threads x 250 verified copies, own files\r",
+        "  timeout_abort: answered after 205 ms\r",
+        "  timeout_reset: ended after 762 ms, 1 command reissued\r",
+        "  sysfs_reset_under_load: 3 resets, 288 verified copies, 17 reissued\r",
+        "  fatal_recovery: 16 commands completed, 16 reissued after the reset\r",
+        "  bounded_close_and_reset: close returned after 579 ms, reset after 550 ms\r",
+        "  dma_fault: 2 faulting copies ended with -EIO (IOMMU fault reported)\r",
+        "  dst_overlap: 7 overlapping submits refused, 6 adjacent ones completed\r",
+        "  adjacent_destinations: 96 small and 6 large adjacent copies in flight together\r",
+        "  fault_injection: 12 submit and 192 probe allocation failures, all unwound\r",
+        "  removal_orderly: 78 commands from 3 threads, 39 completed, 39 ended with ENODEV, each once; 4 held in the device, each ended with ENODEV\r",
+        "  removal_surprise: 66 commands from 3 threads, 39 completed, 27 ended with ENODEV, each once; 4 held in the device, each ended with ENODEV\r"
+      ],
+      "client_cases": 37
+    }
+  }
+}

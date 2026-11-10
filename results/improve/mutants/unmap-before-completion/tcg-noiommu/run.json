@@ -1,0 +1,89 @@
+{
+  "utc": "2026-11-10T17:00:18+00:00",
+  "accel": "tcg",
+  "iommu": false,
+  "qemu": "release",
+  "kernel": "kasan",
+  "iothreads": 0,
+  "argv": [
+    "/home/postedism/Desktop/driver-firnware-runtime/A-kernel-device-contract-lab/.cache/build/qemu/qemu-system-x86_64",
+    "-machine",
+    "q35",
+    "-accel",
+    "tcg",
+    "-cpu",
+    "max",
+    "-m",
+    "2048",
+    "-smp",
+    "4",
+    "-nodefaults",
+    "-display",
+    "none",
+    "-serial",
+    "stdio",
+    "-monitor",
+    "none",
+    "-no-reboot",
+    "-nic",
+    "none",
+    "-device",
+    "pcie-root-port,id=rp0,bus=pcie.0,chassis=1,addr=0x2",
+    "-device",
+    "kdc-dma,id=kdc0,bus=rp0,queues=4",
+    "-device",
+    "pcie-root-port,id=rp1,bus=pcie.0,chassis=2,addr=0x3",
+    "-device",
+    "kdc-dma,id=kdc1,bus=rp1,queues=2",
+    "-qmp",
+    "unix:/tmp/kdc-run-aw4ee55g/qmp.sock,server=on,wait=off",
+    "-kernel",
+    "/home/postedism/Desktop/driver-firnware-runtime/A-kernel-device-contract-lab/build/kernel/arch/x86/boot/bzImage",
+    "-initrd",
+    "/home/postedism/Desktop/driver-firnware-runtime/A-kernel-device-contract-lab/build/initramfs.cpio.gz",
+    "-append",
+    "console=ttyS0 panic=-1 oops=panic panic_on_warn=1 nokaslr printk.devkmsg=on"
+  ],
+  "qemu_version": "QEMU emulator version 10.2.1",
+  "mutant": "unmap-before-completion",
+  "kernel_sha256": "9cac30d2297946c21737c3915c407d306e411280f9c63ce1ea53b8aac1e90d3e",
+  "client_sha256": "cf79a2844f5aa9fd08f9576f69e9aa38db4fc97b6e66066f868e22d49d8af4f9",
+  "load_average": [
+    "3.81",
+    "6.37",
+    "7.43"
+  ],
+  "passed": false,
+  "host_actions": [],
+  "returncode": 0,
+  "seconds": 24.6,
+  "expectations": [],
+  "kmemleak_records": 0,
+  "kmemleak_driver_records": 0,
+  "cases": [
+    [
+      "device_info",
+      "2"
+    ],
+    [
+      "shadow_doorbell",
+      "15"
+    ],
+    [
+      "cq_head_batching",
+      "102"
+    ],
+    [
+      "abi_validation",
+      "65"
+    ]
+  ],
+  "counts": [
+    "  shadow_doorbell: 4 commands behind a stalled engine, each fetched after its doorbell\r",
+    "  cq_head_batching: 16 head writes for 256 single commands; 256 with 63 in flight, batch 63\r"
+  ],
+  "problems": [
+    "report: [    7.793991] kdc_test: FAIL check_copy:598: memcmp(d_at, s_at, len) == 0 (errno=14 Bad address)",
+    "report: [   23.350228] kdc_init: KDC_GUEST_FAILURE exit=1"
+  ]
+}

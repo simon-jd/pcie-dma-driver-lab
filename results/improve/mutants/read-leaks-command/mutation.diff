@@ -1,0 +1,4 @@
+--- kdc_fops.c
+-	list_for_each_entry_safe(cmd, tmp, &batch, node)
+		kdc_cmd_free(cmd);
++	/* deliberate bug: the consumed commands are never freed */

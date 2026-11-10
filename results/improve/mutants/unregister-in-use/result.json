@@ -1,0 +1,21 @@
+{
+  "mutant": "unregister-in-use",
+  "file": "build/linux-6.12.41/drivers/misc/kdc/kdc_fixed.c",
+  "runs": [
+    {
+      "config": "tcg-iommu",
+      "failed": true,
+      "first_failed_assertion": null,
+      "allowed": [],
+      "evidence_required": [
+        "WARNING: CPU: \\d+ PID: \\d+ at drivers/misc/kdc/kdc_fixed\\.c:\\d+ kdc_regbuf_destroy"
+      ],
+      "evidence_seen": [
+        "WARNING: CPU: \\d+ PID: \\d+ at drivers/misc/kdc/kdc_fixed\\.c:\\d+ kdc_regbuf_destroy"
+      ],
+      "caught": true
+    }
+  ],
+  "caught": true,
+  "restored_build_ok": true
+}

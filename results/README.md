@@ -4,9 +4,122 @@ Raw output only; every number below points at the file it comes from. All runs
 are on emulated hardware (QEMU 10.2.1) on one shared build host (Intel
 i9-13900K). The matrix and deliberate-bug runs are correctness runs; their
 seconds include the whole guest boot and, for the KASAN kernel, a kmemleak
-scan. Timing comes only from `round3/perf/` and `perf/`, on KVM with a kernel
-without debug options. Commits named below belong to the development history, which was
+scan. Timing comes only from `round3/perf/`, `perf/` and `improve/`, on KVM with a
+kernel without debug options. Commits named below belong to the development history, which was
 squashed into a single commit when the repository was published.
+
+## improvement round (2026-11-10)
+
+### Timing on KVM: `improve/`
+
+Same method as the perf round: frozen builds (`scripts/snapshot_build.py`, under
+`.cache/ab/`), one quiet window per session, boots alternating build by build (and
+configuration by configuration) round by round, `scripts/bench_report.py` and
+`scripts/bench_compare.py` on the result; same guest, pinning, nice 0 and rejection
+thresholds. New: `run_bench.py` configurations `iothread1` (one IOThread for the device,
+pinned to CPU 9) and `iothreads` (one per vCPU, on CPUs 3, 5, 7), whose CPU time is
+attributed to their CPUs and shown as "IOThreads us" and "host CPU us" (every QEMU
+thread) per command; `--skip-configs` leaves a build out of a configuration its QEMU
+does not have; `bench_compare.py --new-config` pairs two configurations of one build.
+
+Build names: `base` the published `main` (`1a8de5c`); `o3r` the perf round's step before
+registered buffers (`68094ba`), its kernel and client rebuilt (the kernel byte-identical
+to the perf round's frozen o3); `p16`, `p32`, `p3536` o3r plus a pad of inert text after
+the driver, which came out as one binary (see below); `r1` registered buffers moved to
+`kdc_fixed.c` (as a working tree; `r1c` the same as a commit); `i1` + the hold knob; `i3` +
+the id hash and batched `read()`; `i4` + IOThread mode (the branch's final code). All
+builds of a session share one QEMU binary except where the QEMU is the change (i1, i4).
+Each boot's `run.json` has the build's `build_info` (commit, source and file hashes).
+
+| Directory | Command (`taskset -c 10-15,24-31 python3 scripts/run_bench.py ...`) | Boots |
+|---|---|---|
+| `improve/i2a`, `improve/i2b` | `--plan bench/layout.plan --builds base,o3r,p16,p32,p3536,r1 --rounds 7` | 42 each |
+| `improve/iC` | `--plan bench/ab.plan --builds base,r1c,i1,i3 --rounds 7` | 28 |
+| `improve/iCfixed` | `--plan bench/fixed.plan --builds base,r1c --configs noiommu,iommu-strict --rounds 7` | 28 |
+| `improve/iD` | `--plan bench/ab.plan --builds base,i1,i3,i4 --configs noiommu,iothreads,iothread1 --skip-configs base=iothreads,iothread1 --skip-configs i1=iothreads,iothread1 --skip-configs i3=iothreads,iothread1 --rounds 7` | 42 |
+| `improve/iDfixed` | `--plan bench/fixed.plan --builds base,i4 --configs noiommu,iommu-strict --rounds 7` | 28 |
+| `improve/iE` | `--plan bench/ab.plan --builds base,i3,i4 --configs noiommu,iothread1,iothreads --skip-configs base=iothread1,iothreads --skip-configs i3=iothread1,iothreads --rounds 7` | 35 |
+| `improve/iF` | `--plan bench/layout.plan --builds o3r,base,p3536r,r1c --rounds 7` | 28 |
+
+`i2a`, `i2b` and `iF` ran with a copy of `bench/layout.plan`'s arms kept outside the
+repository (each run's `plan.txt` is the plan it used, without the comment lines).
+
+Sessions in order (host clock, 2026-11-10): i2a 00:17, i2b 04:22, iC 04:33, iD 05:38,
+iE 06:02, iF 11:07 (the real 3536-byte pad `p3536r`, a hybrid like check C's: kernel and
+client built from o3 plus the pad, `qemu-system-x86_64` copied from o3r; `iF/variants/` has
+its pad source, `build.json`, object sizes and the addresses of functions linked after
+the driver). Decisions (rules written before the sessions that judged them; the text of
+each is in `docs/design-tradeoffs.md`, Improvement round):
+
+| Step | Comparison file | Targets | Result |
+|---|---|---|---|
+| r1 registered buffers moved out | `i2a`, `i2b`: `compare-r1-vs-base.md`, `compare-r1-vs-o3r.md` | 32 in flight >= 6 of 7 vs base in both sessions | 5 and 5 of 7: miss; kept (ties o3r, never below base) |
+| r1, the fixed path | `iCfixed/compare-r1c-vs-base*.md` | no fixed arm below base's minimum | strict IOMMU pass; without: 32 batched fixed 0.985, a miss |
+| i1 hold knob | `iC/compare-i1-vs-r1c.md` | none (no arm below r1c's minimum) | keep |
+| i3 id hash, batched read() | `iC/compare-i3-vs-i1.md`, `iD/compare-i3-vs-i1.md` | one-file arms | 1.45x and 1.29x, 7 of 7; bounce one at a time 0.992 below i1's minimum in iC, 1.001 in iD |
+| i4 per-queue IOThreads (3, 5, 7) | `iD/compare-i4-vs-i4-iothreads.md` | three threads >= 6 of 7, > 1.03 | 0.870, 0 of 7: fails |
+| i4 one IOThread (9) | `iE/compare-i4-vs-i4-iothread1.md` (and `iD/`) | three threads >= 6 of 7, > 1.03 | 1.342, 7 of 7 (iD 1.361): an option; default stays the main loop |
+| i4 main-loop path | `iD/compare-i4-vs-i3.md`, `iE/compare-i4-vs-i3.md` | no arm below i3's minimum | iD NOPs one at a time 0.987, a miss; iE pass |
+| layout, real 3536-byte pad | `iF/compare-p3536r-vs-o3r.md` | diagnostic | inconclusive: 32 batched 0.982 (base 0.988), three threads 0.989 (base 0.954) |
+| before/after | `iE/compare-i4-vs-base.md`, `iE/compare-i4-vs-base-iothread1.md`, `iD/compare-i4-vs-base.md`, `iDfixed/` | | see the README table |
+
+The layout controls: `i2a/variants/` has the pad sources (`kdc_pad-p16.c` etc., linked after
+the driver's other objects by adding `kdc_pad.o` to `kernel/Makefile`) and the driver's
+object sizes (`text-sizes.txt`, from `size` on the build). The p32 and p3536 sources were
+copied over p16's with their old timestamps, make did not rebuild `kdc_pad.o`, and the three
+kernels are byte-identical (`bzImage` hash in `build_info`), so p16, p32 and p3536 are one
+binary under three names in both sessions; the design notes use them as such.
+
+### Correctness: `improve/matrix/`, `improve/matrix-steps/`, `improve/mutants/`
+
+Each step was verified on a frozen copy of its tree (sources plus the QEMU builds,
+kernels and client built from it), the full matrix of that commit, its qtest suite on both
+QEMU builds and the deliberate bugs of its new or moved mechanisms:
+`improve/matrix-steps/<step>/summary.json` (qtest logs included; guest logs in
+`~/.cache/kl-improve/verify/<step>v/results/matrix/` on the build host) and
+`improve/mutants-steps/<step>/`. The final code's full matrix is `improve/matrix/` and
+its full deliberate-bug run `improve/mutants/`.
+
+| | r1 | i1 | i3 | i4 / final |
+|---|---|---|---|---|
+| qtest, ASan+UBSan and release QEMU | 20/20 | 21/21 | 21/21 | 42/42 (21 tests, main loop and IOThreads) |
+| KUnit; client cases | 13; 37 | 13; 37 | 13; 37 | 13; 37 |
+| guest configurations | 6 of 6 | 6 of 6 | 6 of 6 | 10 of 10 (`improve/matrix/`) |
+| the step's deliberate bugs | overlap-check-off, unregister-in-use: caught | hold-not-honoured: caught | read-leaks-command: caught | iothread-irq-lost: caught |
+
+The i4 step's matrix stopped after its first runs: its qtest suite under the ASan QEMU
+failed once in `counters_and_scratch_iothreads` (`improve/matrix-steps/i4-partial/`):
+two interrupts instead of three, because the IOThread fetched three commands in one pass
+that the test had meant to give two passes. The test now settles between them; the
+final matrix ran on the fixed code.
+
+Final matrix (`improve/matrix/`, `python3 scripts/run_matrix.py`'s configurations run by
+the same steps on a frozen copy of `b081e53`, whose code `fbb9d22` and the documentation
+commits keep): qtest 42/42 on both QEMU builds; KVM with the IOMMU 23.0 s, without
+22.1 s, TCG 72.4 and 68.0 s, ASan QEMU 1144.7 s, KCSAN 26.2 s, and with three IOThreads:
+KVM with the IOMMU 22.4 s, without 22.7 s, KVM with the ASan QEMU 24.4 s, TCG without an
+IOMMU 73.4 s; kmemleak 0 records, `DMA_API_ERRORS 0` and the module counters at zero in
+every run. The step matrices and this one ran up to three at a time on the build CPUs;
+r1's, i1's, i3's and this one passed on their first run (i4's step matrix: above).
+
+`removal_surprise` and `removal_orderly` now print the held commands too. Under the ASan
+QEMU, r1 (before the hold knob) ended 7 commands by the surprise removal; i1 and i3 ended
+15 and 11 plus the 4 held ones, every held one with `ENODEV`.
+
+Deliberate bugs (`improve/mutants/`, `python3 scripts/mutation_check.py --out ...` on
+`fbb9d22`): 16 of 16 caught, the restored build passed the guest suite and qtest again.
+The first full run stopped at `event-index-not-published`, whose anchor still named the
+DMA call the IOThread commit replaced; `fbb9d22` fixed the anchor and the run was
+repeated from the start.
+
+| Mutant | Named check that fired |
+|---|---|
+| the perf round's 14 | as in `perf/mutants/` (`unregister-in-use`: the driver's `WARN` now in `kdc_fixed.c`) |
+| new: device services held commands (`hold-not-honoured`) | qtest `fault_hold`: "held commands are not serviced" |
+| new: IOThread interrupt marked pending, never delivered (`iothread-irq-lost`) | qtest `pass_interrupts_iothreads`: "queue vector fired" |
+
+`improve/ci-local.txt`: `SEED_DIR=... LOCAL_TOOLS=... scripts/ci_local.sh OUT 12-15` from a
+fresh clone of `b081e53`: 407 s, all passed (qtest 42/42 twice, the TCG guest run).
 
 ## perf round (2026-11-08/09)
 

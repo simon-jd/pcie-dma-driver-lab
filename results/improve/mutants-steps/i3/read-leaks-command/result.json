@@ -1,0 +1,21 @@
+{
+  "mutant": "read-leaks-command",
+  "file": "build/linux-6.12.41/drivers/misc/kdc/kdc_fops.c",
+  "runs": [
+    {
+      "config": "tcg-iommu",
+      "failed": true,
+      "first_failed_assertion": "FAIL globals_idle:363:",
+      "allowed": [],
+      "evidence_required": [
+        "kmemleak_dump: .*kdc_cmd_prepare"
+      ],
+      "evidence_seen": [
+        "kmemleak_dump: .*kdc_cmd_prepare"
+      ],
+      "caught": true
+    }
+  ],
+  "caught": true,
+  "restored_build_ok": true
+}

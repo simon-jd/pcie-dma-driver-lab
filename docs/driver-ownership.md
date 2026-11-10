@@ -129,7 +129,9 @@ wait for the recovery work is bounded.
   lie inside one of the file's buffers; it takes a reference on both at submit
   (under `ctx->lock`), builds its SG lists from the per-page DMA addresses, syncs
   its ranges for the device and after completion for the CPU, and keeps the
-  head/tail split of the zero-copy path. `kdc_cmd_release()` drops the
+  head/tail split of the zero-copy path. All of it is in `kdc_fixed.c`: submit
+  and `kdc_cmd_release()` hand a fixed command over with one branch each, so the
+  other paths run none of this code. The release drops the
   references, so the release rule above covers them: `KDC_IOC_UNREGISTER` fails
   with `EBUSY` while any is held (the device may still reach the buffer), and
   `close()` frees the file's buffers after its last command has ended.
@@ -179,7 +181,11 @@ wait for the recovery work is bounded.
 
 Order: `reset_lock` -> `files_mutex` -> `ctx->lock` -> `queue->lock`.
 `queue->lock` covers the rings, slot table, pending list and the phase of
-PENDING/DEVICE commands; `ctx->lock` covers the file's lists and counters.
+PENDING/DEVICE commands; `ctx->lock` covers the file's lists, its hash of live
+commands by id (`kdc_find()`, for duplicate ids and cancel) and its counters.
+`read()` takes every completion that fits off the done list in one `ctx->lock` round and
+removes the copied ones from the live set in a second; a failed copy puts the rest back
+at the front, in order.
 `reset_lock` serialises recovery, `reset_prepare`..`reset_done` and `remove()`'s
 teardown. The abort register is written under `queue->lock` after checking that
 the slot still holds this command: a tag is only reissued after its completion
@@ -194,7 +200,8 @@ both unmap one.
 ## Debugfs and module parameters
 
 - `/sys/kernel/debug/kdc/kdcN/`: the device's fault and timing registers
-  (`service_ns`, `fault`, `fault_drop`, `fault_bad_cid`, `fault_bad_dma`), its
+  (`service_ns`, `fault`, `fault_drop`, `fault_bad_cid`, `fault_bad_dma`,
+  `fault_hold`), its
   counters (`device_aborted`, `device_doorbells`, `device_cq_doorbells`,
   `device_irqs`), `device_inflight` (commands the device itself holds, read
   from the queues' INFLIGHT registers), `scratch`, `coalesce`, the

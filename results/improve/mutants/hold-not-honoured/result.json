@@ -1,0 +1,14 @@
+{
+  "mutant": "hold-not-honoured",
+  "file": ".cache/src/qemu-10.2.1/hw/misc/kdc_dma.c",
+  "runs": [
+    {
+      "config": "qtest-asan",
+      "failed": true,
+      "expected": "held commands are not serviced",
+      "caught": true
+    }
+  ],
+  "caught": true,
+  "restored_build_ok": true
+}

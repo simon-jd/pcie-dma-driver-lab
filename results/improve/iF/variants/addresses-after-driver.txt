@@ -1,0 +1,13 @@
+# symbol addresses in vmlinux of functions linked after the driver (nm -n), for o3r, p3536r and r1
+o3r serio_match_port ffffffff81221a00
+o3r _raw_spin_lock ffffffff81278c80
+o3r memcpy ffffffff81273a00
+o3r __schedule ffffffff81275390
+p3536r serio_match_port ffffffff812227d0
+p3536r _raw_spin_lock ffffffff81279a50
+p3536r memcpy ffffffff812747d0
+p3536r __schedule ffffffff81276160
+r1 serio_match_port ffffffff81222ee0
+r1 _raw_spin_lock ffffffff8127a160
+r1 memcpy ffffffff81274ee0
+r1 __schedule ffffffff81276870
