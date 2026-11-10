@@ -20,6 +20,9 @@ reports itself through /dev/kmsg before it closes the window.
 The guest asks for actions only the host can take (hot-unplug, hot-plug, a
 device that stops responding) with "kdc_test: KDC_HOST <verb> <args>" lines;
 this script performs them over QMP while the guest runs and records them.
+
+With --iothreads N the devices run their queues in N IOThreads (the device's
+iothreads property), including a device the guest asks to hot-add.
 """
 import argparse
 import datetime
@@ -119,16 +122,23 @@ def initramfs(init=INIT):
     return path
 
 
-def qemu_command(qemu, kernel, ramdisk, accel, iommu, qmp=None, smp=4, mem=2048):
+def iothread_ids(n):
+    return ":".join(f"kdcio{i}" for i in range(n))
+
+
+def qemu_command(qemu, kernel, ramdisk, accel, iommu, qmp=None, smp=4, mem=2048, iothreads=0):
     cmd = [str(qemu), "-machine", "q35", "-accel", accel, "-cpu", "host" if accel == "kvm" else "max",
            "-m", str(mem), "-smp", str(smp), "-nodefaults", "-display", "none", "-serial", "stdio",
            "-monitor", "none", "-no-reboot", "-nic", "none"]
+    for i in range(iothreads):
+        cmd += ["-object", f"iothread,id=kdcio{i}"]
+    dev = f",iothreads={iothread_ids(iothreads)}" if iothreads else ""
     if iommu:
         cmd += ["-device", "intel-iommu"]  # must precede the devices it translates for
     cmd += ["-device", "pcie-root-port,id=rp0,bus=pcie.0,chassis=1,addr=0x2",
-            "-device", "kdc-dma,id=kdc0,bus=rp0,queues=4",
+            "-device", f"kdc-dma,id=kdc0,bus=rp0,queues=4{dev}",
             "-device", "pcie-root-port,id=rp1,bus=pcie.0,chassis=2,addr=0x3",
-            "-device", "kdc-dma,id=kdc1,bus=rp1,queues=2"]
+            "-device", f"kdc-dma,id=kdc1,bus=rp1,queues=2{dev}"]
     if qmp:
         cmd += ["-qmp", f"unix:{qmp},server=on,wait=off"]
     append = "console=ttyS0 panic=-1 oops=panic panic_on_warn=1 nokaslr printk.devkmsg=on"
@@ -264,7 +274,7 @@ class Qmp:
         self.sock.close()
 
 
-def host_action(qmp, verb, args):
+def host_action(qmp, verb, args, iothreads=0):
     """Perform one guest request; returns a short result string."""
     if verb == "qom-set":
         dev, prop, value = args.split(" ", 2)
@@ -274,9 +284,12 @@ def host_action(qmp, verb, args):
     elif verb == "device_add":
         # QEMU finishes deleting an ejected function slightly after the guest
         # has let go of it; retry while the slot is still occupied.
+        spec = json.loads(args)
+        if iothreads and spec.get("driver") == "kdc-dma":
+            spec["iothreads"] = iothread_ids(iothreads)
         for attempt in range(50):
             try:
-                qmp.call("device_add", **json.loads(args))
+                qmp.call("device_add", **spec)
                 return f"ok after {attempt} retries"
             except RuntimeError as e:
                 if "already occupied" not in str(e):
@@ -302,9 +315,11 @@ def run(args, out, mutant=None):
     ramdisk = initramfs()
     tmp = tempfile.mkdtemp(prefix="kdc-run-")  # unique QMP socket per run
     qmp_path = f"{tmp}/qmp.sock"
-    command = qemu_command(qemu, kernel, ramdisk, args.accel, args.iommu, qmp=qmp_path)
+    iothreads = getattr(args, "iothreads", 0)
+    command = qemu_command(qemu, kernel, ramdisk, args.accel, args.iommu, qmp=qmp_path, iothreads=iothreads)
     result = {"utc": datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds"),
-              "accel": args.accel, "iommu": args.iommu, "qemu": args.qemu, "kernel": variant, "argv": command,
+              "accel": args.accel, "iommu": args.iommu, "qemu": args.qemu, "kernel": variant,
+              "iothreads": iothreads, "argv": command,
               "qemu_version": subprocess.check_output([str(qemu), "--version"], text=True).splitlines()[0],
               "mutant": mutant, "kernel_sha256": kernel_sha, "client_sha256": record["client_sha256"],
               "load_average": open("/proc/loadavg").read().split()[:3], "passed": False, "host_actions": []}
@@ -327,7 +342,7 @@ def run(args, out, mutant=None):
                           "request": m.group(0)[len("kdc_test: "):]}
                 try:
                     qmp = qmp or Qmp(qmp_path)
-                    action["result"] = host_action(qmp, m.group(1), m.group(2) or "")
+                    action["result"] = host_action(qmp, m.group(1), m.group(2) or "", iothreads)
                 except Exception as e:  # recorded; the guest sees the missing effect and fails
                     action["result"] = f"error: {e}"
                 action["t_done"] = round(time.monotonic() - started, 2)
@@ -373,13 +388,14 @@ def main():
     p.add_argument("--qemu", choices=tuple(QEMU), default="release")
     p.add_argument("--kernel", choices=("kasan", "kcsan"), default="kasan")
     p.add_argument("--timeout", type=int, default=None)
+    p.add_argument("--iothreads", type=int, default=0, help="run every device's queues in this many IOThreads")
     args = p.parse_args()
     args.timeout = args.timeout or (900 if args.accel == "kvm" else 3600)
     out = args.out.resolve()
     out.mkdir(parents=True, exist_ok=False)
     result = run(args, out)
     print(("PASS" if result["passed"] else "FAIL"),
-          f"{args.accel} iommu={args.iommu} qemu={args.qemu} kernel={args.kernel}",
+          f"{args.accel} iommu={args.iommu} qemu={args.qemu} kernel={args.kernel} iothreads={args.iothreads}",
           f"{result['seconds']}s, {len(result['cases'])} client cases; logs in {out}")
     for problem in result["problems"][:20]:
         print("  " + problem)

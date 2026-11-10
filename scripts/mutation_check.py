@@ -44,6 +44,9 @@ Mutants:
   hold-not-honoured        device model services the commands KDC_REG_FAULT_HOLD
                            should hold, the knob the removal cases rely on
                            (qtest suite)
+  iothread-irq-lost        with the queues in IOThreads and no KVM irqfd, the
+                           device marks an interrupt pending but never hands
+                           it to the main loop (qtest suite, IOThread runs)
   unregister-in-use        KDC_IOC_UNREGISTER unmaps a registered buffer that
                            a command still in the device uses (the driver's
                            WARN in kdc_regbuf_destroy is the named check)
@@ -168,6 +171,11 @@ MUTANTS = {
         edits=[("            if (kdc_slot(q, i)->state == SLOT_BUSY && !kdc_slot(q, i)->held) {\n",
                 "            if (kdc_slot(q, i)->state == SLOT_BUSY) { /* deliberate bug: held commands run */\n")],
         qtest=("fault_hold", "held commands are not serviced")),
+    "iothread-irq-lost": dict(
+        file=QEMU_FILE,
+        edits=[("        qatomic_or(&s->irq_pending, 1u << vector);\n        qemu_bh_schedule(s->irq_bh);\n",
+                "        qatomic_or(&s->irq_pending, 1u << vector); /* deliberate bug: never delivered */\n")],
+        qtest=("pass_interrupts", "queue vector fired")),
     "unregister-in-use": dict(
         file=KDC_TREE / "kdc_fixed.c",
         edits=[("\tif (b && atomic_read(&b->users)) {\n",

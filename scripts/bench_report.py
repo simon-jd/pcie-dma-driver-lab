@@ -6,8 +6,9 @@ Reads DIR/windows.jsonl, or DIR/windows.jsonl.gz once it has been compressed.
 
 Per command: KVM exits (all, MMIO, port I/O, HLT, the rest), the device's
 doorbells, CQ head writes and MSI-X messages, and host CPU time of the QEMU
-main loop (the device model) and of the vCPU threads, with the part the vCPU
-threads spent in KVM's halt polling shown separately. Utilisation is CPU time
+main loop (the device model, unless it runs in IOThreads), of the IOThreads, of
+the vCPU threads, with the part the vCPU threads spent in KVM's halt polling
+shown separately, and of every QEMU thread together ("host CPU us"). Utilisation is CPU time
 over window time. The idle arm has no commands; its counters are per window.
 Runs with several builds (run_bench.py --builds) get one table per
 configuration and build; bench_compare.py pairs them.
@@ -23,6 +24,8 @@ def window_metrics(w):
     g, k, d, t = w["guest"], w["kvm"], w["device"], w["threads"]
     cmds, ns = int(g["cmds"]), int(g["ns"])
     vcpu_ns = sum(v["run_ns"] for key, v in t.items() if key.startswith("vcpu"))
+    io_ns = sum(v["run_ns"] for key, v in t.items() if key.startswith("io"))
+    all_ns = sum(v["run_ns"] for v in t.values())
     poll_ns = k.get("halt_poll_success_ns", 0) + k.get("halt_poll_fail_ns", 0)
     clocks = [v for v in w["clock_mhz"].values() if v]
     secs = w["host_ns"] / 1e9
@@ -31,7 +34,7 @@ def window_metrics(w):
          "foreign_siblings_ms_per_s": w["foreign_on_siblings_ms"] / secs,
          "qemu_wait_ms_per_s": w["ours_wait_ms"] / secs,
          "main_util": t.get("main", {}).get("run_ns", 0) / w["host_ns"],
-         "vcpu_util": vcpu_ns / w["host_ns"], "window_ms": ns / 1e6}
+         "vcpu_util": vcpu_ns / w["host_ns"], "io_util": io_ns / w["host_ns"], "window_ms": ns / 1e6}
     other = k["exits"] - k["mmio_exits"] - k["io_exits"] - k["halt_exits"]
     if not cmds:  # idle arm: absolute counts per window
         m.update(exits=k["exits"], mmio=k["mmio_exits"], pio=k["io_exits"], halt=k["halt_exits"], other=other,
@@ -44,6 +47,7 @@ def window_metrics(w):
              sq_doorbells=d["stat-doorbells"] / cmds, cq_doorbells=d["stat-cq-doorbells"] / cmds,
              irqs=d["stat-irqs"] / cmds, main_us=t.get("main", {}).get("run_ns", 0) / 1e3 / cmds,
              vcpu_us=vcpu_ns / 1e3 / cmds, halt_poll_us=poll_ns / 1e3 / cmds,
+             io_us=io_ns / 1e3 / cmds, host_us=all_ns / 1e3 / cmds,
              queues=bin(int(g["queues"], 16)).count("1"))
     return m
 
@@ -86,8 +90,8 @@ def markdown(entries, title):
         rows = [e for e in entries if e["config"] == config and e["build"] == build]
         lines += [f"## {config}" + (f", build {build}" if len(builds) > 1 else ""), "",
                   "| arm | n | k cmds/s | p50 us | p99 us | exits | MMIO | HLT | other | SQ db | CQ db | MSI-X "
-                  "| main loop us | main util | vCPU us | of it halt-poll us |",
-                  "|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|"]
+                  "| main loop us | main util | IOThreads us | vCPU us | of it halt-poll us | host CPU us |",
+                  "|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|"]
         for e in rows:
             if "kcmd_s" not in e["metrics"]:
                 continue
@@ -95,7 +99,8 @@ def markdown(entries, title):
                          f"| {cell(e, 'lat_p99_us', 1)} | {cell(e, 'exits', 2)} | {cell(e, 'mmio', 2)} | {cell(e, 'halt', 2)} "
                          f"| {cell(e, 'other', 2)} | {cell(e, 'sq_doorbells', 2)} | {cell(e, 'cq_doorbells', 2)} "
                          f"| {cell(e, 'irqs', 2)} | {cell(e, 'main_us', 2)} | {cell(e, 'main_util', 2)} "
-                         f"| {cell(e, 'vcpu_us', 2)} | {cell(e, 'halt_poll_us', 2)} |")
+                         f"| {cell(e, 'io_us', 2)} | {cell(e, 'vcpu_us', 2)} | {cell(e, 'halt_poll_us', 2)} "
+                         f"| {cell(e, 'host_us', 2)} |")
         idle = [e for e in rows if "kcmd_s" not in e["metrics"] and e["metrics"]]
         if idle:
             lines += ["", "Idle windows (no commands), counts per window:", "",

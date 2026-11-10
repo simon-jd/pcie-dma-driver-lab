@@ -66,6 +66,10 @@ CONFIGS = {
     "noioeventfd": {"iommu": None, "append": [], "device": ",ioeventfd=off"},
     # the driver does not use the device's shadow doorbells
     "noshadow": {"iommu": None, "append": ["kdc.shadow_doorbells=0"], "device": ""},
+    # the device's queues in IOThreads (queue i in IOThread i mod n), pinned to these CPUs:
+    # one per vCPU on that vCPU core's SMT sibling, or one for the device on CPU 9
+    "iothreads": {"iommu": None, "append": [], "device": "", "iothread_cpus": [3, 5, 7]},
+    "iothread1": {"iommu": None, "append": [], "device": "", "iothread_cpus": [9]},
 }
 INIT = b"""#!/bin/sh
 /bin/busybox mount -t proc proc /proc
@@ -140,10 +144,16 @@ def qemu_command(qemu, kernel, ramdisk, config, smp, qmp):
     cfg = CONFIGS[config]
     cmd = [str(qemu), "-machine", "q35", "-accel", "kvm", "-cpu", "host", "-m", "2048", "-smp", str(smp),
            "-nodefaults", "-display", "none", "-serial", "stdio", "-monitor", "none", "-no-reboot", "-nic", "none"]
+    device = cfg["device"]
+    if cfg.get("iothread_cpus"):
+        ids = [f"io{i}" for i in range(len(cfg["iothread_cpus"]))]
+        for i in ids:
+            cmd += ["-object", f"iothread,id={i}"]
+        device += ",iothreads=" + ":".join(ids)
     if cfg["iommu"]:
         cmd += ["-device", "intel-iommu"]
     cmd += ["-device", "pcie-root-port,id=rp0,bus=pcie.0,chassis=1,addr=0x2",
-            "-device", f"kdc-dma,id=kdc0,bus=rp0,queues=4{cfg['device']}",
+            "-device", f"kdc-dma,id=kdc0,bus=rp0,queues=4{device}",
             "-qmp", f"unix:{qmp},server=on,wait=off"]
     append = ["console=ttyS0", "panic=-1", "nokaslr", "printk.devkmsg=on", "printk.time=0",
               "kdc.bounce_max=65536"] + cfg["append"]
@@ -162,8 +172,9 @@ def read_int(path, default=None):
 class Host:
     """Host-side counters for one QEMU process and the watched CPUs."""
 
-    def __init__(self, pid, watch, vcpu_cpus, main_cpu):
+    def __init__(self, pid, watch, vcpu_cpus, main_cpu, iothread_cpus=()):
         self.pid, self.watch, self.vcpu_cpus, self.main_cpu = pid, watch, vcpu_cpus, main_cpu
+        self.iothread_cpus = list(iothread_cpus)
         self.clock_cpus = vcpu_cpus + [main_cpu]
         self.idle_paths = {c: sorted(pathlib.Path(f"/sys/devices/system/cpu/cpu{c}/cpuidle").glob("state*/time"))
                            for c in watch}
@@ -216,7 +227,7 @@ class Host:
         return snap
 
 
-def delta(a, b, window_ns, host, vcpu_tids):
+def delta(a, b, window_ns, host, vcpu_tids, iothread_tids=()):
     """Counters between two snapshots, and the foreign-load figure for the threshold."""
     d = {"host_ns": b["t_ns"] - a["t_ns"]}
     kvm = {}
@@ -234,8 +245,12 @@ def delta(a, b, window_ns, host, vcpu_tids):
         run, wait = t["run_ns"] - old["run_ns"], t["wait_ns"] - old["wait_ns"]
         ours_run += run
         ours_wait += wait
-        role = "vcpu" if tid in vcpu_tids else ("main" if tid == str(host.pid) else "other")
-        key = f"vcpu{vcpu_tids.index(tid)}" if role == "vcpu" else role
+        if tid in vcpu_tids:
+            key = f"vcpu{vcpu_tids.index(tid)}"
+        elif tid in iothread_tids:
+            key = f"io{iothread_tids.index(tid)}"
+        else:
+            key = "main" if tid == str(host.pid) else "other"
         cur = threads.setdefault(key, {"run_ns": 0, "wait_ns": 0})
         cur["run_ns"] += run
         cur["wait_ns"] += wait
@@ -243,14 +258,15 @@ def delta(a, b, window_ns, host, vcpu_tids):
     wall_us = (b["wall_ns"] - a["wall_ns"]) / 1000
     busy_us = {c: max(0.0, wall_us - (b["idle_us"][c] - a["idle_us"][c])) for c in host.watch}
     d["cpu_busy_us"] = {str(c): round(v) for c, v in busy_us.items()}
-    # where our threads ran: vCPU i on vcpu_cpus[i], everything else on the main CPU
+    # where our threads ran: vCPU i on vcpu_cpus[i], IOThread i on iothread_cpus[i], the rest on the main CPU
     ours_us = {c: 0.0 for c in host.watch}
     for key, t in threads.items():
-        cpu = host.vcpu_cpus[int(key[4:])] if key.startswith("vcpu") else host.main_cpu
+        cpu = host.vcpu_cpus[int(key[4:])] if key.startswith("vcpu") else \
+            host.iothread_cpus[int(key[2:])] if key.startswith("io") else host.main_cpu
         if cpu in ours_us:
             ours_us[cpu] += t["run_ns"] / 1000
     foreign_us = {c: max(0.0, busy_us[c] - ours_us[c]) for c in host.watch}
-    hosting = set(host.vcpu_cpus) | {host.main_cpu}
+    hosting = set(host.vcpu_cpus) | {host.main_cpu} | set(host.iothread_cpus)
     d["foreign_on_vm_cpus_ms"] = sum(v for c, v in foreign_us.items() if c in hosting) / 1000
     d["foreign_on_siblings_ms"] = sum(v for c, v in foreign_us.items() if c not in hosting) / 1000
     d["idle_state_us"] = {str(c): [y - x for x, y in zip(a["idle_states_us"][c], b["idle_states_us"][c])]
@@ -307,7 +323,14 @@ def boot(args, build, config, index, plan_text, out, windows_out, serial_out):
         vcpu_tids = [str(c["thread-id"]) for c in sorted(cpus, key=lambda c: c["cpu-index"])]
         for tid, cpu in zip(vcpu_tids, vcpus):
             os.sched_setaffinity(int(tid), {cpu})
-        host = Host(proc.pid, cpu_list(args.watch_cpus), vcpus, args.main_cpu)
+        iothread_cpus = CONFIGS[config].get("iothread_cpus", [])
+        iothread_tids = []
+        if iothread_cpus:
+            threads = {t["id"]: str(t["thread-id"]) for t in qmp.call("query-iothreads")}
+            iothread_tids = [threads[f"io{i}"] for i in range(len(iothread_cpus))]
+            for tid, cpu in zip(iothread_tids, iothread_cpus):
+                os.sched_setaffinity(int(tid), {cpu})
+        host = Host(proc.pid, cpu_list(args.watch_cpus), vcpus, args.main_cpu, iothread_cpus)
 
         def affinities():
             out = {}
@@ -320,6 +343,7 @@ def boot(args, build, config, index, plan_text, out, windows_out, serial_out):
 
         info["affinity_after_pinning"] = affinities()
         info["vcpu_tids"] = vcpu_tids
+        info["iothread_tids"], info["iothread_cpus"] = iothread_tids, iothread_cpus
         for raw in proc.stdout:
             line = raw.decode(errors="replace")
             lines.append(line)
@@ -330,7 +354,7 @@ def boot(args, build, config, index, plan_text, out, windows_out, serial_out):
                 reply = token
                 if token % 2 == 0 and token - 1 in marks:
                     a = marks.pop(token - 1)
-                    d = delta(a, snap, snap["t_ns"] - a["t_ns"], host, vcpu_tids)
+                    d = delta(a, snap, snap["t_ns"] - a["t_ns"], host, vcpu_tids, iothread_tids)
                     d["qemu_wait_ms_per_s"] = d["ours_wait_ms"] / (d["host_ns"] / 1e9)
                     d.update(token=token, config=config, build=build.name, boot=index,
                              accepted=d["foreign_ms_per_s"] <= args.max_foreign and
@@ -382,6 +406,8 @@ def main():
     p.add_argument("--builds", default="tree", help="comma-separated: tree (this checkout) or names under .cache/ab/")
     p.add_argument("--skip-arms", action="append", default=[], metavar="BUILD=ARM,ARM",
                    help="leave these arms out of the plan for one build (e.g. a mode its client does not have)")
+    p.add_argument("--skip-configs", action="append", default=[], metavar="BUILD=CONFIG,CONFIG",
+                   help="do not boot this build in these configurations (e.g. one its QEMU does not support)")
     p.add_argument("--vcpus", default="2,4,6", help="host CPU per vCPU (also sets the vCPU count)")
     p.add_argument("--main-cpu", type=int, default=8, help="host CPU for QEMU's main loop and helper threads")
     p.add_argument("--watch-cpus", default="2-9", help="CPUs whose foreign load is checked (VM CPUs + siblings)")
@@ -407,6 +433,10 @@ def main():
     for item in args.skip_arms:
         name, _, arms = item.partition("=")
         skip[name] = set(arms.split(","))
+    skip_configs = {}
+    for item in args.skip_configs:
+        name, _, cfgs = item.partition("=")
+        skip_configs[name] = set(cfgs.split(","))
     plans = {b.name: "".join(line for line in plan_text.splitlines(keepends=True)
                              if not line.split() or line.split()[0] not in skip.get(b.name, ()))
              for b in builds}
@@ -416,6 +446,8 @@ def main():
         for _ in range(args.rounds):
             for config in configs:
                 for build in builds:
+                    if config in skip_configs.get(build.name, ()):
+                        continue
                     info, probs = boot(args, build, config, index, plans[build.name], out, windows_out,
                                        serial_out)
                     windows_out.flush()

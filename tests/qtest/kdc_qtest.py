@@ -7,6 +7,10 @@ times are exact and deterministic. Run it against the ASan+UBSan QEMU build;
 any sanitizer report on QEMU's stderr fails the run.
 
 Constants come from include/kdc_hw.h, so the test and the C code cannot drift.
+
+Every test runs twice: with the device's queues in QEMU's main loop, and with
+them in two IOThreads (the iothreads property). An IOThread works on its own
+time, so in that mode settle() also waits a little real time after each step.
 """
 import argparse
 import json
@@ -77,7 +81,7 @@ class QemuDied(Exception):
 
 
 class Qtest:
-    def __init__(self, qemu, log, queues=NQUEUES, device_args=""):
+    def __init__(self, qemu, log, queues=NQUEUES, device_args="", iothreads=False):
         self.tmp = tempfile.mkdtemp(prefix="kdc-qtest-")
         self.qmp_path = os.path.join(self.tmp, "qmp.sock")
         self.stderr_path = os.path.join(self.tmp, "stderr.txt")
@@ -87,6 +91,10 @@ class Qtest:
                 "-qmp", f"unix:{self.qmp_path},server=on,wait=off",
                 "-device", "pcie-root-port,id=rp0,bus=pcie.0,addr=0x2,chassis=1",
                 "-device", f"kdc-dma,id=kdc,bus=rp0,addr=0x0,queues={queues}{device_args}"]
+        if iothreads:
+            argv[1:1] = ["-object", "iothread,id=qio0", "-object", "iothread,id=qio1"]
+            argv[-1] += ",iothreads=qio0:qio1"
+        self.threaded = iothreads
         self.stderr = open(self.stderr_path, "w")
         # QEMU's own allocations are not leak-clean at exit; leak checking would only add noise.
         env = dict(os.environ, ASAN_OPTIONS="detect_leaks=0:abort_on_error=1",
@@ -141,9 +149,12 @@ class Qtest:
         return now
 
     def settle(self):
-        """Give the main loop a few iterations to run pending bottom halves."""
+        """Give the main loop a few iterations to run pending bottom halves (and
+        the IOThreads a moment to run theirs)."""
         for _ in range(3):
             self.cmd(f"readl 0x{BAR0 + KDC_REG_ID:x}")
+            if self.threaded:
+                time.sleep(0.01)
 
     # -- PCI config space --
     def cfg_addr(self, bus, dev, fn, reg):
@@ -889,6 +900,10 @@ def t_counters_and_scratch(t):
     ring = t.queue(0)
     for cid in range(3):
         ring.put(copy_cmd(t, cid, 64, src=SRC + cid * 4096, dst=DST + cid * 4096)[0], ring=cid != 1)
+        if cid == 0:
+            # the first command's own pass (one interrupt) before the next two (two):
+            # an IOThread could otherwise fetch all three in one pass
+            t.settle()
     t.settle()
     check(len(ring.poll()) == 3, "three completions, reaped with one CQ head write")
     stats = {name: t.reg(reg) for name, reg in (("doorbells", KDC_REG_STAT_DOORBELLS),
@@ -979,17 +994,22 @@ def main():
     random.seed(1234)
     args.log.parent.mkdir(parents=True, exist_ok=True)
     version = subprocess.check_output([args.qemu, "--version"], text=True).splitlines()[0]
-    failures = 0
+    failures = ran = 0
     with args.log.open("w") as log:
         log.write(f"qemu: {args.qemu}\n{version}\n")
-        for test in TESTS:
-            if args.only and args.only not in test.__name__:
+        for test, threaded in [(t, False) for t in TESTS] + [(t, True) for t in TESTS]:
+            name = test.__name__[2:] + ("_iothreads" if threaded else "")
+            if args.only and args.only not in name:
                 continue
+            ran += 1
             started = time.monotonic()
-            t = Qtest(args.qemu, log, device_args=getattr(test, "device_args", ""))
+            t = Qtest(args.qemu, log, device_args=getattr(test, "device_args", ""), iothreads=threaded)
             try:
                 t.setup_pci()
-                test(t)
+                if test is t_fuzz and threaded:
+                    test(t, iterations=500)
+                else:
+                    test(t)
                 status = "PASS"
             except Exception as e:  # report and continue with the next test
                 status = f"FAIL {type(e).__name__}: {e}"
@@ -999,10 +1019,10 @@ def main():
             except Exception as e:
                 status = f"FAIL {type(e).__name__}: {e}"
                 failures += 1
-            line = f"{status} {test.__name__[2:]} ({time.monotonic() - started:.1f}s)"
+            line = f"{status} {name} ({time.monotonic() - started:.1f}s)"
             print(line, flush=True)
             log.write(line + "\n")
-        summary = f"KDC_QTEST {'PASS' if not failures else 'FAIL'} tests={len(TESTS)} failures={failures}"
+        summary = f"KDC_QTEST {'PASS' if not failures else 'FAIL'} tests={ran} failures={failures}"
         print(summary)
         log.write(summary + "\n")
     sys.exit(1 if failures else 0)

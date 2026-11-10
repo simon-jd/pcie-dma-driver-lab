@@ -4,7 +4,10 @@
 Writes results/<name>/: one directory per guest configuration (serial.log,
 qemu-stderr.log, run.json), qtest-<flavor>.log, and summary.json. Guest
 configurations are {kvm, tcg} x {IOMMU strict, no IOMMU} with the KASAN kernel,
-TCG with the ASan/UBSan QEMU build, and TCG with the KCSAN kernel. KVM
+TCG with the ASan/UBSan QEMU build, TCG with the KCSAN kernel, and the
+device's queues in three IOThreads on KVM (IOMMU strict and none), on KVM with
+the ASan/UBSan QEMU, and on TCG without an IOMMU (TCG behind an emulated IOMMU
+is refused in that mode, see qemu/kdc_dma.c). KVM
 configurations are recorded as skipped (with the reason) when /dev/kvm is not
 accessible to the current user.
 """
@@ -16,10 +19,15 @@ import subprocess
 import sys
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
-CONFIGS = [("kvm-iommu", "kvm", True, "release", "kasan"), ("kvm-noiommu", "kvm", False, "release", "kasan"),
-           ("tcg-iommu", "tcg", True, "release", "kasan"), ("tcg-noiommu", "tcg", False, "release", "kasan"),
-           ("tcg-iommu-asanqemu", "tcg", True, "asan", "kasan"),
-           ("tcg-iommu-kcsan", "tcg", True, "release", "kcsan")]
+# name, accelerator, IOMMU, QEMU build, kernel, IOThreads
+CONFIGS = [("kvm-iommu", "kvm", True, "release", "kasan", 0), ("kvm-noiommu", "kvm", False, "release", "kasan", 0),
+           ("tcg-iommu", "tcg", True, "release", "kasan", 0), ("tcg-noiommu", "tcg", False, "release", "kasan", 0),
+           ("tcg-iommu-asanqemu", "tcg", True, "asan", "kasan", 0),
+           ("tcg-iommu-kcsan", "tcg", True, "release", "kcsan", 0),
+           ("kvm-iommu-iothreads", "kvm", True, "release", "kasan", 3),
+           ("kvm-noiommu-iothreads", "kvm", False, "release", "kasan", 3),
+           ("kvm-iommu-asanqemu-iothreads", "kvm", True, "asan", "kasan", 3),
+           ("tcg-noiommu-iothreads", "tcg", False, "release", "kasan", 3)]
 
 
 def main():
@@ -37,7 +45,7 @@ def main():
                              "--log", str(log)], stdin=subprocess.DEVNULL).returncode
         summary["qtest"][flavor] = {"passed": rc == 0, "log": log.name}
     kvm_ok = os.access("/dev/kvm", os.R_OK | os.W_OK)
-    for name, accel, iommu, qemu, kernel in CONFIGS:
+    for name, accel, iommu, qemu, kernel, iothreads in CONFIGS:
         if args.only and name not in args.only:
             continue
         if accel == "kvm" and not kvm_ok:
@@ -45,10 +53,12 @@ def main():
             print(f"SKIP {name}: no access to /dev/kvm")
             continue
         cmd = [sys.executable, str(ROOT / "scripts/run_vm.py"), "--out", str(out / name), "--accel", accel,
-               "--iommu" if iommu else "--no-iommu", "--qemu", qemu, "--kernel", kernel]
+               "--iommu" if iommu else "--no-iommu", "--qemu", qemu, "--kernel", kernel,
+               "--iothreads", str(iothreads)]
         subprocess.run(cmd, stdin=subprocess.DEVNULL)
         run = json.loads((out / name / "run.json").read_text())
         summary["guest"][name] = {k: run.get(k) for k in ("passed", "seconds", "problems", "qemu_version", "kernel",
+                                                          "iothreads",
                                                           "kernel_sha256", "load_average", "expectations",
                                                           "kmemleak_records", "kmemleak_driver_records",
                                                           "host_actions", "counts")}
