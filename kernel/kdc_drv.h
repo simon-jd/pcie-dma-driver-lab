@@ -4,6 +4,7 @@
 #include <linux/cdev.h>
 #include <linux/device.h>
 #include <linux/dmapool.h>
+#include <linux/hashtable.h>
 #include <linux/interrupt.h>
 #include <linux/interval_tree.h>
 #include <linux/list.h>
@@ -132,6 +133,7 @@ struct kdc_regbuf {
 struct kdc_cmd {
 	struct list_head node; /* ctx->staged, queue->pending, ctx->done or a local list */
 	struct list_head ctx_node; /* ctx->live until read() consumes it */
+	struct hlist_node id_node; /* ctx->ids, while on ctx->live */
 	struct kdc_ctx *ctx;
 	struct kdc_queue *q;
 	enum kdc_phase phase;
@@ -171,6 +173,7 @@ struct kdc_ctx {
 	spinlock_t lock;
 	wait_queue_head_t wq;
 	struct list_head live, staged, done;
+	DECLARE_HASHTABLE(ids, 6); /* the live commands by id, for duplicate and cancel lookups */
 	struct list_head dev_node; /* kdev->files, under files_mutex */
 	u64 epoch, bytes, pinned_pages;
 	u32 nr_live, nr_staged, nr_ready, nr_inflight;

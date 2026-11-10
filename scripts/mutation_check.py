@@ -130,9 +130,8 @@ MUTANTS = {
         runs=[("tcg-iommu", True, [], [r"DMA-API: kdc \S+: cacheline tracking EEXIST, overlapping mappings"])]),
     "read-leaks-command": dict(
         file=KDC_TREE / "kdc_fops.c",
-        edits=[("\t\tctx->nr_live--;\n\t\tspin_unlock(&ctx->lock);\n\t\tkdc_cmd_free(cmd);\n\t\tn++;\n",
-                "\t\tctx->nr_live--;\n\t\tspin_unlock(&ctx->lock);\n"
-                "\t\t/* deliberate bug: the consumed command is never freed */\n\t\tn++;\n")],
+        edits=[("\tlist_for_each_entry_safe(cmd, tmp, &batch, node)\n\t\tkdc_cmd_free(cmd);\n",
+                "\t/* deliberate bug: the consumed commands are never freed */\n")],
         runs=[("tcg-iommu", True, [], [r"kmemleak_dump: .*kdc_cmd_prepare"])]),
     "coalesce-ignored": dict(
         file=KDC_TREE / "kdc_pci.c",

@@ -417,7 +417,7 @@ static bool kdc_fixed_dup(struct kdc_ctx *ctx, u64 id)
 	struct kdc_cmd *cmd;
 
 	lockdep_assert_held(&ctx->lock);
-	list_for_each_entry(cmd, &ctx->live, ctx_node)
+	hash_for_each_possible(ctx->ids, cmd, id_node, id)
 		if (cmd->id == id && READ_ONCE(cmd->phase) != KDC_FREE)
 			return true;
 	return false;
@@ -493,6 +493,7 @@ long kdc_submit_fixed(struct kdc_ctx *ctx, const struct kdc_submit *s)
 	}
 	cmd->epoch = ctx->epoch;
 	list_add_tail(&cmd->ctx_node, &ctx->live);
+	hash_add(ctx->ids, &cmd->id_node, cmd->id);
 	ctx->nr_live++;
 	ctx->nr_inflight++;
 	ctx->bytes += cmd->quota_bytes;

@@ -48,12 +48,19 @@ void kdc_cmd_publish(struct kdc_cmd *cmd, int status)
 	spin_unlock(&ctx->lock);
 }
 
+/*
+ * A live command by id. A hash of the live commands rather than a walk of
+ * ctx->live: every submit looks its id up twice under the file lock, and when
+ * several threads share a file most of the commands on the list were last
+ * touched on other CPUs, so the walk was a string of cache misses under the
+ * lock everyone waits for.
+ */
 static struct kdc_cmd *kdc_find(struct kdc_ctx *ctx, u64 id, const u64 *epoch)
 {
 	struct kdc_cmd *cmd;
 
 	lockdep_assert_held(&ctx->lock);
-	list_for_each_entry(cmd, &ctx->live, ctx_node)
+	hash_for_each_possible(ctx->ids, cmd, id_node, id)
 		if (cmd->id == id && (!epoch || cmd->epoch == *epoch) &&
 		    READ_ONCE(cmd->phase) != KDC_FREE)
 			return cmd;
@@ -136,6 +143,7 @@ static int kdc_open(struct inode *inode, struct file *file)
 	INIT_LIST_HEAD(&ctx->live);
 	INIT_LIST_HEAD(&ctx->staged);
 	INIT_LIST_HEAD(&ctx->done);
+	hash_init(ctx->ids);
 	ctx->epoch = 1;
 	down_read(&kdev->gone_lock);
 	if (kdev->dead) {
@@ -178,6 +186,7 @@ static int kdc_release(struct inode *inode, struct file *file)
 	spin_unlock(&ctx->lock);
 	list_for_each_entry_safe(cmd, tmp, &ctx->live, ctx_node) {
 		list_del(&cmd->ctx_node);
+		hash_del(&cmd->id_node);
 		kdc_cmd_free(cmd);
 	}
 	mutex_lock(&kdev->files_mutex);
@@ -244,6 +253,7 @@ static long kdc_ioctl_submit(struct kdc_ctx *ctx, void __user *arg)
 	}
 	cmd->epoch = ctx->epoch;
 	list_add_tail(&cmd->ctx_node, &ctx->live);
+	hash_add(ctx->ids, &cmd->id_node, cmd->id);
 	ctx->nr_live++;
 	ctx->nr_inflight++;
 	ctx->bytes += cmd->quota_bytes;
@@ -481,59 +491,73 @@ static bool kdc_ctx_finished(struct kdc_ctx *ctx)
 /*
  * Returns as many completions as fit; blocks only for the first one. Once the
  * device is gone and every completion has been read, returns -ENODEV.
+ *
+ * The completions are taken off the done list in one round of the file lock
+ * and removed from the live set in a second, however many there are: with
+ * several readers on one file, two rounds per completion kept the lock's
+ * cache line moving between their CPUs.
  */
 static ssize_t kdc_read(struct file *file, char __user *buf, size_t size,
 			loff_t *off)
 {
 	struct kdc_ctx *ctx = file->private_data;
-	size_t n = 0, max = size / sizeof(struct kdc_completion);
+	size_t n = 0, got = 0, i = 0, max = size / sizeof(struct kdc_completion);
+	struct kdc_cmd *cmd, *tmp;
+	LIST_HEAD(batch);
+	LIST_HEAD(back);
 	int err;
 
 	if (!max)
 		return -EINVAL;
-	while (n < max) {
-		struct kdc_completion c;
-		struct kdc_cmd *cmd;
-
+	for (;;) {
 		spin_lock(&ctx->lock);
-		cmd = list_first_entry_or_null(&ctx->done, struct kdc_cmd, node);
-		if (cmd) {
-			list_del_init(&cmd->node);
-			ctx->nr_ready--;
-			WRITE_ONCE(cmd->phase, KDC_FREE);
-		}
-		spin_unlock(&ctx->lock);
-		if (!cmd) {
-			if (n)
+		list_for_each_entry_safe(cmd, tmp, &ctx->done, node) {
+			if (got == max)
 				break;
-			if (kdc_ctx_finished(ctx))
-				return -ENODEV;
-			if (file->f_flags & O_NONBLOCK)
-				return -EAGAIN;
-			err = wait_event_interruptible(ctx->wq,
-						       READ_ONCE(ctx->nr_ready) ||
-						       kdc_ctx_finished(ctx));
-			if (err)
-				return err;
-			continue;
+			list_move_tail(&cmd->node, &batch);
+			WRITE_ONCE(cmd->phase, KDC_FREE);
+			got++;
 		}
-		kdc_fill_completion(&c, cmd);
-		if (copy_to_user(buf + n * sizeof(c), &c, sizeof(c))) {
-			spin_lock(&ctx->lock);
-			WRITE_ONCE(cmd->phase, KDC_DONE);
-			list_add(&cmd->node, &ctx->done);
-			ctx->nr_ready++;
-			spin_unlock(&ctx->lock);
-			return n ? n * sizeof(c) : -EFAULT;
-		}
-		spin_lock(&ctx->lock);
-		list_del(&cmd->ctx_node);
-		ctx->nr_live--;
+		ctx->nr_ready -= got;
 		spin_unlock(&ctx->lock);
-		kdc_cmd_free(cmd);
+		if (got)
+			break;
+		if (kdc_ctx_finished(ctx))
+			return -ENODEV;
+		if (file->f_flags & O_NONBLOCK)
+			return -EAGAIN;
+		err = wait_event_interruptible(ctx->wq,
+					       READ_ONCE(ctx->nr_ready) ||
+					       kdc_ctx_finished(ctx));
+		if (err)
+			return err;
+	}
+	list_for_each_entry(cmd, &batch, node) {
+		struct kdc_completion c;
+
+		kdc_fill_completion(&c, cmd);
+		if (copy_to_user(buf + n * sizeof(c), &c, sizeof(c)))
+			break;
 		n++;
 	}
-	return n * sizeof(struct kdc_completion);
+	spin_lock(&ctx->lock);
+	list_for_each_entry_safe(cmd, tmp, &batch, node) {
+		if (i++ < n) {
+			list_del(&cmd->ctx_node);
+			hash_del(&cmd->id_node);
+			ctx->nr_live--;
+		} else {
+			/* not copied: back to the front of the done list, in order */
+			WRITE_ONCE(cmd->phase, KDC_DONE);
+			list_move_tail(&cmd->node, &back);
+		}
+	}
+	list_splice(&back, &ctx->done);
+	ctx->nr_ready += got - n;
+	spin_unlock(&ctx->lock);
+	list_for_each_entry_safe(cmd, tmp, &batch, node)
+		kdc_cmd_free(cmd);
+	return n ? n * sizeof(struct kdc_completion) : -EFAULT;
 }
 
 static __poll_t kdc_poll(struct file *file, struct poll_table_struct *wait)
