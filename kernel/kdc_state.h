@@ -137,7 +137,6 @@ static inline int kdc_quota(u32 live, u64 bytes, u64 more)
 	return 0;
 }
 
-/* Field validation that needs no locks; returns 0 or -errno. */
 /* KDC_IOC_REGISTER arguments; 0 or -EINVAL / -EPROTO. */
 static inline int kdc_buffer_check(const struct kdc_buffer *b)
 {
@@ -150,6 +149,7 @@ static inline int kdc_buffer_check(const struct kdc_buffer *b)
 	return 0;
 }
 
+/* Field validation that needs no locks; returns 0 or -errno. */
 static inline int kdc_submit_check(const struct kdc_submit *s,
 				   unsigned int nr_queues)
 {
@@ -169,14 +169,19 @@ static inline int kdc_submit_check(const struct kdc_submit *s,
 						    KDC_SUBMIT_ZEROCOPY | KDC_SUBMIT_FIXED)) ?
 			       -EINVAL :
 			       0;
-	if ((s->flags & KDC_SUBMIT_FIXED) && (s->flags & (KDC_SUBMIT_BOUNCE | KDC_SUBMIT_ZEROCOPY)))
-		return -EINVAL;
 	if (!s->length || s->length > KDC_MAX_LENGTH || !s->src || !s->dst ||
 	    !kdc_pages_spanned(s->src, s->length) ||
 	    !kdc_pages_spanned(s->dst, s->length) ||
 	    kdc_ranges_overlap(s->src, s->dst, s->length))
 		return -EINVAL;
 	return 0;
+}
+
+/* A KDC_SUBMIT_FIXED command also names no other data path. */
+static inline int kdc_fixed_check(const struct kdc_submit *s, unsigned int nr_queues)
+{
+	return kdc_submit_check(s, nr_queues) ?:
+	       (s->flags & (KDC_SUBMIT_BOUNCE | KDC_SUBMIT_ZEROCOPY) ? -EINVAL : 0);
 }
 
 /*

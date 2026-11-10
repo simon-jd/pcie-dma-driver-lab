@@ -108,20 +108,14 @@ struct kdc_dst_range {
 	struct interval_tree_node it;
 };
 
-/* Destination byte ranges by physical address. */
-struct kdc_tracker {
-	spinlock_t lock;
-	struct rb_root_cached tree;
-};
-
 /*
- * A registered buffer (KDC_IOC_REGISTER): pinned once and mapped page by page
- * for DMA_BIDIRECTIONAL. users counts commands from submit until their
- * kdc_cmd_release(), i.e. while the device may still reach the buffer; it is
+ * A registered buffer (KDC_IOC_REGISTER, kdc_fixed.c): pinned once and mapped
+ * page by page for DMA_BIDIRECTIONAL. users counts commands from submit until
+ * their release, i.e. while the device may still reach the buffer; it is
  * unmapped only when that is zero, or by remove() once the device has stopped.
  * Its pages are in the module-wide tracker for as long as it is registered,
  * so no other destination can share them; fixed commands inside it are
- * checked against each other in fixed_dst.
+ * checked against each other in its own tree.
  */
 struct kdc_regbuf {
 	u64 uaddr, len;
@@ -129,7 +123,8 @@ struct kdc_regbuf {
 	struct page **pages;
 	dma_addr_t *dma;
 	struct kdc_dst_range *ranges;
-	struct kdc_tracker fixed_dst;
+	spinlock_t fixed_lock;
+	struct rb_root_cached fixed_tree;
 	bool mapped, tracked;
 	atomic_t users;
 };
@@ -142,10 +137,8 @@ struct kdc_cmd {
 	enum kdc_phase phase;
 	enum kdc_abort_reason abort_reason;
 	bool abort_sent, use_bounce, ended_by_reset;
-	bool fixed; /* KDC_SUBMIT_FIXED: pages belong to registered buffers */
-	struct kdc_regbuf *src_buf, *dst_buf; /* held until kdc_cmd_release() */
 	u8 retries;
-	u64 id, epoch, quota_bytes, dst;
+	u64 id, epoch, quota_bytes;
 	u32 length, head_len, tail_len;
 	u16 cid, tag;
 	unsigned long timeout, deadline, abort_deadline; /* jiffies */
@@ -155,7 +148,6 @@ struct kdc_cmd {
 	struct sg_table src_sgt, dst_sgt;
 	bool src_mapped, dst_mapped;
 	struct kdc_dst_range *ranges;
-	struct kdc_tracker *tracker; /* module-wide, or the registered buffer's */
 	unsigned int nr_ranges;
 	bool ranges_tracked;
 	void *sgl, *bounce_buf;
@@ -163,6 +155,15 @@ struct kdc_cmd {
 	int status;
 	u32 crc, done_bytes;
 	u16 hw_status;
+	/*
+	 * KDC_SUBMIT_FIXED only (kdc_fixed.c). Last, so that the fields the other
+	 * paths use keep their offsets; a fixed command leaves src_pages,
+	 * dst_pages and their counts empty, and kdc_cmd_release() hands it to
+	 * kdc_fixed_release().
+	 */
+	bool fixed;
+	struct kdc_regbuf *src_buf, *dst_buf; /* held until release */
+	u64 dst;
 };
 
 struct kdc_ctx {
@@ -171,10 +172,10 @@ struct kdc_ctx {
 	wait_queue_head_t wq;
 	struct list_head live, staged, done;
 	struct list_head dev_node; /* kdev->files, under files_mutex */
-	struct kdc_regbuf *bufs[KDC_MAX_FIXED_BUFS]; /* under ctx->lock */
 	u64 epoch, bytes, pinned_pages;
 	u32 nr_live, nr_staged, nr_ready, nr_inflight;
 	bool closing, resetting;
+	struct kdc_regbuf *bufs[KDC_MAX_FIXED_BUFS]; /* under ctx->lock; kdc_fixed.c */
 };
 
 /* module-wide counters (debugfs kdc/), for leak checks across removal */
@@ -182,20 +183,26 @@ extern atomic_t kdc_live_cmds, kdc_global_pinned, kdc_global_mapped,
 	kdc_dst_ranges;
 
 /* kdc_cmd.c */
+extern spinlock_t kdc_dst_lock;
+extern struct rb_root_cached kdc_dst_tree;
+extern bool kdc_track_overlap;
 struct kdc_cmd *kdc_cmd_prepare(struct kdc_dev *kdev, const struct kdc_submit *s,
-				struct kdc_regbuf *src_buf, struct kdc_regbuf *dst_buf,
 				int *errp);
-struct kdc_regbuf *kdc_regbuf_create(struct kdc_dev *kdev, u64 uaddr, u64 len, int *errp);
-void kdc_regbuf_unmap(struct kdc_dev *kdev, struct kdc_regbuf *b);
-void kdc_regbuf_destroy(struct kdc_dev *kdev, struct kdc_regbuf *b);
-static inline unsigned int kdc_cmd_pinned(const struct kdc_cmd *cmd)
-{
-	return cmd->fixed ? 0 : cmd->src_npages + cmd->dst_npages;
-}
 void kdc_cmd_release(struct kdc_dev *kdev, struct kdc_cmd *cmd, bool copy_back);
 void kdc_cmd_free(struct kdc_cmd *cmd);
 int kdc_fill_hw_sgl(struct kdc_hw_sge *out, unsigned int max,
 		    struct sg_table *sgt, u32 length);
+
+/*
+ * kdc_fixed.c: registered buffers and the commands that use them, kept out of
+ * the functions the other paths run.
+ */
+long kdc_ioctl_register(struct kdc_ctx *ctx, void __user *arg);
+long kdc_ioctl_unregister(struct kdc_ctx *ctx, void __user *arg);
+long kdc_submit_fixed(struct kdc_ctx *ctx, const struct kdc_submit *s);
+void kdc_fixed_release(struct kdc_dev *kdev, struct kdc_cmd *cmd, bool copy_back);
+void kdc_fixed_close(struct kdc_ctx *ctx);
+void kdc_fixed_unmap_all(struct kdc_dev *kdev);
 
 /* kdc_pci.c */
 extern struct workqueue_struct *kdc_wq;

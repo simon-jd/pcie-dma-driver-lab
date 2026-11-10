@@ -197,11 +197,11 @@ static void submit_field_checks(struct kunit *test)
 	s = ok; s.flags = 0x20;
 	KUNIT_EXPECT_EQ(test, kdc_submit_check(&s, 4), -EINVAL);
 	s = ok; s.flags = KDC_SUBMIT_FIXED;
-	KUNIT_EXPECT_EQ(test, kdc_submit_check(&s, 4), 0);
+	KUNIT_EXPECT_EQ(test, kdc_fixed_check(&s, 4), 0);
 	s = ok; s.flags = KDC_SUBMIT_FIXED | KDC_SUBMIT_ZEROCOPY;
-	KUNIT_EXPECT_EQ(test, kdc_submit_check(&s, 4), -EINVAL);
+	KUNIT_EXPECT_EQ(test, kdc_fixed_check(&s, 4), -EINVAL);
 	s = ok; s.flags = KDC_SUBMIT_FIXED | KDC_SUBMIT_BOUNCE;
-	KUNIT_EXPECT_EQ(test, kdc_submit_check(&s, 4), -EINVAL);
+	KUNIT_EXPECT_EQ(test, kdc_fixed_check(&s, 4), -EINVAL);
 	s = ok; s.flags = KDC_SUBMIT_BOUNCE | KDC_SUBMIT_ZEROCOPY;
 	KUNIT_EXPECT_EQ(test, kdc_submit_check(&s, 4), -EINVAL);
 	s = ok; s.queue = 4;

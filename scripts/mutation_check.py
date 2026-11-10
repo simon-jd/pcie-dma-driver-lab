@@ -23,8 +23,9 @@ Mutants:
                            and KDC_IOC_RESET can wait forever
   remove-frees-queues      remove() frees the per-queue array that commands of
                            still-open files point into
-  overlap-check-off        the destination overlap check is skipped (caught by
-                           DMA-API debug's overlapping-mapping report in fixed_buffers)
+  overlap-check-off        the destination overlap check of zero-copy and bounce
+                           commands is skipped (caught by DMA-API debug's
+                           overlapping-mapping report in fixed_buffers)
   read-leaks-command       read() never frees a consumed command (a positive
                            control for the kmemleak scan after the suite)
   coalesce-ignored         the debugfs coalescing setting is stored but never
@@ -118,7 +119,7 @@ MUTANTS = {
         runs=[("tcg-iommu", True, [], [r"BUG: KASAN: \S*use-after-free in kdc_"])]),
     "overlap-check-off": dict(
         file=KDC_TREE / "kdc_cmd.c",
-        edits=[("\t\tif (interval_tree_iter_first(&t->tree, it->start, it->last))\n\t\t\tbreak;\n",
+        edits=[("\t\tif (interval_tree_iter_first(&kdc_dst_tree, it->start, it->last))\n\t\t\tbreak;\n",
                 "\t\t/* deliberate bug: no overlap check */\n")],
         # Since registered buffers, fixed_buffers is the first case that puts a destination
         # on pages another mapping holds; without the check DMA-API debug reports it there,
@@ -161,11 +162,11 @@ MUTANTS = {
                 "        if (0) { /* deliberate bug: the event index is never published */\n")],
         qtest=("shadow_doorbell", "event index published after the pass")),
     "unregister-in-use": dict(
-        file=KDC_TREE / "kdc_fops.c",
+        file=KDC_TREE / "kdc_fixed.c",
         edits=[("\tif (b && atomic_read(&b->users)) {\n",
                 "\tif (0) { /* deliberate bug: unmapped while a command may still use it */\n")],
         # The driver's own check fires first: freeing a buffer a command still holds WARNs.
-        runs=[("tcg-iommu", True, [], [r"WARNING: CPU: \d+ PID: \d+ at drivers/misc/kdc/kdc_cmd\.c:\d+ "
+        runs=[("tcg-iommu", True, [], [r"WARNING: CPU: \d+ PID: \d+ at drivers/misc/kdc/kdc_fixed\.c:\d+ "
                                        r"kdc_regbuf_destroy"])]),
 }
 

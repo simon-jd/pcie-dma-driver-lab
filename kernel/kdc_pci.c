@@ -844,8 +844,6 @@ put:
 static void kdc_remove(struct pci_dev *pdev)
 {
 	struct kdc_dev *kdev = pci_get_drvdata(pdev);
-	struct kdc_ctx *ctx;
-	unsigned int i;
 	LIST_HEAD(list);
 
 	/*
@@ -879,10 +877,7 @@ static void kdc_remove(struct pci_dev *pdev)
 	 * keep theirs pinned until close(), but nothing may stay mapped for a
 	 * device that is going away. No ioctl runs any more (dead is set).
 	 */
-	list_for_each_entry(ctx, &kdev->files, dev_node)
-		for (i = 0; i < KDC_MAX_FIXED_BUFS; i++)
-			if (ctx->bufs[i])
-				kdc_regbuf_unmap(kdev, ctx->bufs[i]);
+	kdc_fixed_unmap_all(kdev);
 	kdc_teardown(kdev);
 	mutex_unlock(&kdev->files_mutex);
 	mutex_unlock(&kdev->reset_lock);
