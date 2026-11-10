@@ -162,7 +162,7 @@ MUTANTS = {
         runs=[("tcg-iommu", True, ["FAIL shadow_doorbell:"], [])]),
     "event-index-not-published": dict(
         file=QEMU_FILE,
-        edits=[("        if (pci_dma_write(PCI_DEVICE(s), q->db_addr + offsetof(struct kdc_hw_dbbuf, sq_event),\n"
+        edits=[("        if (kdc_dma_write(s, q->db_addr + offsetof(struct kdc_hw_dbbuf, sq_event),\n"
                 "                          &ev, sizeof(ev)) != MEMTX_OK) {\n",
                 "        if (0) { /* deliberate bug: the event index is never published */\n")],
         qtest=("shadow_doorbell", "event index published after the pass")),
