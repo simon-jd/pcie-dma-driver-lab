@@ -1,0 +1,47 @@
+qemu: /home/postedism/.cache/coord-verify-kernel-perf/repo/.cache/build/qemu-asan/qemu-system-x86_64
+QEMU emulator version 10.2.1
+==3291047==WARNING: ASan doesn't fully support makecontext/swapcontext functions and may produce false positives in some cases!
+PASS identity (0.1s)
+==3291051==WARNING: ASan doesn't fully support makecontext/swapcontext functions and may produce false positives in some cases!
+PASS queue_config (0.1s)
+==3291056==WARNING: ASan doesn't fully support makecontext/swapcontext functions and may produce false positives in some cases!
+PASS copy_crc (0.6s)
+==3291064==WARNING: ASan doesn't fully support makecontext/swapcontext functions and may produce false positives in some cases!
+PASS copy_crc_table (0.6s)
+==3291188==WARNING: ASan doesn't fully support makecontext/swapcontext functions and may produce false positives in some cases!
+PASS service_time (0.1s)
+==3291192==WARNING: ASan doesn't fully support makecontext/swapcontext functions and may produce false positives in some cases!
+PASS abort (0.1s)
+==3291196==WARNING: ASan doesn't fully support makecontext/swapcontext functions and may produce false positives in some cases!
+PASS phase_and_backpressure (0.1s)
+  15 malformed descriptor classes rejected
+==3291200==WARNING: ASan doesn't fully support makecontext/swapcontext functions and may produce false positives in some cases!
+PASS malformed (0.2s)
+==3291220==WARNING: ASan doesn't fully support makecontext/swapcontext functions and may produce false positives in some cases!
+PASS doorbell_errors (0.1s)
+==3291225==WARNING: ASan doesn't fully support makecontext/swapcontext functions and may produce false positives in some cases!
+PASS ring_dma_fault (0.1s)
+==3291229==WARNING: ASan doesn't fully support makecontext/swapcontext functions and may produce false positives in some cases!
+qemu-system-x86_64: warning: Blocked re-entrant IO on MemoryRegion: kdc-regs at addr: 0x28
+PASS dma_into_own_bar (0.1s)
+==3291233==WARNING: ASan doesn't fully support makecontext/swapcontext functions and may produce false positives in some cases!
+PASS reset_paths (0.1s)
+==3291237==WARNING: ASan doesn't fully support makecontext/swapcontext functions and may produce false positives in some cases!
+PASS fault_knobs (0.1s)
+==3291241==WARNING: ASan doesn't fully support makecontext/swapcontext functions and may produce false positives in some cases!
+PASS recovery_knobs (0.1s)
+==3291245==WARNING: ASan doesn't fully support makecontext/swapcontext functions and may produce false positives in some cases!
+PASS coalescing (0.1s)
+==3291249==WARNING: ASan doesn't fully support makecontext/swapcontext functions and may produce false positives in some cases!
+PASS pass_interrupts (0.1s)
+==3291253==WARNING: ASan doesn't fully support makecontext/swapcontext functions and may produce false positives in some cases!
+PASS shadow_doorbell (0.1s)
+==3291257==WARNING: ASan doesn't fully support makecontext/swapcontext functions and may produce false positives in some cases!
+PASS shadow_db_off (0.1s)
+==3291261==WARNING: ASan doesn't fully support makecontext/swapcontext functions and may produce false positives in some cases!
+PASS counters_and_scratch (0.1s)
+  fuzz: 2000 iterations, 2000 descriptors queued, 2000 completions read (queues may halt on bad doorbells)
+==3291302==WARNING: ASan doesn't fully support makecontext/swapcontext functions and may produce false positives in some cases!
+qemu-system-x86_64: warning: Blocked re-entrant IO on MemoryRegion: kdc-regs at addr: 0x0
+PASS fuzz (0.8s)
+KDC_QTEST PASS tests=20 failures=0

@@ -1,0 +1,150 @@
+{
+  "config": "noiommu",
+  "build": "o5b",
+  "boot": 17,
+  "argv": [
+    "taskset",
+    "-c",
+    "8",
+    "nice",
+    "-n",
+    "0",
+    "/home/postedism/.cache/coord-verify-kernel-perf/repo/.cache/ab/o5b/qemu-system-x86_64",
+    "-machine",
+    "q35",
+    "-accel",
+    "kvm",
+    "-cpu",
+    "host",
+    "-m",
+    "2048",
+    "-smp",
+    "3",
+    "-nodefaults",
+    "-display",
+    "none",
+    "-serial",
+    "stdio",
+    "-monitor",
+    "none",
+    "-no-reboot",
+    "-nic",
+    "none",
+    "-device",
+    "pcie-root-port,id=rp0,bus=pcie.0,chassis=1,addr=0x2",
+    "-device",
+    "kdc-dma,id=kdc0,bus=rp0,queues=4",
+    "-qmp",
+    "unix:/tmp/kdc-bench-9vrcp4ru/qmp.sock,server=on,wait=off",
+    "-kernel",
+    "/home/postedism/.cache/coord-verify-kernel-perf/repo/.cache/ab/o5b/bzImage",
+    "-initrd",
+    "/tmp/kdc-bench-9vrcp4ru/initramfs.cpio.gz",
+    "-append",
+    "console=ttyS0 panic=-1 nokaslr printk.devkmsg=on printk.time=0 kdc.bounce_max=65536"
+  ],
+  "build_info": {
+    "name": "o5b",
+    "commit": "15183842621ba18dc9b9a0409ea3b9419cf35387",
+    "subject": "Record the CI steps and the README commands from a fresh clone of perf",
+    "sources_differ_from_commit": true,
+    "source_sha256": {
+      "configs/kernel-perf.config": "e344b8e657b32e196eb615c574b2bd327f0bee5b775e06115d6b46a290b9b0fa",
+      "include/kdc_abi.h": "0fa3d724a5c60f956ff54a373905784d524de8d327f0f4deecc64be64917c9e2",
+      "include/kdc_hw.h": "e5e0ea48de0d2fbe75f3ebf385948f77ec6ab32b1d16710cc835455fd11630b7",
+      "kernel/Kconfig": "ebc84c113dbd7028e551aea52842038c50527be3c635c1289ee2c3c3c0d8b5bd",
+      "kernel/Makefile": "bc99083bea8e4b7267b9fbe0e0169d15f7a0231e562fc385e88593701a5178d7",
+      "kernel/kdc_cmd.c": "bd50e13a6736193a00f9a77dcad389bbdb511b18e1267c20752c0938f9d645e9",
+      "kernel/kdc_drv.h": "16ad95c260da54799d9b22d0e9902ccad737085c888253cbf3228956f3c43fb9",
+      "kernel/kdc_fops.c": "51893a13e6ad7bb6fbf32528439ce67c9e080de6dceb42af2acdb7340b2c24d0",
+      "kernel/kdc_kunit.c": "85f207aec0b963cca7592ad54739d97be0148c50a647839243bfca366491100d",
+      "kernel/kdc_pci.c": "c14cb7e8a965b2fd2b6c1281b0ee949bb4e8be6464fdebd2d4e48ff74a397869",
+      "kernel/kdc_recover.c": "c1cb2aa1d1215a8d311b10374bbbf1e1df399b348be0a8cdd57adf5deb1153f3",
+      "kernel/kdc_ring.h": "07d8aeef5ad37eb3dead789d2b71052979494ecfe2540f5c093e98c7c51043b0",
+      "kernel/kdc_state.h": "50900be318eb65337a8d7131c9238ac4550b37a363b8d411b26addcb79f8be88",
+      "tests/kdc_bench.c": "1de004ded677832c1e03a198dd53122c354a1af5927de1e28223fecd12bb5369",
+      "tests/kdc_test.c": "4b551e6e4243f61da4006dc71fb581e4aed65c54e22cbe3f43df0d4e3c529e49",
+      "tests/qtest/kdc_qtest.py": "cdc533aa1e1e7644e6972478bbc2ff78b521979a247c8c49c808d4353ad7b579",
+      "qemu/kdc_dma.c": "968513b2c6a44982a2f62213bc05367d16c790c2e07fd82cfcec52ebc27591a4"
+    },
+    "files": {
+      "qemu-system-x86_64": "783a3f81925c180f642ee575c0908b701d11392e64990391a95869c17ba21dca",
+      "bzImage": "f1a2c95edfaedf5e98ed93c8306922616a3bf76780cc53d88b330aef8ccc7691",
+      "kdc_bench": "2a54846e561e7af80d966931812b9df441e9de87b126e2c09e707693b1733606"
+    },
+    "kernel_sha256": "f1a2c95edfaedf5e98ed93c8306922616a3bf76780cc53d88b330aef8ccc7691",
+    "bench_sha256": "2a54846e561e7af80d966931812b9df441e9de87b126e2c09e707693b1733606",
+    "qemu_sha256": "783a3f81925c180f642ee575c0908b701d11392e64990391a95869c17ba21dca"
+  },
+  "utc_start": "2026-11-10T00:23:06+00:00",
+  "qemu_version": "QEMU emulator version 10.2.1",
+  "kernel_sha256": "f1a2c95edfaedf5e98ed93c8306922616a3bf76780cc53d88b330aef8ccc7691",
+  "bench_sha256": "2a54846e561e7af80d966931812b9df441e9de87b126e2c09e707693b1733606",
+  "vcpu_cpus": [
+    2,
+    4,
+    6
+  ],
+  "main_cpu": 8,
+  "watch_cpus": [
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "max_foreign_ms_per_s": 1500.0,
+  "max_qemu_wait_ms_per_s": 25.0,
+  "nice": 0,
+  "load_average_start": [
+    "3.06",
+    "4.13",
+    "3.72"
+  ],
+  "host_kernel": "7.0.0-42-generic",
+  "kvm_halt_poll_ns": 200000,
+  "governor": "powersave",
+  "quiet_marker": "coord-kernel-o5b 2026-11-09T16:16:23-08:00 2026-11-09T16:46:23-08:00",
+  "affinity_after_pinning": {
+    "3727901 qemu-system-x86": [
+      8
+    ],
+    "3727902 qemu-system-x86": [
+      8
+    ],
+    "3727903 qemu-system-x86": [
+      8
+    ],
+    "3727904 qemu-system-x86": [
+      2
+    ],
+    "3727905 qemu-system-x86": [
+      4
+    ],
+    "3727906 qemu-system-x86": [
+      6
+    ],
+    "3727908 kvm-nx-lpage-re": [
+      8
+    ]
+  },
+  "vcpu_tids": [
+    "3727904",
+    "3727905",
+    "3727906"
+  ],
+  "affinity_at_exit_note": "threads listed after pinning; QEMU has exited",
+  "seconds": 18.6,
+  "returncode": 0,
+  "load_average_end": [
+    "3.21",
+    "4.09",
+    "3.71"
+  ],
+  "bench_exit": "0",
+  "windows": 14,
+  "rejected": 0
+}

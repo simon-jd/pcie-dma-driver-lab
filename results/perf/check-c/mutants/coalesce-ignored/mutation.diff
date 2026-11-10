@@ -1,0 +1,4 @@
+--- kdc_pci.c
+-		for (i = 0; i < kdev->nr_queues; i++)
+			kdc_wr(kdev, KDC_QREG(i, KDC_Q_COALESCE), val);
++		i = 0; /* deliberate bug: the setting never reaches the queues */

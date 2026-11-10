@@ -1,0 +1,282 @@
+{
+  "mutants": [
+    {
+      "mutant": "unmap-before-completion",
+      "file": "build/linux-6.12.41/drivers/misc/kdc/kdc_cmd.c",
+      "runs": [
+        {
+          "config": "tcg-iommu",
+          "failed": true,
+          "first_failed_assertion": "FAIL check_copy:593:",
+          "allowed": [
+            "FAIL check_copy:"
+          ],
+          "evidence_required": [
+            "DMAR: \\[DMA Read"
+          ],
+          "evidence_seen": [
+            "DMAR: \\[DMA Read"
+          ],
+          "caught": true
+        },
+        {
+          "config": "tcg-noiommu",
+          "failed": true,
+          "first_failed_assertion": "FAIL check_copy:596:",
+          "allowed": [
+            "FAIL check_copy:",
+            "FAIL pinned_page_not_recycled:"
+          ],
+          "evidence_required": [],
+          "evidence_seen": [],
+          "caught": true
+        }
+      ],
+      "caught": true,
+      "restored_build_ok": true
+    },
+    {
+      "mutant": "cancel-trusts-abort",
+      "file": "build/linux-6.12.41/drivers/misc/kdc/kdc_fops.c",
+      "runs": [
+        {
+          "config": "tcg-iommu",
+          "failed": true,
+          "first_failed_assertion": "FAIL cancel_device_owned:1157:",
+          "allowed": [
+            "FAIL cancel_device_owned:"
+          ],
+          "evidence_required": [],
+          "evidence_seen": [],
+          "caught": true
+        }
+      ],
+      "caught": true,
+      "restored_build_ok": true
+    },
+    {
+      "mutant": "device-skips-sgl-sum",
+      "file": ".cache/src/qemu-10.2.1/hw/misc/kdc_dma.c",
+      "runs": [
+        {
+          "config": "qtest-asan",
+          "failed": true,
+          "expected": "entries short of length",
+          "caught": true
+        }
+      ],
+      "caught": true,
+      "restored_build_ok": true
+    },
+    {
+      "mutant": "release-before-reset",
+      "file": "build/linux-6.12.41/drivers/misc/kdc/kdc_recover.c",
+      "runs": [
+        {
+          "config": "tcg-iommu",
+          "failed": true,
+          "first_failed_assertion": "FAIL timeout_reset:1665:",
+          "allowed": [
+            "FAIL timeout_reset:",
+            "FAIL timeout_escalation:"
+          ],
+          "evidence_required": [],
+          "evidence_seen": [],
+          "caught": true
+        }
+      ],
+      "caught": true,
+      "restored_build_ok": true
+    },
+    {
+      "mutant": "abort-never-escalates",
+      "file": "build/linux-6.12.41/drivers/misc/kdc/kdc_recover.c",
+      "runs": [
+        {
+          "config": "tcg-iommu",
+          "failed": true,
+          "first_failed_assertion": "FAIL timeout_reset:1663:",
+          "allowed": [
+            "FAIL timeout_reset:"
+          ],
+          "evidence_required": [],
+          "evidence_seen": [],
+          "caught": true
+        }
+      ],
+      "caught": true,
+      "restored_build_ok": true
+    },
+    {
+      "mutant": "remove-frees-queues",
+      "file": "build/linux-6.12.41/drivers/misc/kdc/kdc_pci.c",
+      "runs": [
+        {
+          "config": "tcg-iommu",
+          "failed": true,
+          "first_failed_assertion": null,
+          "allowed": [],
+          "evidence_required": [
+            "BUG: KASAN: \\S*use-after-free in kdc_"
+          ],
+          "evidence_seen": [
+            "BUG: KASAN: \\S*use-after-free in kdc_"
+          ],
+          "caught": true
+        }
+      ],
+      "caught": true,
+      "restored_build_ok": true
+    },
+    {
+      "mutant": "overlap-check-off",
+      "file": "build/linux-6.12.41/drivers/misc/kdc/kdc_cmd.c",
+      "runs": [
+        {
+          "config": "tcg-iommu",
+          "failed": true,
+          "first_failed_assertion": null,
+          "allowed": [],
+          "evidence_required": [
+            "DMA-API: kdc \\S+: cacheline tracking EEXIST, overlapping mappings"
+          ],
+          "evidence_seen": [
+            "DMA-API: kdc \\S+: cacheline tracking EEXIST, overlapping mappings"
+          ],
+          "caught": true
+        }
+      ],
+      "caught": true,
+      "restored_build_ok": true
+    },
+    {
+      "mutant": "read-leaks-command",
+      "file": "build/linux-6.12.41/drivers/misc/kdc/kdc_fops.c",
+      "runs": [
+        {
+          "config": "tcg-iommu",
+          "failed": true,
+          "first_failed_assertion": "FAIL globals_idle:361:",
+          "allowed": [],
+          "evidence_required": [
+            "kmemleak_dump: .*kdc_cmd_prepare"
+          ],
+          "evidence_seen": [
+            "kmemleak_dump: .*kdc_cmd_prepare"
+          ],
+          "caught": true
+        }
+      ],
+      "caught": true,
+      "restored_build_ok": true
+    },
+    {
+      "mutant": "coalesce-ignored",
+      "file": "build/linux-6.12.41/drivers/misc/kdc/kdc_pci.c",
+      "runs": [
+        {
+          "config": "tcg-iommu",
+          "failed": true,
+          "first_failed_assertion": "FAIL coalescing:1007:",
+          "allowed": [
+            "FAIL coalescing:"
+          ],
+          "evidence_required": [],
+          "evidence_seen": [],
+          "caught": true
+        }
+      ],
+      "caught": true,
+      "restored_build_ok": true
+    },
+    {
+      "mutant": "cq-head-never-written",
+      "file": "build/linux-6.12.41/drivers/misc/kdc/kdc_pci.c",
+      "runs": [
+        {
+          "config": "tcg-iommu",
+          "failed": true,
+          "first_failed_assertion": "FAIL cq_head_batching:944:",
+          "allowed": [
+            "FAIL cq_head_batching:"
+          ],
+          "evidence_required": [],
+          "evidence_seen": [],
+          "caught": true
+        }
+      ],
+      "caught": true,
+      "restored_build_ok": true
+    },
+    {
+      "mutant": "pass-end-irq-skipped",
+      "file": ".cache/src/qemu-10.2.1/hw/misc/kdc_dma.c",
+      "runs": [
+        {
+          "config": "qtest-asan",
+          "failed": true,
+          "expected": "first and last completion of the pass interrupt",
+          "caught": true
+        }
+      ],
+      "caught": true,
+      "restored_build_ok": true
+    },
+    {
+      "mutant": "shadow-ring-only-idle",
+      "file": "build/linux-6.12.41/drivers/misc/kdc/kdc_pci.c",
+      "runs": [
+        {
+          "config": "tcg-iommu",
+          "failed": true,
+          "first_failed_assertion": "FAIL shadow_doorbell:902:",
+          "allowed": [
+            "FAIL shadow_doorbell:"
+          ],
+          "evidence_required": [],
+          "evidence_seen": [],
+          "caught": true
+        }
+      ],
+      "caught": true,
+      "restored_build_ok": true
+    },
+    {
+      "mutant": "event-index-not-published",
+      "file": ".cache/src/qemu-10.2.1/hw/misc/kdc_dma.c",
+      "runs": [
+        {
+          "config": "qtest-asan",
+          "failed": true,
+          "expected": "event index published after the pass",
+          "caught": true
+        }
+      ],
+      "caught": true,
+      "restored_build_ok": true
+    },
+    {
+      "mutant": "unregister-in-use",
+      "file": "build/linux-6.12.41/drivers/misc/kdc/kdc_fops.c",
+      "runs": [
+        {
+          "config": "tcg-iommu",
+          "failed": true,
+          "first_failed_assertion": null,
+          "allowed": [],
+          "evidence_required": [
+            "WARNING: CPU: \\d+ PID: \\d+ at drivers/misc/kdc/kdc_cmd\\.c:\\d+ kdc_regbuf_destroy"
+          ],
+          "evidence_seen": [
+            "WARNING: CPU: \\d+ PID: \\d+ at drivers/misc/kdc/kdc_cmd\\.c:\\d+ kdc_regbuf_destroy"
+          ],
+          "caught": true
+        }
+      ],
+      "caught": true,
+      "restored_build_ok": true
+    }
+  ],
+  "restored_guest_passed": true,
+  "restored_qtest_passed": true
+}

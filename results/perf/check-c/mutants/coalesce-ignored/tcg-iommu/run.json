@@ -1,0 +1,112 @@
+{
+  "utc": "2026-11-09T23:39:36+00:00",
+  "accel": "tcg",
+  "iommu": true,
+  "qemu": "release",
+  "kernel": "kasan",
+  "argv": [
+    "/home/postedism/.cache/coord-verify-kernel-perf/repo/.cache/build/qemu/qemu-system-x86_64",
+    "-machine",
+    "q35",
+    "-accel",
+    "tcg",
+    "-cpu",
+    "max",
+    "-m",
+    "2048",
+    "-smp",
+    "4",
+    "-nodefaults",
+    "-display",
+    "none",
+    "-serial",
+    "stdio",
+    "-monitor",
+    "none",
+    "-no-reboot",
+    "-nic",
+    "none",
+    "-device",
+    "intel-iommu",
+    "-device",
+    "pcie-root-port,id=rp0,bus=pcie.0,chassis=1,addr=0x2",
+    "-device",
+    "kdc-dma,id=kdc0,bus=rp0,queues=4",
+    "-device",
+    "pcie-root-port,id=rp1,bus=pcie.0,chassis=2,addr=0x3",
+    "-device",
+    "kdc-dma,id=kdc1,bus=rp1,queues=2",
+    "-qmp",
+    "unix:/tmp/kdc-run-h6czxk1u/qmp.sock,server=on,wait=off",
+    "-kernel",
+    "/home/postedism/.cache/coord-verify-kernel-perf/repo/build/kernel/arch/x86/boot/bzImage",
+    "-initrd",
+    "/home/postedism/.cache/coord-verify-kernel-perf/repo/build/initramfs.cpio.gz",
+    "-append",
+    "console=ttyS0 panic=-1 oops=panic panic_on_warn=1 nokaslr printk.devkmsg=on intel_iommu=on iommu.strict=1"
+  ],
+  "qemu_version": "QEMU emulator version 10.2.1",
+  "mutant": "coalesce-ignored",
+  "kernel_sha256": "ae4226c3ac3d1835d7a6a9d0dc6cc802b911010747afbdae3e9a0f9d2ba2677a",
+  "client_sha256": "8f0017b413088bf12e84c660afd93f8fdf9ee8e1570c98aed99ccabc6013178d",
+  "load_average": [
+    "1.77",
+    "2.19",
+    "2.57"
+  ],
+  "passed": false,
+  "host_actions": [],
+  "returncode": 0,
+  "seconds": 23.9,
+  "expectations": [],
+  "kmemleak_records": 0,
+  "kmemleak_driver_records": 0,
+  "cases": [
+    [
+      "device_info",
+      "4"
+    ],
+    [
+      "shadow_doorbell",
+      "13"
+    ],
+    [
+      "cq_head_batching",
+      "91"
+    ],
+    [
+      "abi_validation",
+      "79"
+    ],
+    [
+      "data_integrity",
+      "357"
+    ],
+    [
+      "fixed_buffers",
+      "167"
+    ],
+    [
+      "nop_and_batch_read",
+      "2"
+    ],
+    [
+      "queue_selection",
+      "12"
+    ],
+    [
+      "batch_flush",
+      "75"
+    ]
+  ],
+  "counts": [
+    "  shadow_doorbell: 4 commands behind a stalled engine, each fetched after its doorbell\r",
+    "  cq_head_batching: 16 head writes for 256 single commands; 256 with 63 in flight, batch 63\r",
+    "  data_integrity: 84 copies verified (dst bytes, guard bytes, CRC32C)\r",
+    "  fixed_buffers: 40 copies through registered buffers verified\r"
+  ],
+  "problems": [
+    "report: [    8.046235] kdc_test: FAIL coalescing:1007: read_knob(0, \"device_irqs\") == irqs + 1 (errno=2 No such file or directory)",
+    "report: [   22.901538] kdc_init: KDC_GUEST_FAILURE exit=1"
+  ]
+}

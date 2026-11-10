@@ -1,0 +1,10 @@
+--- kdc_fops.c
+-	} else if (action == KDC_CANCEL_SEND_ABORT) {
+		kdc_send_abort_locked(q, cmd, KDC_ABORT_CANCEL);
+	}
++	} else if (action == KDC_CANCEL_SEND_ABORT) {
+		kdc_send_abort_locked(q, cmd, KDC_ABORT_CANCEL);
+		/* deliberate bug: assume the abort took effect at once */
+		WRITE_ONCE(cmd->phase, KDC_COMPLETING);
+		action = KDC_CANCEL_NOW;
+	}

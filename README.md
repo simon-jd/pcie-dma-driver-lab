@@ -20,15 +20,22 @@ The hardware exists only in QEMU; nothing here ran on a physical device.
 | three threads, 8 in flight each: own files; one file | 201.0k; 174.4k | 951.6k (4.7x); 486.3k (2.8x) |
 | VM exits per command, one at a time (to QEMU) | 3.65 (2.00) | 2.70 (0.06) |
 | strict emulated IOMMU, best path: one at a time; 32 batched | bounce 98.1k; 453.3k | registered buffer 148.0k; 660.5k |
-| Losses | | registered-buffer code costs the other paths about 0.5%; one file still half of three; batching now slower than not at three threads (852.2k) |
+| Losses | | registered-buffer code costs the paths that do not use it 1–4% at 32 in flight (five sessions); one file still half of three; batching now slower than not at three threads (852.2k) |
 | Correctness | | qtest 20/20 on both QEMU builds; KUnit 13/13 and 37/37 client cases on KVM and TCG, IOMMU strict or none, ASan QEMU, KCSAN; 14 of 14 deliberate bugs caught |
 
-What changed, each kept only if it beat the previous step in seven paired boots in
-one quiet window: the CQ head is written every 16 completions; the device sends two
+What changed: the CQ head is written every 16 completions; the device sends two
 MSI-X messages per processing pass instead of one per completion; SQ tails go through
 a shadow doorbell page with an event index and an ioeventfd, so a doorbell no longer
-exits to QEMU and a busy device needs none; registered buffers are pinned and mapped
-once. Waking one reader per completion did not pay and was reverted. Numbers are the
+exits to QEMU and a busy device needs none. Each of these beat the previous step in
+seven paired boots in one quiet window. Registered buffers, pinned and mapped once,
+did not: the paths that do not use them got 1–4% slower at 32 in flight in five
+sessions, the cost is in the guest kernel (swapping the QEMU binaries or the benchmark
+clients did not move it), and moving the new fields to the ends of the structs did not
+remove it. They are kept for what they give the paths that use them, 1.1x (4 KiB) to
+1.7x (64 KiB) over bounce in the same build. Waking one reader per completion did not
+pay and was reverted. An independent rerun from fresh clones
+([check C](results/perf/check-c/README.md)) reproduced every before/after ratio in the
+table within 3% and the correctness results. Numbers are the
 guest driver plus KVM exits plus QEMU's device model around a modeled service time of
 0, not device throughput ([design trade-offs](docs/design-tradeoffs.md#performance-round-2026-11-09-optimizing-along-the-command-path),
 [results](results/README.md)).

@@ -1,0 +1,5 @@
+qemu: /home/postedism/.cache/coord-verify-kernel-perf/repo/.cache/build/qemu-asan/qemu-system-x86_64
+QEMU emulator version 10.2.1
+==3461581==WARNING: ASan doesn't fully support makecontext/swapcontext functions and may produce false positives in some cases!
+FAIL AssertionError: entries short of length: expected status 3, got [{'result': 3029437362, 'bytes': 8192, 'sq_head': 11, 'sqid': 1, 'cid': 10, 'code': 0}] malformed (0.2s)
+KDC_QTEST FAIL tests=20 failures=1

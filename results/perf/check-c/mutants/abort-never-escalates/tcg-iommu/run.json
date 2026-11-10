@@ -1,0 +1,183 @@
+{
+  "utc": "2026-11-09T23:32:49+00:00",
+  "accel": "tcg",
+  "iommu": true,
+  "qemu": "release",
+  "kernel": "kasan",
+  "argv": [
+    "/home/postedism/.cache/coord-verify-kernel-perf/repo/.cache/build/qemu/qemu-system-x86_64",
+    "-machine",
+    "q35",
+    "-accel",
+    "tcg",
+    "-cpu",
+    "max",
+    "-m",
+    "2048",
+    "-smp",
+    "4",
+    "-nodefaults",
+    "-display",
+    "none",
+    "-serial",
+    "stdio",
+    "-monitor",
+    "none",
+    "-no-reboot",
+    "-nic",
+    "none",
+    "-device",
+    "intel-iommu",
+    "-device",
+    "pcie-root-port,id=rp0,bus=pcie.0,chassis=1,addr=0x2",
+    "-device",
+    "kdc-dma,id=kdc0,bus=rp0,queues=4",
+    "-device",
+    "pcie-root-port,id=rp1,bus=pcie.0,chassis=2,addr=0x3",
+    "-device",
+    "kdc-dma,id=kdc1,bus=rp1,queues=2",
+    "-qmp",
+    "unix:/tmp/kdc-run-fnv36fc9/qmp.sock,server=on,wait=off",
+    "-kernel",
+    "/home/postedism/.cache/coord-verify-kernel-perf/repo/build/kernel/arch/x86/boot/bzImage",
+    "-initrd",
+    "/home/postedism/.cache/coord-verify-kernel-perf/repo/build/initramfs.cpio.gz",
+    "-append",
+    "console=ttyS0 panic=-1 oops=panic panic_on_warn=1 nokaslr printk.devkmsg=on intel_iommu=on iommu.strict=1"
+  ],
+  "qemu_version": "QEMU emulator version 10.2.1",
+  "mutant": "abort-never-escalates",
+  "kernel_sha256": "247b88326b0cfc94b9cb4c8a8fcd0b96da4a720aa181a98ad35c2b675fcc22b9",
+  "client_sha256": "8f0017b413088bf12e84c660afd93f8fdf9ee8e1570c98aed99ccabc6013178d",
+  "load_average": [
+    "2.39",
+    "2.50",
+    "2.81"
+  ],
+  "passed": false,
+  "host_actions": [],
+  "returncode": 0,
+  "seconds": 38.1,
+  "expectations": [
+    {
+      "tag": "timeout-abort",
+      "pattern": "timed out after",
+      "matched": 1
+    }
+  ],
+  "kmemleak_records": 0,
+  "kmemleak_driver_records": 0,
+  "cases": [
+    [
+      "device_info",
+      "3"
+    ],
+    [
+      "shadow_doorbell",
+      "13"
+    ],
+    [
+      "cq_head_batching",
+      "107"
+    ],
+    [
+      "abi_validation",
+      "78"
+    ],
+    [
+      "data_integrity",
+      "336"
+    ],
+    [
+      "fixed_buffers",
+      "170"
+    ],
+    [
+      "nop_and_batch_read",
+      "2"
+    ],
+    [
+      "queue_selection",
+      "10"
+    ],
+    [
+      "batch_flush",
+      "64"
+    ],
+    [
+      "coalescing",
+      "72"
+    ],
+    [
+      "pinned_page_not_recycled",
+      "590"
+    ],
+    [
+      "cancel_driver_owned",
+      "97"
+    ],
+    [
+      "cancel_device_owned",
+      "61"
+    ],
+    [
+      "cancel_race",
+      "1459"
+    ],
+    [
+      "close_with_inflight",
+      "239"
+    ],
+    [
+      "reset_semantics",
+      "13"
+    ],
+    [
+      "quotas",
+      "43"
+    ],
+    [
+      "file_isolation",
+      "2"
+    ],
+    [
+      "concurrency",
+      "371"
+    ],
+    [
+      "shared_file",
+      "113"
+    ],
+    [
+      "ring_overflow_all_queues",
+      "251"
+    ],
+    [
+      "second_device",
+      "6"
+    ],
+    [
+      "unbind_rebind",
+      "220"
+    ],
+    [
+      "timeout_abort",
+      "237"
+    ]
+  ],
+  "counts": [
+    "  shadow_doorbell: 4 commands behind a stalled engine, each fetched after its doorbell\r",
+    "  cq_head_batching: 16 head writes for 256 single commands; 256 with 63 in flight, batch 63\r",
+    "  data_integrity: 84 copies verified (dst bytes, guard bytes, CRC32C)\r",
+    "  fixed_buffers: 40 copies through registered buffers verified\r",
+    "  coalescing: batch of 8 in 1 interrupt, single command waited 51 ms\r",
+    "  cancel_race: 5 cancelled before the doorbell, 1288 aborted by the device, 207 completed first; 40 more aborted while held device-owned\r",
+    "  concurrency: 4 threads x 250 verified copies, own files\r",
+    "  timeout_abort: answered after 220 ms\r"
+  ],
+  "problems": [
+    "report: [   21.843952] kdc_test: FAIL timeout_reset:1663: wait_ready(fd, 10000) (errno=2 No such file or directory)",
+    "report: [   37.068931] kdc_init: KDC_GUEST_FAILURE exit=1",
+    "expectation window left open: timeout-reset"
+  ]
+}

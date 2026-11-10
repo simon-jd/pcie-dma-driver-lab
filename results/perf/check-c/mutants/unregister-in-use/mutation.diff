@@ -1,0 +1,3 @@
+--- kdc_fops.c
+-	if (b && atomic_read(&b->users)) {
++	if (0) { /* deliberate bug: unmapped while a command may still use it */

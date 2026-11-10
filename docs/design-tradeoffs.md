@@ -441,7 +441,7 @@ threads 526.8k vs 518.7k/s for NOPs (3 of 7 pairs) and 482.5k vs 488.6k/s for 4 
 one file vs 958.0k/s on three, o3) is therefore not in the wakeups; the file lock and
 its single completion list are the remaining shared state.
 
-### 5. Registered buffers (driver, ABI): kept, with one miss on the rule
+### 5. Registered buffers (driver, ABI): kept, although they miss the rule on the other paths
 
 Behind QEMU's emulated Intel IOMMU in strict mode every zero-copy command maps and
 unmaps its pages, and each unmap is an IOTLB invalidation, i.e. more VM exits; that is
@@ -478,11 +478,35 @@ The miss: on the arms that do not use it, the final build against o3
 32 in flight with a doorbell each ended at 577.8k/s, just below o3's lowest pair
 (579.2k; median 586.5k, 1 win of 7): the rule's second condition fails there by 0.2%.
 In the earlier session with the same code (`results/perf/chain`, o6 vs o4) that arm
-passed and the delayed-coalescing arm missed by a similar margin instead, so this is a
-cost of about half a percent on the per-command paths (more fields and branches in submit
-and release; `vCPU us` 1.58 -> 1.61 at that arm) or noise of that size. It is kept on
-the branch because the opt-in path gains 1.5x behind the IOMMU; dropping its commit
-restores o3 exactly.
+passed and the delayed-coalescing arm missed by a similar margin instead.
+
+The independent check (`results/perf/check-c/`, fresh clones, four more sessions) shows
+the cost is larger than that session suggested and is real. At 32 in flight with a
+doorbell each, the final build against o3 had median ratios of 0.991, 0.963, 0.985,
+0.981 and 0.983 in the five sessions, with 1, 0, 2, 3 and 1 of 7 pairs faster: a cost
+of 1-4%, about 2% typically (`vCPU us` per command 1.60 -> 1.65 and 1.58 -> 1.63 in two
+of the sessions, unchanged in a third). Batched
+at 32 and the three-thread arms lose up to about 2% in some sessions and tie in others;
+one command at a time shows nothing (0.990 to 1.013). Where it is:
+
+- **Not QEMU.** The two QEMU binaries come from the same source but differ by 208 bytes
+  (their build directories). The final kernel and client on o3's QEMU still lose (0.982,
+  1 of 7); o3's kernel and client on the final QEMU do not (1.003, 6 of 7) (`check-c/swap-qemu`).
+- **Not the benchmark client.** o3's kernel with the final client beats the final build
+  in 6 of 7 pairs on five of six arms; the final kernel with o3's client still loses
+  (`check-c/swap-client`).
+- **Not the struct layout, as far as tested.** The new fields had moved `sqe` off its
+  cache line in `kdc_cmd` and pushed `kdc_ctx`'s counters onto a fourth line (pahole).
+  Moving every new field to the end of both structs (`check-c/reorder/reorder.diff`)
+  restored the old offsets but not the speed: 0.990 against o3, 0 of 7 pairs, and a
+  tie with the final build. Not applied.
+
+So the cost is in the guest kernel: either the added work in submit and release
+(arguments, branches and stores per command) or the kernel image's code layout after
+350 added lines; with no host profiler the two are not separated. Registered buffers stay
+on the branch because the opt-in path is 1.11x (4 KiB) to 1.61x (64 KiB) faster than
+bounce behind the strict IOMMU and 1.14x to 1.74x without one, in the same build
+(`check-c/fixed`); dropping their commit restores o3 exactly.
 
 ### What limits it now, and what was not done
 

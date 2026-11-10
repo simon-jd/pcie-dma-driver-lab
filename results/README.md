@@ -45,7 +45,9 @@ Decisions (rule in `scripts/bench_compare.py` and `docs/design-tradeoffs.md`):
 | registered buffers (as o6 on o4) | `perf/chain/compare-o6-vs-o4.md` | none | delayed-coalescing arm below the base minimum (median ratio 0.994) |
 | o5 registered buffers on o3 | `perf/fixed/compare-o5-vs-o5-iommu-strict-paths.md`, `perf/fixed/compare-o5-vs-o5-paths.md` | fixed vs zero-copy and bounce, strict IOMMU and none | targets 7/7 (one 6/7) |
 | o5, other paths | `perf/final/compare-o5-vs-o3.md` | none | 32 in flight 0.2% below the base minimum (median -0.9%): kept, stated as a miss |
+| o5, other paths, four more sessions | `perf/check-c/*/compare-perf-vs-o3-*.md` | none | 32 in flight 0.963 to 0.985, 0 to 3 of 7: a 1-4% cost, kept (see Check C) |
 | before/after | `perf/final/compare-o5-vs-main.md` | | every arm 7/7, 1.21x to 4.75x |
+| before/after, fresh clones | `perf/check-c/final/compare-perf-vs-main-vs-main.md` | | every arm 7/7, 1.22x to 4.68x |
 
 `perf/decompose` has no comparison file: its three configurations are the same build
 with the device's `ioeventfd=off` and the driver's `kdc.shadow_doorbells=0`, read from
@@ -128,6 +130,23 @@ detected by something else first: `overlap-check-off` used to name `dst_overlap`
 (the full run counted it as missed; `perf/mutants/summary-full-run.json`); and
 `unregister-in-use` first expected `fixed_buffers` to see `EBUSY`, but the driver's own
 `WARN` fires before that (`.cache/results-raw/perf/attempts/` on the build host).
+
+### Check C: `perf/check-c/`
+
+An independent rerun of the round's final comparisons from fresh clones of `perf`
+(`1518384`), `main` (`b95f7ae`) and o3 (`68094ba`), every build made again from source,
+plus three experiments on the registered-buffer cost. Details and commands:
+[`perf/check-c/README.md`](perf/check-c/README.md).
+
+| Run | Result |
+|---|---|
+| `check-c/matrix`, `matrix-asan2`, `matrix-asan3` | qtest 20/20 on both QEMU builds; 6 of 6 guest configurations pass (KUnit 13/13, 37/37 client cases, kmemleak 0); the ASan QEMU configuration passed 3 of 3, its `removal_surprise` ending 9, 10 and 15 commands by the removal (27 to 36 in the other configurations) |
+| `check-c/mutants` | 14 of 14 caught, restored build passes |
+| `check-c/final` perf vs main | every arm 7/7, 1.22x to 4.68x; each ratio within 3% of `perf/final` except NOPs on one shared file (2.79x vs 2.68x) |
+| `check-c/final` perf vs o3 | 32 in flight 0.963 (0 of 7); rule fails |
+| `check-c/fixed` | fixed vs bounce in the same build 7/7 (one 6/6): 1.14x to 1.74x without an IOMMU, 1.11x to 1.61x behind the strict IOMMU |
+| `check-c/swap-qemu`, `check-c/swap-client` | the cost follows the guest kernel, not the QEMU binary or the benchmark client |
+| `check-c/reorder` | new fields moved to the ends of `kdc_cmd` and `kdc_ctx`: 0.990 against o3 (0 of 7), not applied |
 
 ## round3 (2026-11-08)
 

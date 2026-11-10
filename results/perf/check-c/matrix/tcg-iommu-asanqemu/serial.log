@@ -1,0 +1,922 @@
+[    0.000000] Linux version 6.12.41 (kdc@local) (gcc (Ubuntu 15.2.0-16ubuntu1) 15.2.0, GNU ld (GNU Binutils for Ubuntu) 2.46) #1 SMP 2026-11-06 00:00:00 +0000
+[    0.000000] Command line: console=ttyS0 panic=-1 oops=panic panic_on_warn=1 nokaslr printk.devkmsg=on intel_iommu=on iommu.strict=1
+[    0.000000] BIOS-provided physical RAM map:
+[    0.000000] BIOS-e820: [mem 0x0000000000000000-0x000000000009fbff] usable
+[    0.000000] BIOS-e820: [mem 0x000000000009fc00-0x000000000009ffff] reserved
+[    0.000000] BIOS-e820: [mem 0x00000000000f0000-0x00000000000fffff] reserved
+[    0.000000] BIOS-e820: [mem 0x0000000000100000-0x000000007ffdffff] usable
+[    0.000000] BIOS-e820: [mem 0x000000007ffe0000-0x000000007fffffff] reserved
+[    0.000000] BIOS-e820: [mem 0x00000000b0000000-0x00000000bfffffff] reserved
+[    0.000000] BIOS-e820: [mem 0x00000000fed1c000-0x00000000fed1ffff] reserved
+[    0.000000] BIOS-e820: [mem 0x00000000fffc0000-0x00000000ffffffff] reserved
+[    0.000000] BIOS-e820: [mem 0x000000fd00000000-0x000000ffffffffff] reserved
+[    0.000000] NX (Execute Disable) protection: active
+[    0.000000] APIC: Static calls initialized
+[    0.000000] tsc: Fast TSC calibration failed
+[    0.000000] last_pfn = 0x7ffe0 max_arch_pfn = 0x10000000000
+[    0.000000] x86/PAT: PAT support disabled because CONFIG_X86_PAT is disabled in the kernel.
+[    0.000000] x86/PAT: Configuration [0-7]: WB  WT  UC- UC  WB  WT  UC- UC  
+[    0.000000] found SMP MP-table at [mem 0x000f54b0-0x000f54bf]
+[    0.000000] Using GB pages for direct mapping
+[    0.000000] RAMDISK: [mem 0x7fe2a000-0x7ffdffff]
+[    0.000000] ACPI: Early table checksum verification disabled
+[    0.000000] ACPI: RSDP 0x00000000000F52D0 000014 (v00 BOCHS )
+[    0.000000] ACPI: RSDT 0x000000007FFE2626 00003C (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+[    0.000000] ACPI: FACP 0x000000007FFE238E 0000F4 (v03 BOCHS  BXPC     00000001 BXPC 00000001)
+[    0.000000] ACPI: DSDT 0x000000007FFE0040 00234E (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+[    0.000000] ACPI: FACS 0x000000007FFE0000 000040
+[    0.000000] ACPI: APIC 0x000000007FFE2482 000090 (v03 BOCHS  BXPC     00000001 BXPC 00000001)
+[    0.000000] ACPI: HPET 0x000000007FFE2512 000038 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+[    0.000000] ACPI: MCFG 0x000000007FFE254A 00003C (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+[    0.000000] ACPI: DMAR 0x000000007FFE2586 000078 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+[    0.000000] ACPI: WAET 0x000000007FFE25FE 000028 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+[    0.000000] ACPI: Reserving FACP table memory at [mem 0x7ffe238e-0x7ffe2481]
+[    0.000000] ACPI: Reserving DSDT table memory at [mem 0x7ffe0040-0x7ffe238d]
+[    0.000000] ACPI: Reserving FACS table memory at [mem 0x7ffe0000-0x7ffe003f]
+[    0.000000] ACPI: Reserving APIC table memory at [mem 0x7ffe2482-0x7ffe2511]
+[    0.000000] ACPI: Reserving HPET table memory at [mem 0x7ffe2512-0x7ffe2549]
+[    0.000000] ACPI: Reserving MCFG table memory at [mem 0x7ffe254a-0x7ffe2585]
+[    0.000000] ACPI: Reserving DMAR table memory at [mem 0x7ffe2586-0x7ffe25fd]
+[    0.000000] ACPI: Reserving WAET table memory at [mem 0x7ffe25fe-0x7ffe2625]
+[    0.000000] Zone ranges:
+[    0.000000]   DMA32    [mem 0x0000000000001000-0x000000007ffdffff]
+[    0.000000]   Normal   empty
+[    0.000000] Movable zone start for each node
+[    0.000000] Early memory node ranges
+[    0.000000]   node   0: [mem 0x0000000000001000-0x000000000009efff]
+[    0.000000]   node   0: [mem 0x0000000000100000-0x000000007ffdffff]
+[    0.000000] Initmem setup node 0 [mem 0x0000000000001000-0x000000007ffdffff]
+[    0.000000] On node 0, zone DMA32: 1 pages in unavailable ranges
+[    0.000000] On node 0, zone DMA32: 97 pages in unavailable ranges
+[    0.000000] On node 0, zone DMA32: 32 pages in unavailable ranges
+[    0.000000] kasan: KernelAddressSanitizer initialized
+[    0.000000] ACPI: PM-Timer IO Port: 0x608
+[    0.000000] ACPI: LAPIC_NMI (acpi_id[0xff] dfl dfl lint[0x1])
+[    0.000000] IOAPIC[0]: apic_id 0, version 32, address 0xfec00000, GSI 0-23
+[    0.000000] ACPI: INT_SRC_OVR (bus 0 bus_irq 0 global_irq 2 dfl dfl)
+[    0.000000] ACPI: INT_SRC_OVR (bus 0 bus_irq 5 global_irq 5 high level)
+[    0.000000] ACPI: INT_SRC_OVR (bus 0 bus_irq 9 global_irq 9 high level)
+[    0.000000] ACPI: INT_SRC_OVR (bus 0 bus_irq 10 global_irq 10 high level)
+[    0.000000] ACPI: INT_SRC_OVR (bus 0 bus_irq 11 global_irq 11 high level)
+[    0.000000] ACPI: Using ACPI (MADT) for SMP configuration information
+[    0.000000] ACPI: HPET id: 0x8086a201 base: 0xfed00000
+[    0.000000] CPU topo: Max. logical packages:   1
+[    0.000000] CPU topo: Max. logical dies:       1
+[    0.000000] CPU topo: Max. dies per package:   1
+[    0.000000] CPU topo: Max. threads per core:   1
+[    0.000000] CPU topo: Num. cores per package:     4
+[    0.000000] CPU topo: Num. threads per package:   4
+[    0.000000] CPU topo: Allowing 4 present CPUs plus 0 hotplug CPUs
+[    0.000000] [mem 0xc0000000-0xfed1bfff] available for PCI devices
+[    0.000000] clocksource: refined-jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 19112604462750000 ns
+[    0.000000] setup_percpu: NR_CPUS:4 nr_cpumask_bits:4 nr_cpu_ids:4 nr_node_ids:1
+[    0.000000] percpu: Embedded 63 pages/cpu s226776 r0 d31272 u524288
+[    0.000000] Kernel command line: console=ttyS0 panic=-1 oops=panic panic_on_warn=1 nokaslr printk.devkmsg=on intel_iommu=on iommu.strict=1
+[    0.000000] DMAR: IOMMU enabled
+[    0.000000] Unknown kernel command line parameters "nokaslr", will be passed to user space.
+[    0.000000] random: crng init done
+[    0.000000] Dentry cache hash table entries: 262144 (order: 9, 2097152 bytes, linear)
+[    0.000000] Inode-cache hash table entries: 131072 (order: 8, 1048576 bytes, linear)
+[    0.000000] Built 1 zonelists, mobility grouping on.  Total pages: 524158
+[    0.000000] mem auto-init: stack:all(zero), heap alloc:off, heap free:off
+[    0.000000] stackdepot: allocating hash table via alloc_large_system_hash
+[    0.000000] stackdepot hash table entries: 1048576 (order: 12, 16777216 bytes, linear)
+[    0.000000] SLUB: HWalign=64, Order=0-3, MinObjects=0, CPUs=4, Nodes=1
+[    0.000000] Running RCU self tests
+[    0.000000] Running RCU synchronous self tests
+[    0.000000] rcu: Hierarchical RCU implementation.
+[    0.000000] rcu: 	RCU lockdep checking is enabled.
+[    0.000000] rcu: RCU calculated value of scheduler-enlistment delay is 10 jiffies.
+[    0.000000] Running RCU synchronous self tests
+[    0.000000] NR_IRQS: 4352, nr_irqs: 456, preallocated irqs: 16
+[    0.000000] rcu: srcu_init: Setting srcu_struct sizes based on contention.
+[    0.000000] Console: colour *CGA 80x25
+[    0.000000] printk: legacy console [ttyS0] enabled
+[    0.000000] Lock dependency validator: Copyright (c) 2006 Red Hat, Inc., Ingo Molnar
+[    0.000000] ... MAX_LOCKDEP_SUBCLASSES:  8
+[    0.000000] ... MAX_LOCK_DEPTH:          48
+[    0.000000] ... MAX_LOCKDEP_KEYS:        8192
+[    0.000000] ... CLASSHASH_SIZE:          4096
+[    0.000000] ... MAX_LOCKDEP_ENTRIES:     32768
+[    0.000000] ... MAX_LOCKDEP_CHAINS:      65536
+[    0.000000] ... CHAINHASH_SIZE:          32768
+[    0.000000]  memory used by lock dependency info: 6429 kB
+[    0.000000]  memory used for stack traces: 4224 kB
+[    0.000000]  per task-struct memory footprint: 1920 bytes
+[    0.000000] ACPI: Core revision 20240827
+[    0.000000] clocksource: hpet: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 19112604467 ns
+[    0.030000] APIC: Switch to symmetric I/O mode setup
+[    0.090000] ..TIMER: vector=0x30 apic1=0 pin1=2 apic2=-1 pin2=-1
+[    0.170000] tsc: Unable to calibrate against PIT
+[    0.170000] tsc: using HPET reference calibration
+[    0.170000] tsc: Detected 2994.811 MHz processor
+[    0.003411] clocksource: tsc-early: mask: 0xffffffffffffffff max_cycles: 0x2b2b1f953df, max_idle_ns: 440795273809 ns
+[    0.010221] Calibrating delay loop (skipped), value calculated using timer frequency.. 5989.62 BogoMIPS (lpj=29948110)
+[    0.063639] Last level iTLB entries: 4KB 0, 2MB 0, 4MB 0
+[    0.101174] Last level dTLB entries: 4KB 0, 2MB 0, 4MB 0, 1GB 0
+[    0.138778] Speculative Store Bypass: Vulnerable
+[    0.209755] x86/fpu: Supporting XSAVE feature 0x001: 'x87 floating point registers'
+[    0.259041] x86/fpu: Supporting XSAVE feature 0x002: 'SSE registers'
+[    0.261592] x86/fpu: Supporting XSAVE feature 0x004: 'AVX registers'
+[    0.263453] x86/fpu: Supporting XSAVE feature 0x008: 'MPX bounds registers'
+[    0.265322] x86/fpu: Supporting XSAVE feature 0x010: 'MPX CSR'
+[    0.269736] x86/fpu: Supporting XSAVE feature 0x200: 'Protection Keys User registers'
+[    0.273616] x86/fpu: xstate_offset[2]:  576, xstate_sizes[2]:  256
+[    0.278406] x86/fpu: xstate_offset[3]:  960, xstate_sizes[3]:   64
+[    0.280291] x86/fpu: xstate_offset[4]: 1024, xstate_sizes[4]:   64
+[    0.282017] x86/fpu: xstate_offset[9]: 2688, xstate_sizes[9]:    8
+[    0.284102] x86/fpu: Enabled xstate features 0x21f, context size is 2696 bytes, using 'standard' format.
+[    1.288813] Freeing SMP alternatives memory: 8K
+[    1.294579] pid_max: default: 32768 minimum: 301
+[    1.570083] Mount-cache hash table entries: 4096 (order: 3, 32768 bytes, linear)
+[    1.575790] Mountpoint-cache hash table entries: 4096 (order: 3, 32768 bytes, linear)
+[    2.542186] Running RCU synchronous self tests
+[    2.550199] Running RCU synchronous self tests
+[    2.967391] smpboot: CPU0: AMD QEMU TCG CPU version 2.5+ (family: 0x6, model: 0x6, stepping: 0x3)
+[    3.753890] Performance Events: PMU not available due to virtualization, using software events only.
+[    3.775092] signal: max sigframe size: 3232
+[    3.848466] rcu: Hierarchical SRCU implementation.
+[    3.850179] rcu: 	Max phase no-delay instances is 1000.
+[    4.214552] smp: Bringing up secondary CPUs ...
+[    4.504585] smpboot: x86: Booting SMP configuration:
+[    4.508651] .... node  #0, CPUs:      #1 #2 #3
+[    5.859161] smp: Brought up 1 node, 4 CPUs
+[    5.863041] smpboot: Total of 4 processors activated (24039.77 BogoMIPS)
+[    6.346686] Memory: 1728928K/2096632K available (10240K kernel code, 3174K rwdata, 3036K rodata, 1280K init, 17868K bss, 362856K reserved, 0K cma-reserved)
+[    7.098718] devtmpfs: initialized
+[    8.159086] Running RCU synchronous self tests
+[    8.173433] Running RCU synchronous self tests
+[    9.013908] DMA-API: preallocated 65536 debug entries
+[    9.017796] DMA-API: debugging enabled by kernel config
+[    9.022575] clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 19112604462750000 ns
+[    9.034201] futex hash table entries: 1024 (order: 5, 131072 bytes, linear)
+[   11.278842] thermal_sys: Registered thermal governor 'step_wise'
+[   11.281346] thermal_sys: Registered thermal governor 'user_space'
+[   11.359577] cpuidle: using governor ladder
+[   11.402884] acpiphp: ACPI Hot Plug PCI Controller Driver version: 0.5
+[   11.556932] PCI: ECAM [mem 0xb0000000-0xbfffffff] (base 0xb0000000) for domain 0000 [bus 00-ff]
+[   11.571864] PCI: ECAM [mem 0xb0000000-0xbfffffff] reserved as E820 entry
+[   11.607843] PCI: Using configuration type 1 for base access
+[   12.094088] ACPI: Added _OSI(Module Device)
+[   12.096010] ACPI: Added _OSI(Processor Device)
+[   12.098562] ACPI: Added _OSI(Processor Aggregator Device)
+[   50.336123] ACPI: 1 ACPI AML tables successfully acquired and loaded
+[   57.113202] ACPI: Interpreter enabled
+[   57.175002] ACPI: PM: (supports S0 S5)
+[   57.181714] ACPI: Using IOAPIC for interrupt routing
+[   57.434068] PCI: Using host bridge windows from ACPI; if necessary, use "pci=nocrs" and report a bug
+[   57.437729] PCI: Using E820 reservations for host bridge windows
+[   58.992976] ACPI: Enabled 2 GPEs in block 00 to 3F
+[  102.731784] ACPI: PCI Root Bridge [PCI0] (domain 0000 [bus 00-ff])
+[  102.762085] acpi PNP0A08:00: _OSC: OS supports [ExtendedConfig ASPM ClockPM Segments MSI HPX-Type3]
+[  104.297724] acpi PNP0A08:00: _OSC: platform does not support [PCIeHotplug LTR]
+[  107.072827] acpi PNP0A08:00: _OSC: OS now controls [PME PCIeCapability]
+[  108.241766] PCI host bridge to bus 0000:00
+[  108.351138] pci_bus 0000:00: root bus resource [io  0x0000-0x0cf7 window]
+[  108.358648] pci_bus 0000:00: root bus resource [io  0x0d00-0xffff window]
+[  108.364060] pci_bus 0000:00: root bus resource [mem 0x000a0000-0x000bffff window]
+[  108.370459] pci_bus 0000:00: root bus resource [mem 0x80000000-0xafffffff window]
+[  108.375670] pci_bus 0000:00: root bus resource [mem 0xc0000000-0xfebfffff window]
+[  108.381873] pci_bus 0000:00: root bus resource [mem 0x100000000-0x8ffffffff window]
+[  108.390916] pci_bus 0000:00: root bus resource [bus 00-ff]
+[  108.468004] pci 0000:00:00.0: [8086:29c0] type 00 class 0x060000 conventional PCI endpoint
+[  109.143918] pci 0000:00:02.0: [1b36:000c] type 01 class 0x060400 PCIe Root Port
+[  109.171896] pci 0000:00:02.0: BAR 0 [mem 0xfe600000-0xfe600fff]
+[  109.219623] pci 0000:00:02.0: PCI bridge to [bus 01]
+[  109.240637] pci 0000:00:02.0:   bridge window [mem 0xfe400000-0xfe5fffff]
+[  109.260244] pci 0000:00:02.0:   bridge window [mem 0xfea00000-0xfebfffff 64bit pref]
+[  109.264850] pci 0000:00:02.0: enabling Extended Tags
+[  109.719110] pci 0000:00:03.0: [1b36:000c] type 01 class 0x060400 PCIe Root Port
+[  109.755142] pci 0000:00:03.0: BAR 0 [mem 0xfe601000-0xfe601fff]
+[  109.789300] pci 0000:00:03.0: PCI bridge to [bus 02]
+[  109.799838] pci 0000:00:03.0:   bridge window [mem 0xfe200000-0xfe3fffff]
+[  109.811946] pci 0000:00:03.0:   bridge window [mem 0xfe800000-0xfe9fffff 64bit pref]
+[  109.817972] pci 0000:00:03.0: enabling Extended Tags
+[  110.179700] pci 0000:00:1f.0: [8086:2918] type 00 class 0x060100 conventional PCI endpoint
+[  110.205663] pci 0000:00:1f.0: quirk: [io  0x0600-0x067f] claimed by ICH6 ACPI/GPIO/TCO
+[  110.523979] pci 0000:00:1f.2: [8086:2922] type 00 class 0x010601 conventional PCI endpoint
+[  110.626624] pci 0000:00:1f.2: BAR 4 [io  0xc040-0xc05f]
+[  110.658932] pci 0000:00:1f.2: BAR 5 [mem 0xfe602000-0xfe602fff]
+[  111.101352] pci 0000:00:1f.3: [8086:2930] type 00 class 0x0c0500 conventional PCI endpoint
+[  111.173520] pci 0000:00:1f.3: BAR 4 [io  0x0700-0x073f]
+[  111.809059] acpiphp: Slot [0] registered
+[  111.832167] pci 0000:01:00.0: [1234:4b44] type 00 class 0x088000 PCIe Endpoint
+[  111.841469] pci 0000:01:00.0: BAR 0 [mem 0xfe400000-0xfe403fff 64bit]
+[  111.868416] pci 0000:01:00.0: BAR 2 [mem 0xfe404000-0xfe404fff]
+[  111.949895] pci 0000:01:00.0: enabling Extended Tags
+[  117.448488] pci 0000:00:02.0: PCI bridge to [bus 01]
+[  117.618796] acpiphp: Slot [0-1] registered
+[  117.627795] pci 0000:02:00.0: [1234:4b44] type 00 class 0x088000 PCIe Endpoint
+[  117.648824] pci 0000:02:00.0: BAR 0 [mem 0xfe200000-0xfe203fff 64bit]
+[  117.691095] pci 0000:02:00.0: BAR 2 [mem 0xfe204000-0xfe204fff]
+[  117.769260] pci 0000:02:00.0: enabling Extended Tags
+[  122.847828] pci 0000:00:03.0: PCI bridge to [bus 02]
+[  124.104879] ACPI: PCI: Interrupt link LNKA configured for IRQ 10
+[  124.844100] ACPI: PCI: Interrupt link LNKB configured for IRQ 10
+[  125.535681] ACPI: PCI: Interrupt link LNKC configured for IRQ 11
+[  126.240523] ACPI: PCI: Interrupt link LNKD configured for IRQ 11
+[  126.964514] ACPI: PCI: Interrupt link LNKE configured for IRQ 10
+[  127.664768] ACPI: PCI: Interrupt link LNKF configured for IRQ 10
+[  128.324932] ACPI: PCI: Interrupt link LNKG configured for IRQ 11
+[  129.045335] ACPI: PCI: Interrupt link LNKH configured for IRQ 11
+[  129.194237] ACPI: PCI: Interrupt link GSIA configured for IRQ 16
+[  129.319158] ACPI: PCI: Interrupt link GSIB configured for IRQ 17
+[  129.405747] ACPI: PCI: Interrupt link GSIC configured for IRQ 18
+[  129.484681] ACPI: PCI: Interrupt link GSID configured for IRQ 19
+[  129.601450] ACPI: PCI: Interrupt link GSIE configured for IRQ 20
+[  129.705210] ACPI: PCI: Interrupt link GSIF configured for IRQ 21
+[  129.778443] ACPI: PCI: Interrupt link GSIG configured for IRQ 22
+[  129.857878] ACPI: PCI: Interrupt link GSIH configured for IRQ 23
+[  132.473552] iommu: Default domain type: Translated
+[  132.475277] iommu: DMA domain TLB invalidation policy: strict mode (set via kernel command line)
+[  132.529972] PCI: Using ACPI for IRQ routing
+[  132.941612] vgaarb: loaded
+[  133.090931] clocksource: Switched to clocksource tsc-early
+[  133.318776] ACPI: Failed to create genetlink family for ACPI event
+[  133.335654] pnp: PnP ACPI init
+[  133.959994] system 00:04: [mem 0xb0000000-0xbfffffff window] has been reserved
+[  135.839975] pnp: PnP ACPI: found 5 devices
+[  140.573430] clocksource: acpi_pm: mask: 0xffffff max_cycles: 0xffffff, max_idle_ns: 2085701024 ns
+[  140.587110] pci 0000:00:02.0: bridge window [io  0x1000-0x0fff] to [bus 01] add_size 1000
+[  140.591733] pci 0000:00:03.0: bridge window [io  0x1000-0x0fff] to [bus 02] add_size 1000
+[  140.615952] pci 0000:00:02.0: bridge window [io  0x1000-0x1fff]: assigned
+[  140.618599] pci 0000:00:03.0: bridge window [io  0x2000-0x2fff]: assigned
+[  140.636847] pci 0000:00:02.0: PCI bridge to [bus 01]
+[  140.639614] pci 0000:00:02.0:   bridge window [io  0x1000-0x1fff]
+[  140.659661] pci 0000:00:02.0:   bridge window [mem 0xfe400000-0xfe5fffff]
+[  140.680177] pci 0000:00:02.0:   bridge window [mem 0xfea00000-0xfebfffff 64bit pref]
+[  140.722765] pci 0000:00:03.0: PCI bridge to [bus 02]
+[  140.725537] pci 0000:00:03.0:   bridge window [io  0x2000-0x2fff]
+[  140.752304] pci 0000:00:03.0:   bridge window [mem 0xfe200000-0xfe3fffff]
+[  140.779011] pci 0000:00:03.0:   bridge window [mem 0xfe800000-0xfe9fffff 64bit pref]
+[  140.812765] pci_bus 0000:00: resource 4 [io  0x0000-0x0cf7 window]
+[  140.817516] pci_bus 0000:00: resource 5 [io  0x0d00-0xffff window]
+[  140.818895] pci_bus 0000:00: resource 6 [mem 0x000a0000-0x000bffff window]
+[  140.820286] pci_bus 0000:00: resource 7 [mem 0x80000000-0xafffffff window]
+[  140.821711] pci_bus 0000:00: resource 8 [mem 0xc0000000-0xfebfffff window]
+[  140.823118] pci_bus 0000:00: resource 9 [mem 0x100000000-0x8ffffffff window]
+[  140.825995] pci_bus 0000:01: resource 0 [io  0x1000-0x1fff]
+[  140.827381] pci_bus 0000:01: resource 1 [mem 0xfe400000-0xfe5fffff]
+[  140.828732] pci_bus 0000:01: resource 2 [mem 0xfea00000-0xfebfffff 64bit pref]
+[  140.830320] pci_bus 0000:02: resource 0 [io  0x2000-0x2fff]
+[  140.831734] pci_bus 0000:02: resource 1 [mem 0xfe200000-0xfe3fffff]
+[  140.833136] pci_bus 0000:02: resource 2 [mem 0xfe800000-0xfe9fffff 64bit pref]
+[  140.931763] PCI: CLS 0 bytes, default 64
+[  140.991211] DMAR: Host address width 48
+[  140.998593] DMAR: DRHD base: 0x000000fed90000 flags: 0x0
+[  141.041802] DMAR: dmar0: reg_base_addr fed90000 ver 1:0 cap 80d2008c222f0606 ecap f00f4a
+[  141.065219] DMAR: No RMRR found
+[  141.066776] DMAR: No ATSR found
+[  141.067845] DMAR: No SATC found
+[  141.090684] DMAR: dmar0: Using Queued invalidation
+[  141.319512] Unpacking initramfs...
+[  141.626101] pci 0000:00:00.0: Adding to iommu group 0
+[  141.727116] pci 0000:00:02.0: Adding to iommu group 1
+[  141.787592] pci 0000:00:03.0: Adding to iommu group 2
+[  141.853375] pci 0000:00:1f.0: Adding to iommu group 3
+[  141.892836] pci 0000:00:1f.2: Adding to iommu group 3
+[  141.953337] pci 0000:00:1f.3: Adding to iommu group 3
+[  142.014780] pci 0000:01:00.0: Adding to iommu group 4
+[  142.073236] pci 0000:02:00.0: Adding to iommu group 5
+[  143.525044] Freeing initrd memory: 1752K
+[  145.977235] DMAR: Intel(R) Virtualization Technology for Directed I/O
+[  146.515518] workingset: timestamp_bits=62 max_order=19 bucket_order=0
+[  147.569487] tsc: Refined TSC clocksource calibration: 2995.226 MHz
+[  147.578424] clocksource: tsc: mask: 0xffffffffffffffff max_cycles: 0x2b2ca75b898, max_idle_ns: 440795216464 ns
+[  152.321725] ACPI: \_SB_.GSIG: Enabled at IRQ 22
+[  157.004025] ACPI: \_SB_.GSIH: Enabled at IRQ 23
+[  157.406497] input: Power Button as /devices/LNXSYSTM:00/LNXPWRBN:00/input/input0
+[  157.428876] ACPI: button: Power Button [PWRF]
+[  157.563068] clocksource: Switched to clocksource tsc
+[  187.509378] Serial: 8250/16550 driver, 1 ports, IRQ sharing disabled
+[  187.757442] 00:02: ttyS0 at I/O 0x3f8 (irq = 4, base_baud = 115200) is a 16550A
+[  191.126922] kdc 0000:01:00.0: kdc0: 4 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  191.813514] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  191.918816] i8042: PNP: PS/2 Controller [PNP0303:KBD,PNP0f13:MOU] at 0x60,0x64 irq 1,12
+[  192.079667] serio: i8042 KBD port at 0x60,0x64 irq 1
+[  192.098025] serio: i8042 AUX port at 0x60,0x64 irq 12
+[  192.189005] amd_pstate: the _CPC object is not present in SBIOS or ACPI disabled
+[  192.290945] IPI shorthand broadcast: enabled
+[  198.211105] sched_clock: Marking stable (198378376337, -172608981)->(198520185476, -314418120)
+[  198.641247] input: AT Translated Set 2 keyboard as /devices/platform/i8042/serio0/input/input1
+[  199.447229] input: ImExPS/2 Generic Explorer Mouse as /devices/platform/i8042/serio1/input/input3
+[  203.927962] kmemleak: Kernel memory leak detector initialized (mem pool available: 14998)
+[  204.079497] KTAP version 1
+[  204.083081] 1..1
+[  204.092009]     KTAP version 1
+[  204.095785]     # Subtest: kdc
+[  204.098882]     # module: kdc_kunit
+[  204.100219]     1..13
+[  204.233002]     ok 1 cid_generation
+[  204.297565]     ok 2 ring_math
+[  204.363901]     ok 3 phase_flips_on_wrap
+[  204.434229]     ok 4 page_span_and_overlap
+[  204.499396]     ok 5 cancel_by_ownership
+[  204.599196]     ok 6 status_mapping
+[  204.681001]     ok 7 watchdog_and_reclaim
+[  204.789540]     ok 8 dst_split
+[  204.895107]     ok 9 admission_and_quota
+[  204.987902]     ok 10 submit_field_checks
+[  205.068141]     ok 11 sgl_from_dma_segments
+[  205.159730]     ok 12 hw_layout
+[  205.225368]     ok 13 shadow_event_index
+[  205.227142] # kdc: pass:13 fail:0 skip:0 total:13
+[  205.228465] # Totals: pass:13 fail:0 skip:0 total:13
+[  205.232612] ok 1 kdc
+[  207.579258] clocksource: Long readout interval, skipping watchdog check: cs_nsec: 1855456025 wd_nsec: 1855447410
+[  210.516555] Freeing unused kernel image (initmem) memory: 1280K
+[  210.518937] Write protecting the kernel read-only data: 14336k
+[  210.673292] Freeing unused kernel image (rodata/data gap) memory: 1060K
+[  210.683453] Run /init as init process
+[  215.841232] kdc_init: KDC_GUEST_START
+[  216.883810] kdc_test: PASS device_info (83 ms)
+[  217.287536] kdc_test:   shadow_doorbell: 4 commands behind a stalled engine, each fetched after its doorbell
+[  217.296357] kdc_test: PASS shadow_doorbell (402 ms)
+[  219.685428] kdc_test:   cq_head_batching: 16 head writes for 256 single commands; 256 with 63 in flight, batch 63
+[  219.689638] kdc_test: PASS cq_head_batching (2389 ms)
+[  220.117618] kdc_test: PASS abi_validation (419 ms)
+[  230.137319] kdc_test:   data_integrity: 84 copies verified (dst bytes, guard bytes, CRC32C)
+[  230.145776] kdc_test: PASS data_integrity (10023 ms)
+[  233.507207] kdc_test:   fixed_buffers: 40 copies through registered buffers verified
+[  233.512254] kdc_test: PASS fixed_buffers (3362 ms)
+[  233.623087] kdc_test: PASS nop_and_batch_read (104 ms)
+[  233.789908] kdc_test: PASS queue_selection (160 ms)
+[  234.134484] kdc_test: PASS batch_flush (339 ms)
+[  234.605302] kdc_test:   coalescing: batch of 8 in 1 interrupt, single command waited 62 ms
+[  234.609289] kdc_test: PASS coalescing (471 ms)
+[  252.350201] kdc_test: PASS pinned_page_not_recycled (17737 ms)
+[  254.493758] kdc_test: PASS cancel_driver_owned (2126 ms)
+[  254.830354] kdc_test: PASS cancel_device_owned (322 ms)
+[  293.745308] kdc_test:   cancel_race: 29 cancelled before the doorbell, 1 aborted by the device, 1470 completed first; 40 more aborted while held device-owned
+[  293.752562] kdc_test: PASS cancel_race (38918 ms)
+[  294.277425] kdc_test: PASS close_with_inflight (522 ms)
+[  294.445927] kdc_test: PASS reset_semantics (163 ms)
+[  295.345344] kdc_test: PASS quotas (896 ms)
+[  295.395304] kdc_test: PASS file_isolation (46 ms)
+[  303.076786] kdc_test:   concurrency: 4 threads x 250 verified copies, own files
+[  303.081559] kdc_test: PASS concurrency (7683 ms)
+[  306.040398] kdc_test: PASS shared_file (2954 ms)
+[  312.601520] kdc_test: PASS ring_overflow_all_queues (6557 ms)
+[  312.767611] kdc_test: PASS second_device (162 ms)
+[  317.633557] kdc 0000:01:00.0: kdc0: 4 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  317.861276] kdc_test: PASS unbind_rebind (5085 ms)
+[  317.943376] kdc_test: EXPECT_BEGIN timeout-abort timed out after
+[  318.202841] kdc 0000:01:00.0: queue 1 cid 0x1000 timed out after 200 ms; aborting
+[  318.237131] kdc_test: EXPECT_END timeout-abort
+[  318.256241] kdc_test:   timeout_abort: answered after 277 ms
+[  318.259668] kdc_test: PASS timeout_abort (395 ms)
+[  318.318840] kdc_test: EXPECT_BEGIN timeout-reset timed out after|resetting controller
+[  318.603237] kdc 0000:01:00.0: queue 0 cid 0x2000 timed out after 200 ms; aborting
+[  319.189214] kdc 0000:01:00.0: resetting controller
+[  319.236502] kdc_test: EXPECT_END timeout-reset
+[  319.412797] kdc_test:   timeout_reset: ended after 905 ms, 1 command reissued
+[  319.417567] kdc_test: PASS timeout_reset (1156 ms)
+[  319.480402] kdc_test: EXPECT_BEGIN escalation timed out after|resetting controller|controller reset failed
+[  319.723140] kdc 0000:01:00.0: queue 2 cid 0x1000 timed out after 200 ms; aborting
+[  320.283840] kdc 0000:01:00.0: resetting controller
+[  321.293942] kdc 0000:01:00.0: controller reset failed; trying a function reset
+[  321.507063] kdc_test: EXPECT_END escalation
+[  321.760527] kdc_test: PASS timeout_escalation (2340 ms)
+[  321.948558] kdc_test: EXPECT_BEGIN failure timed out after|resetting controller|controller reset failed|recovery failed
+[  322.233877] kdc 0000:02:00.0: queue 0 cid 0x1000 timed out after 200 ms; aborting
+[  322.803049] kdc 0000:02:00.0: resetting controller
+[  323.824386] kdc 0000:02:00.0: controller reset failed; trying a function reset
+[  325.013029] kdc 0000:02:00.0: recovery failed; device disabled until reset or rebind
+[  325.042887] kdc_test: EXPECT_END failure
+[  325.078735] kdc_test: EXPECT_BEGIN revive working again
+[  325.315569] kdc 0000:02:00.0: device working again after reset
+[  325.337506] kdc_test: EXPECT_END revive
+[  325.619261] kdc_test: PASS recovery_failure (3851 ms)
+[  327.232649] kdc_test:   sysfs_reset_under_load: 3 resets, 86 verified copies, 17 reissued
+[  327.237058] kdc_test: PASS sysfs_reset_under_load (1612 ms)
+[  327.394020] kdc_test: EXPECT_BEGIN fatal device error|resetting controller
+[  327.726105] kdc 0000:01:00.0: device error 0x8 (queue 0, status 0x3)
+[  327.733871] kdc 0000:01:00.0: resetting controller
+[  327.794657] kdc_test: EXPECT_END fatal
+[  327.822902] kdc_test:   fatal_recovery: 16 commands completed, 16 reissued after the reset
+[  327.826061] kdc_test: PASS fatal_recovery (586 ms)
+[  327.873757] kdc_test: EXPECT_BEGIN lost timed out after|resetting controller|completion for unknown cid
+[  328.233027] kdc 0000:01:00.0: queue 0 cid 0xe000 timed out after 300 ms; aborting
+[  328.787800] kdc 0000:01:00.0: resetting controller
+[  328.842592] kdc 0000:01:00.0: queue 0: completion for unknown cid 0xffff
+[  329.203935] kdc 0000:01:00.0: queue 0 cid 0xf000 timed out after 300 ms; aborting
+[  329.819466] kdc 0000:01:00.0: resetting controller
+[  329.834249] kdc_test: EXPECT_END lost
+[  329.848433] kdc_test: PASS lost_completions (2018 ms)
+[  330.008079] kdc_test: EXPECT_BEGIN bounded resetting controller
+[  330.601294] kdc 0000:01:00.0: resetting controller
+[  331.249263] kdc 0000:01:00.0: resetting controller
+[  331.270308] kdc_test: EXPECT_END bounded
+[  331.283340] kdc_test:   bounded_close_and_reset: close returned after 568 ms, reset after 574 ms
+[  331.286474] kdc_test: PASS bounded_close_and_reset (1433 ms)
+[  331.379910] kdc_test: EXPECT_BEGIN dmar-zerocopy DMAR: (\[DMA Write|DRHD: handling fault)
+[  331.518075] DMAR: DRHD: handling fault status reg 2
+[  331.526482] DMAR: [DMA Write NO_PASID] Request device [01:00.0] fault addr 0xfffffffffff00000 [fault reason 0x04] Access beyond MGAW
+[  331.545323] kdc_test: EXPECT_END dmar-zerocopy
+[  331.561060] kdc_test: EXPECT_BEGIN dmar-bounce DMAR: (\[DMA Write|DRHD: handling fault)
+[  331.686579] DMAR: DRHD: handling fault status reg 2
+[  331.691297] DMAR: [DMA Write NO_PASID] Request device [01:00.0] fault addr 0xfffffffffff00000 [fault reason 0x04] Access beyond MGAW
+[  331.711517] kdc_test: EXPECT_END dmar-bounce
+[  331.904591] kdc_test:   dma_fault: 2 faulting copies ended with -EIO (IOMMU fault reported)
+[  331.911553] kdc_test: PASS dma_fault (621 ms)
+[  332.370389] kdc_test:   dst_overlap: 7 overlapping submits refused, 6 adjacent ones completed
+[  332.374181] kdc_test: PASS dst_overlap (460 ms)
+[  334.715112] kdc_test:   adjacent_destinations: 96 small and 6 large adjacent copies in flight together
+[  334.719645] kdc_test: PASS adjacent_destinations (2343 ms)
+[  342.132038] kdc_test: EXPECT_BEGIN probe-failures probe with driver kdc failed|really_probe: driver_sysfs_add failed
+[  342.822966] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  343.846116] kdc 0000:02:00.0: really_probe: driver_sysfs_add failed
+[  344.511747] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  346.360596] kdc 0000:02:00.0: really_probe: driver_sysfs_add failed
+[  347.050646] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  348.612641] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  350.184630] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  351.362578] kdc 0000:02:00.0: really_probe: driver_sysfs_add failed
+[  352.070288] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  352.980368] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  353.737098] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  355.436017] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  356.164130] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  357.148625] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  357.808605] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  360.170930] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  362.503117] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  364.252533] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  365.100670] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  366.808023] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  368.500069] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  369.575426] kdc 0000:02:00.0: probe with driver kdc failed with error -22
+[  370.271888] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  371.274438] kdc 0000:02:00.0: probe with driver kdc failed with error -22
+[  371.419917] kmemleak: Cannot allocate a scan area, scanning the full object
+[  371.945093] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  373.595974] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  374.690654] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  374.859356] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  375.552505] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  377.195684] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  378.741606] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  380.417922] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  381.911163] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  383.520184] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  385.605302] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  387.168475] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  388.681945] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  391.135936] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  393.243645] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  395.760806] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  397.554308] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  400.051279] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  401.631579] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  403.202714] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  405.572606] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  406.539126] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  407.312526] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  408.960542] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  411.508721] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  413.032336] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  415.420943] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  417.152355] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  419.629871] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  421.225967] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  422.805527] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  425.180611] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  426.729387] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  428.179849] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  430.023218] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  430.767632] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  432.461306] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  434.547790] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  435.428084] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  436.767405] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  437.660680] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  439.691925] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  441.257725] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  442.851232] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  443.979864] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  444.805763] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  446.795184] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  447.083492] kdc 0000:02:00.0: probe with driver kdc failed with error -28
+[  447.879766] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  449.459515] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  451.073539] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  453.767710] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  455.385360] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  457.738586] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  460.076176] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  461.789882] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  463.068526] kobject: kobject_add_internal failed for 32 (error: -12 parent: irq)
+[  463.074927] Failed to add kobject for irq 32
+[  463.533337] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  465.134946] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  467.074459] kobject: kobject_add_internal failed for 32 (error: -12 parent: irq)
+[  467.076653] Failed to add kobject for irq 32
+[  467.567630] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  468.674064] kobject: kobject_add_internal failed for 32 (error: -12 parent: irq)
+[  468.676000] Failed to add kobject for irq 32
+[  469.106100] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  470.657660] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  471.770211] kobject: kobject_add_internal failed for 32 (error: -12 parent: irq)
+[  471.772682] Failed to add kobject for irq 32
+[  472.207129] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  473.735959] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  475.282491] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  476.316001] kobject: kobject_add_internal failed for 32 (error: -12 parent: irq)
+[  476.317964] Failed to add kobject for irq 32
+[  476.763101] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  479.147871] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  480.996489] kobject: kobject_add_internal failed for 32 (error: -12 parent: irq)
+[  480.999691] Failed to add kobject for irq 32
+[  481.463942] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  483.364158] kobject: kobject_add_internal failed for 32 (error: -12 parent: irq)
+[  483.366300] Failed to add kobject for irq 32
+[  483.995509] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  486.416545] kobject: kobject_add_internal failed for 32 (error: -12 parent: irq)
+[  486.418636] Failed to add kobject for irq 32
+[  486.967728] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  489.008911] kobject: kobject_add_internal failed for 32 (error: -12 parent: irq)
+[  489.011663] Failed to add kobject for irq 32
+[  489.503048] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  490.673510] kobject: kobject_add_internal failed for 32 (error: -12 parent: irq)
+[  490.675434] Failed to add kobject for irq 32
+[  491.163139] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  493.516526] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  494.705931] kobject: kobject_add_internal failed for 32 (error: -12 parent: irq)
+[  494.707991] Failed to add kobject for irq 32
+[  495.222558] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  496.831093] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  499.356912] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  501.293978] kdc 0000:02:00.0: probe with driver kdc failed with error -28
+[  501.645939] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  502.418252] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  503.880813] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  504.750675] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  507.466113] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  508.985282] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  511.346990] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  512.539245] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  512.987281] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  513.859080] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  515.939236] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  516.751529] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  518.563908] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  519.823915] kdc 0000:02:00.0: probe with driver kdc failed with error -28
+[  520.903848] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  522.548855] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  524.113013] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  525.752600] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  527.020771] kobject: can not set name properly!
+[  527.022991] Failed to add kobject for irq 33
+[  527.483414] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  528.690101] kobject: kobject_add_internal failed for 33 (error: -12 parent: irq)
+[  528.692616] Failed to add kobject for irq 33
+[  529.074753] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  530.625471] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  532.115309] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  534.578112] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  536.283311] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  538.322346] kobject: kobject_add_internal failed for 33 (error: -12 parent: irq)
+[  538.324332] Failed to add kobject for irq 33
+[  538.725981] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  540.334605] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  543.003786] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  544.215832] kobject: kobject_add_internal failed for 33 (error: -12 parent: irq)
+[  544.217865] Failed to add kobject for irq 33
+[  544.633188] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  546.377170] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  547.683597] kobject: kobject_add_internal failed for 33 (error: -12 parent: irq)
+[  547.685833] Failed to add kobject for irq 33
+[  548.128271] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  550.690076] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  552.197247] kobject: kobject_add_internal failed for 33 (error: -12 parent: irq)
+[  552.202444] Failed to add kobject for irq 33
+[  552.676574] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  555.119069] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  556.423512] kobject: kobject_add_internal failed for 33 (error: -12 parent: irq)
+[  556.426077] Failed to add kobject for irq 33
+[  556.869681] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  558.183798] kobject: kobject_add_internal failed for 33 (error: -12 parent: irq)
+[  558.185984] Failed to add kobject for irq 33
+[  558.657257] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  560.858599] kdc 0000:02:00.0: probe with driver kdc failed with error -28
+[  561.724508] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  564.177877] kdc 0000:02:00.0: probe with driver kdc failed with error -28
+[  565.078385] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  566.426153] kdc 0000:02:00.0: probe with driver kdc failed with error -28
+[  566.948218] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  567.419656] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  568.362685] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  570.881890] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  571.353782] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  571.846794] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  572.751732] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  575.000537] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  575.876678] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  577.282761] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  578.104152] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  579.784406] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  582.512623] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  584.201725] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  585.823755] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  587.501687] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  589.103883] kobject: can not set name properly!
+[  589.105827] Failed to add kobject for irq 34
+[  589.524252] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  591.696359] kobject: kobject_add_internal failed for 34 (error: -12 parent: irq)
+[  591.698396] Failed to add kobject for irq 34
+[  592.108728] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  593.368167] kobject: kobject_add_internal failed for 34 (error: -12 parent: irq)
+[  593.370089] Failed to add kobject for irq 34
+[  593.729664] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  595.467279] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  597.599312] kobject: kobject_add_internal failed for 34 (error: -12 parent: irq)
+[  597.601386] Failed to add kobject for irq 34
+[  597.961903] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  599.794227] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  601.255410] kobject: kobject_add_internal failed for 34 (error: -12 parent: irq)
+[  601.258973] Failed to add kobject for irq 34
+[  601.642914] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  603.237713] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  604.524900] kobject: kobject_add_internal failed for 34 (error: -12 parent: irq)
+[  604.526931] Failed to add kobject for irq 34
+[  604.928207] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  607.472005] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  608.903347] kobject: kobject_add_internal failed for 34 (error: -12 parent: irq)
+[  608.906398] Failed to add kobject for irq 34
+[  609.342724] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  611.124510] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  612.518491] kobject: kobject_add_internal failed for 34 (error: -12 parent: irq)
+[  612.520433] Failed to add kobject for irq 34
+[  612.898402] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  614.651033] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  616.243822] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  618.226934] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  619.583027] kobject: kobject_add_internal failed for 34 (error: -12 parent: irq)
+[  619.585674] Failed to add kobject for irq 34
+[  619.982068] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  622.750463] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  625.468413] kdc 0000:02:00.0: kdc1: 1 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  627.011321] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  629.131804] kdc 0000:02:00.0: kdc1: 1 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  631.640777] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  633.488901] kdc 0000:02:00.0: kdc1: 1 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  635.136194] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  637.593815] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  638.392954] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  639.836539] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  640.435341] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  640.990599] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  641.891582] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  644.191005] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  645.172047] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  647.227702] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  649.007084] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  650.658820] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  651.597019] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  653.119364] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  653.960076] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  656.418618] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  657.339024] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  659.970418] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  660.786293] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  662.360328] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  663.285594] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  666.119477] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  668.797565] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  670.490629] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  671.949384] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  672.753366] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  673.448787] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  674.413342] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  676.935826] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  677.835786] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  679.510122] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  680.426195] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  682.757607] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  683.545876] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  685.300323] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  686.234951] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  688.595610] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  689.507909] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  691.225528] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  693.721648] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  695.305546] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  696.878918] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  699.490775] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  701.842225] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  702.890418] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  704.797836] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  707.497753] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  709.060961] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  710.073630] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  711.630858] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  712.584820] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  714.156780] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  714.914733] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  715.644528] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  716.684642] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  717.715967] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  719.426267] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  720.222986] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  720.961859] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  721.976438] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  723.620660] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  724.875090] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  726.068071] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  726.998566] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  729.501674] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  730.553770] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  732.327487] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  733.223483] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  734.913622] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  735.908285] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  738.373987] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  739.114391] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  739.893665] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  740.636536] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  741.520312] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  744.141701] kdc 0000:02:00.0: Using 48-bit DMA addresses
+[  744.461438] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  746.358834] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  747.974674] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  748.918457] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  751.706699] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  752.653273] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  754.712227] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  756.618527] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  757.530194] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  759.277741] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  760.767842] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  761.575661] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  763.185260] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  764.087536] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  765.870007] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  767.476381] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  769.089475] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  769.885094] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  770.815369] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  772.467913] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  773.314423] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  775.115420] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  775.939764] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  776.932424] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  778.728380] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  780.405310] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  781.324088] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  784.165099] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  785.110831] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  786.862804] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  787.759502] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  789.465046] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  790.412009] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  793.218620] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  794.294962] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  796.860702] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  797.809499] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  799.466798] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  801.266230] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  802.995415] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  803.926417] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  805.879705] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  806.769164] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  809.523446] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  810.384942] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  811.263326] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  812.826090] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  815.521943] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  816.408557] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  818.424387] kobject: kobject_add_internal failed for kdc1 (error: -12 parent: kdc)
+[  818.774103] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  819.878246] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  821.652678] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  823.619030] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  825.597423] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  826.438194] kobject: kobject_add_internal failed for kdc1 (error: -12 parent: kdc)
+[  826.770762] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  827.984726] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  828.992906] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  831.945137] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  832.963313] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  834.967127] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  835.881022] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  837.827666] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  838.709958] kobject: kobject_add_internal failed for kdc1 (error: -12 parent: kdc)
+[  838.988294] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  840.106052] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  841.471071] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  842.636731] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  843.842606] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  844.794678] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  846.581739] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  847.590558] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  850.248558] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  852.101044] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  852.992749] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  854.892004] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  855.703428] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  858.260596] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  860.256753] kdc 0000:02:00.0: probe with driver kdc failed with error -12
+[  861.544062] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  863.566535] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  865.325055] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  866.978440] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  868.707245] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  871.533459] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  873.408167] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  875.382814] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  877.114687] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  878.879850] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  880.582816] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  883.218368] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  885.152108] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  887.219311] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  888.997971] debugfs: out of free dentries, can not create file 'fault_drop'
+[  889.049611] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  890.776625] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  892.533511] debugfs: out of free dentries, can not create file 'fault_bad_cid'
+[  892.578315] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  894.374499] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  897.026041] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  899.505693] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  901.322531] debugfs: out of free dentries, can not create file 'fault_bad_dma'
+[  901.371706] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  903.436641] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  905.341794] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  906.993829] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  908.951497] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  910.779212] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  913.461592] debugfs: out of free dentries, can not create file 'scratch'
+[  913.514385] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  915.314362] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  917.266284] debugfs: out of free dentries, can not create file 'device_aborted'
+[  917.311503] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  919.269567] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  921.131259] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  922.921626] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  925.522328] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  927.220246] debugfs: out of free dentries, can not create file 'scratch'
+[  927.261154] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  930.136298] debugfs: out of free dentries, can not create file 'device_doorbells'
+[  930.167400] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  932.058050] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  933.778491] debugfs: out of free dentries, can not create file 'device_cq_doorbells'
+[  933.805209] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  936.456528] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  938.178116] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  940.099798] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  942.094231] debugfs: out of free dentries, can not create file 'device_cq_doorbells'
+[  942.118614] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  943.774954] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  945.506916] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  947.257477] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  948.967487] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  950.656638] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  953.583328] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  955.539475] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  958.225416] debugfs: out of free dentries, can not create file 'device_inflight'
+[  958.243486] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  960.856575] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  962.699989] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  964.483584] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  966.383542] debugfs: out of free dentries, can not create file 'cq_head_batch'
+[  966.399773] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  968.328091] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  970.230992] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  972.015738] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  973.779061] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  976.476992] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  978.256321] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  980.154894] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  982.085312] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  984.002914] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  984.027429] kdc_test: EXPECT_END probe-failures
+[  984.521608] kdc_test:   fault_injection: 26 submit and 397 probe allocation failures, all unwound
+[  984.525715] kdc_test: PASS fault_injection (649804 ms)
+[  985.054587] kdc_test: KDC_HOST device_del kdc1
+[  987.912963] kdc_test:   removal_orderly: 93 commands from 3 threads, 45 completed, 48 ended with ENODEV, each once
+[  987.955142] kdc_test: KDC_HOST device_add {"driver": "kdc-dma", "id": "kdc1b", "bus": "rp1", "queues": 2}
+[  990.517253] pci 0000:02:00.0: [1234:4b44] type 00 class 0x088000 PCIe Endpoint
+[  990.526425] pci 0000:02:00.0: BAR 0 [mem 0x00000000-0x00003fff 64bit]
+[  990.527848] pci 0000:02:00.0: BAR 2 [mem 0x00000000-0x00000fff]
+[  990.529997] pci 0000:02:00.0: enabling Extended Tags
+[  994.647835] pci 0000:02:00.0: Adding to iommu group 5
+[  995.322292] pci 0000:02:00.0: BAR 0 [mem 0xfe200000-0xfe203fff 64bit]: assigned
+[  995.325998] pci 0000:02:00.0: BAR 2 [mem 0xfe204000-0xfe204fff]: assigned
+[  995.395477] kdc 0000:02:00.0: enabling device (0000 -> 0002)
+[  996.120541] kdc 0000:02:00.0: kdc1: 2 queues x 64 entries, bounce <= 65536 bytes, shadow doorbells
+[  996.390754] kdc_test: PASS removal_orderly (11861 ms)
+[  996.973138] kdc_test: EXPECT_BEGIN surprise device not responding
+[  996.977247] kdc_test: KDC_HOST qom-set kdc1b fault-gone true
+[  997.033111] kdc 0000:02:00.0: device not responding; ending all commands
+[  997.417583] kdc_test: KDC_HOST device_del kdc1b
+[  999.580225] kdc_test: EXPECT_END surprise
+[  999.631644] kdc_test:   removal_surprise: 77 commands from 3 threads, 68 completed, 9 ended with ENODEV, each once
+[  999.672127] kdc_test: PASS removal_surprise (3277 ms)
+[  999.675035] kdc_test: KDC_TEST_PASS cases=37 cpus=4
+[ 1092.820286] kdc_init: KMEMLEAK_BEGIN
+[ 1093.720848] kdc_init: KMEMLEAK_END
+[ 1094.670379] kdc_init: DMA_API_ERRORS 0
+[ 1097.652349] kdc_init: KDC_COUNTERS cmds=0 pinned=0 mapped=0 dst_ranges=0
+[ 1097.691404] kdc_init: KDC_GUEST_SUCCESS
+[ 1099.237185] ACPI: PM: Preparing to enter system sleep state S5
+[ 1099.401886] reboot: Power down

@@ -1,0 +1,53 @@
+diff --git a/kernel/kdc_drv.h b/kernel/kdc_drv.h
+index 9484edb..d18aa2c 100644
+--- a/kernel/kdc_drv.h
++++ b/kernel/kdc_drv.h
+@@ -143,9 +143,8 @@ struct kdc_cmd {
+ 	enum kdc_abort_reason abort_reason;
+ 	bool abort_sent, use_bounce, ended_by_reset;
+ 	bool fixed; /* KDC_SUBMIT_FIXED: pages belong to registered buffers */
+-	struct kdc_regbuf *src_buf, *dst_buf; /* held until kdc_cmd_release() */
+ 	u8 retries;
+-	u64 id, epoch, quota_bytes, dst;
++	u64 id, epoch, quota_bytes;
+ 	u32 length, head_len, tail_len;
+ 	u16 cid, tag;
+ 	unsigned long timeout, deadline, abort_deadline; /* jiffies */
+@@ -155,7 +154,6 @@ struct kdc_cmd {
+ 	struct sg_table src_sgt, dst_sgt;
+ 	bool src_mapped, dst_mapped;
+ 	struct kdc_dst_range *ranges;
+-	struct kdc_tracker *tracker; /* module-wide, or the registered buffer's */
+ 	unsigned int nr_ranges;
+ 	bool ranges_tracked;
+ 	void *sgl, *bounce_buf;
+@@ -163,6 +161,13 @@ struct kdc_cmd {
+ 	int status;
+ 	u32 crc, done_bytes;
+ 	u16 hw_status;
++	/*
++	 * Registered-buffer fields last: placed earlier they moved sqe off its
++	 * cache line, and the paths that do not use them got slower.
++	 */
++	struct kdc_regbuf *src_buf, *dst_buf; /* held until kdc_cmd_release() */
++	u64 dst;
++	struct kdc_tracker *tracker; /* module-wide, or the registered buffer's */
+ };
+ 
+ struct kdc_ctx {
+@@ -171,10 +176,14 @@ struct kdc_ctx {
+ 	wait_queue_head_t wq;
+ 	struct list_head live, staged, done;
+ 	struct list_head dev_node; /* kdev->files, under files_mutex */
+-	struct kdc_regbuf *bufs[KDC_MAX_FIXED_BUFS]; /* under ctx->lock */
+ 	u64 epoch, bytes, pinned_pages;
+ 	u32 nr_live, nr_staged, nr_ready, nr_inflight;
+ 	bool closing, resetting;
++	/*
++	 * Last, so the counters every submit and completion touches stay on the
++	 * cache lines they had before registered buffers (one line fewer).
++	 */
++	struct kdc_regbuf *bufs[KDC_MAX_FIXED_BUFS]; /* under ctx->lock */
+ };
+ 
+ /* module-wide counters (debugfs kdc/), for leak checks across removal */
