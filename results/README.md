@@ -120,6 +120,14 @@ repeated from the start.
 
 `improve/ci-local.txt`: `SEED_DIR=... LOCAL_TOOLS=... scripts/ci_local.sh OUT 12-15` from a
 fresh clone of `b081e53`: 407 s, all passed (qtest 42/42 twice, the TCG guest run).
+`improve/fresh-clone.txt`: the README's commands from a fresh clone of `b47bc21` (QEMU
+and kernel builds, qtest on the ASan QEMU, the guest suite on TCG with the IOMMU and on
+KVM with the IOMMU, in the main loop and with three IOThreads, the perf kernel, a frozen
+build, `bench/crc.plan`, and one round each of the A/B of the clone against its own
+frozen build and of the main loop against one IOThread): all passed, 329 s for builds and
+tests, 486 s in all. Its one-round comparisons are single pairs and decide nothing (the
+NOP pair of the identical-build A/B tied at 1.000; one IOThread 1.208 on NOPs one at a
+time).
 
 ## perf round (2026-11-08/09)
 
