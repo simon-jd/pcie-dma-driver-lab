@@ -696,6 +696,41 @@ def t_fault_knobs(t):
     check(t.reg(KDC_REG_STATUS) == 0 and t.qom_get("fault-fatal") is False, "reset clears fatal")
 
 
+def t_fault_hold(t):
+    t.enable()
+    t.set_reg(KDC_REG_SERVICE_NS, 1000)
+    ring = t.queue(1)
+    t.qom_set("fault-hold", 2)
+    check(t.reg(KDC_REG_FAULT_HOLD) == 2, "hold count readable")
+    for cid in (1, 2, 3):
+        ring.put(copy_cmd(t, cid, 64, src=SRC + cid * 4096, dst=DST + cid * 4096)[0])
+    t.settle()
+    t.step(1_000_000)
+    done = ring.poll()
+    check([c["cid"] for c in done] == [3], f"held commands are not serviced, the next one is {done}")
+    check(t.qreg(1, KDC_Q_INFLIGHT) == 2 and t.reg(KDC_REG_FAULT_HOLD) == 0, "both held in flight")
+    t.step(100_000_000)
+    check(not ring.poll(), "held commands never complete by themselves")
+    t.set_qreg(1, KDC_Q_ABORT, 2)
+    t.settle()
+    check([(c["cid"], c["code"]) for c in ring.poll()] == [(2, KDC_SC_ABORTED)], "a held command can be aborted")
+    check(t.qreg(1, KDC_Q_INFLIGHT) == 1, "the other stays held")
+    other = t.queue(2)
+    t.set_reg(KDC_REG_FAULT_HOLD, (2 + 1) << KDC_HOLD_QUEUE_SHIFT | 1)  # one command, queue 2 only
+    ring.put(copy_cmd(t, 4, 64, src=SRC + 4 * 4096, dst=DST + 4 * 4096)[0])
+    other.put(copy_cmd(t, 5, 64, src=SRC + 5 * 4096, dst=DST + 5 * 4096)[0])
+    other.put(copy_cmd(t, 6, 64, src=SRC + 6 * 4096, dst=DST + 6 * 4096)[0])
+    t.settle()
+    t.step(1_000_000)
+    check([c["cid"] for c in ring.poll()] == [4], "a hold for queue 2 leaves queue 1 alone")
+    check([c["cid"] for c in other.poll()] == [6] and t.qreg(2, KDC_Q_INFLIGHT) == 1,
+          "the first command of queue 2 is held")
+    check(t.reg(KDC_REG_FAULT_HOLD) & KDC_HOLD_COUNT_MASK == 0, "the count ran down")
+    t.set_reg(KDC_REG_FAULT_HOLD, 5)
+    t.set_reg(KDC_REG_RESET, KDC_RESET_MAGIC)
+    check(t.reg(KDC_REG_FAULT_HOLD) == 0 and t.qom_get("fault-hold") == 0, "reset clears the hold count")
+
+
 def flr(t):
     """Function-level reset through the PCIe capability, then reprogram config space."""
     pcie = t.find_cap(0x10)
@@ -931,7 +966,7 @@ def t_fuzz(t, iterations=2000):
 
 TESTS = [t_identity, t_queue_config, t_copy_crc, t_copy_crc_table, t_service_time, t_abort, t_phase_and_backpressure,
          t_malformed, t_doorbell_errors, t_ring_dma_fault, t_dma_into_own_bar, t_reset_paths,
-         t_fault_knobs, t_recovery_knobs, t_coalescing, t_pass_interrupts, t_shadow_doorbell, t_shadow_db_off,
+         t_fault_knobs, t_fault_hold, t_recovery_knobs, t_coalescing, t_pass_interrupts, t_shadow_doorbell, t_shadow_db_off,
          t_counters_and_scratch, t_fuzz]
 
 

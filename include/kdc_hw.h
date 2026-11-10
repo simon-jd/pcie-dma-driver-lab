@@ -79,6 +79,17 @@
 #define KDC_REG_FAULT_BAD_CID 0x04c /* RW: corrupt the cid of the next N completions */
 #define KDC_REG_FAULT_BAD_DMA 0x050 /* RW: next N copies target KDC_BAD_DMA_ADDR */
 #define KDC_BAD_DMA_ADDR 0xfffffffffff00000ULL
+/*
+ * RW: hold the next N commands the device fetches, on one queue or on any.
+ * [15:0] N, [23:16] queue + 1 (0: any queue). A held command is device-owned
+ * (counted in KDC_Q_INFLIGHT) but never serviced; it ends only by an abort, a
+ * reset or the device going away. It keeps its slot, so a queue stops fetching
+ * once its ring's worth of commands sits behind it. N counts down as commands
+ * are held.
+ */
+#define KDC_REG_FAULT_HOLD 0x054
+#define KDC_HOLD_COUNT_MASK 0xffff
+#define KDC_HOLD_QUEUE_SHIFT 16
 
 /* Device counters (RO, wrap at 2^32, cleared by reset) */
 #define KDC_REG_STAT_DONE 0x060

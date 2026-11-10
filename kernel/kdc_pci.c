@@ -636,6 +636,7 @@ static void kdc_debugfs_init(struct kdc_dev *kdev)
 		{ "fault_drop", KDC_REG_FAULT_DROP, 0600 },
 		{ "fault_bad_cid", KDC_REG_FAULT_BAD_CID, 0600 },
 		{ "fault_bad_dma", KDC_REG_FAULT_BAD_DMA, 0600 },
+		{ "fault_hold", KDC_REG_FAULT_HOLD, 0600 },
 		{ "scratch", KDC_REG_SCRATCH, 0600 },
 		{ "device_aborted", KDC_REG_STAT_ABORTED, 0400 },
 		{ "device_doorbells", KDC_REG_STAT_DOORBELLS, 0400 },

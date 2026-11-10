@@ -41,6 +41,9 @@ Mutants:
   event-index-not-published  device model never writes the event index, so a
                            driver would skip doorbells an idle device needs
                            (qtest suite)
+  hold-not-honoured        device model services the commands KDC_REG_FAULT_HOLD
+                           should hold, the knob the removal cases rely on
+                           (qtest suite)
   unregister-in-use        KDC_IOC_UNREGISTER unmaps a registered buffer that
                            a command still in the device uses (the driver's
                            WARN in kdc_regbuf_destroy is the named check)
@@ -161,6 +164,11 @@ MUTANTS = {
                 "                          &ev, sizeof(ev)) != MEMTX_OK) {\n",
                 "        if (0) { /* deliberate bug: the event index is never published */\n")],
         qtest=("shadow_doorbell", "event index published after the pass")),
+    "hold-not-honoured": dict(
+        file=QEMU_FILE,
+        edits=[("            if (kdc_slot(q, i)->state == SLOT_BUSY && !kdc_slot(q, i)->held) {\n",
+                "            if (kdc_slot(q, i)->state == SLOT_BUSY) { /* deliberate bug: held commands run */\n")],
+        qtest=("fault_hold", "held commands are not serviced")),
     "unregister-in-use": dict(
         file=KDC_TREE / "kdc_fixed.c",
         edits=[("\tif (b && atomic_read(&b->users)) {\n",

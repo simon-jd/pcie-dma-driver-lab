@@ -23,10 +23,10 @@
  *
  * Fault knobs model a misbehaving device for the driver's recovery paths:
  * a stalled engine, a fatal state, dropped or corrupted completions, DMA to a
- * bad address, a controller that ignores its reset, one that never becomes
- * ready again, and a device that has stopped responding altogether (BAR and
- * config reads return all-ones, no DMA, no interrupts), as after a surprise
- * removal.
+ * bad address, commands held without ever being serviced, a controller that
+ * ignores its reset, one that never becomes ready again, and a device that has
+ * stopped responding altogether (BAR and config reads return all-ones, no DMA,
+ * no interrupts), as after a surprise removal.
  *
  * SPDX-License-Identifier: GPL-2.0-or-later
  */
@@ -62,6 +62,7 @@ typedef enum { SLOT_FREE, SLOT_BUSY, SLOT_DONE } KdcSlotState;
 typedef struct KdcSlot {
     KdcSlotState state;
     bool aborted;
+    bool held; /* KDC_REG_FAULT_HOLD: never serviced */
     uint16_t cid;
     uint16_t code;
     uint32_t result;
@@ -104,7 +105,7 @@ struct KdcState {
     uint64_t dbbuf; /* KDC_REG_DBBUF: page address | KDC_DBBUF_ENABLE */
     uint32_t service_ns;
     uint32_t ctrl, status, err_status, err_info, err_vector;
-    uint32_t fault, fault_drop, fault_bad_cid, fault_bad_dma;
+    uint32_t fault, fault_drop, fault_bad_cid, fault_bad_dma, fault_hold;
     bool stuck; /* KDC_FAULT_STUCK: survives every reset */
     bool gone; /* not responding at all; host-side knob only */
     uint32_t stat_done, stat_aborted, stat_errors, stat_irqs, stat_doorbells;
@@ -188,11 +189,23 @@ static void kdc_reset_state(KdcState *s)
     s->ctrl = s->status = 0;
     s->err_status = s->err_info = 0;
     s->err_vector = s->nqueues;
-    s->fault = s->fault_drop = s->fault_bad_cid = s->fault_bad_dma = 0;
+    s->fault = s->fault_drop = s->fault_bad_cid = s->fault_bad_dma = s->fault_hold = 0;
     s->stat_done = s->stat_aborted = s->stat_errors = 0;
     s->stat_irqs = s->stat_doorbells = s->stat_cq_doorbells = 0;
     s->scratch = 0;
     s->dbbuf = 0;
+}
+
+/* KDC_REG_FAULT_HOLD: should the device hold the command @q just fetched? */
+static bool kdc_hold(KdcState *s, KdcQueue *q)
+{
+    uint32_t sel = (s->fault_hold >> KDC_HOLD_QUEUE_SHIFT) & 0xff;
+
+    if (!(s->fault_hold & KDC_HOLD_COUNT_MASK) || (sel && sel != q->id + 1u)) {
+        return false;
+    }
+    s->fault_hold--;
+    return true;
 }
 
 static void kdc_kick_all(KdcState *s)
@@ -546,6 +559,7 @@ again:
         slot->cid = le16_to_cpu(slot->sqe.cid);
         slot->aborted = false;
         slot->code = kdc_validate_sqe(&slot->sqe);
+        slot->held = slot->code == KDC_SC_SUCCESS && kdc_hold(s, q);
         slot->result = slot->bytes = 0;
         slot->fetched_at = now;
         slot->state = slot->code == KDC_SC_SUCCESS ? SLOT_BUSY : SLOT_DONE;
@@ -597,7 +611,7 @@ static void kdc_engine(KdcQueue *q, int64_t now)
             kdc_execute(q, slot);
         }
         for (i = 0; i < q->slot_count && !next; i++) {
-            if (kdc_slot(q, i)->state == SLOT_BUSY) {
+            if (kdc_slot(q, i)->state == SLOT_BUSY && !kdc_slot(q, i)->held) {
                 next = kdc_slot(q, i);
             }
         }
@@ -869,6 +883,7 @@ static uint64_t kdc_mmio_read(void *opaque, hwaddr addr, unsigned size)
     case KDC_REG_FAULT_DROP: return s->fault_drop;
     case KDC_REG_FAULT_BAD_CID: return s->fault_bad_cid;
     case KDC_REG_FAULT_BAD_DMA: return s->fault_bad_dma;
+    case KDC_REG_FAULT_HOLD: return s->fault_hold;
     case KDC_REG_STAT_DONE: return s->stat_done;
     case KDC_REG_STAT_ABORTED: return s->stat_aborted;
     case KDC_REG_STAT_ERRORS: return s->stat_errors;
@@ -945,6 +960,9 @@ static void kdc_mmio_write(void *opaque, hwaddr addr, uint64_t val64,
     case KDC_REG_FAULT_BAD_DMA:
         s->fault_bad_dma = val;
         break;
+    case KDC_REG_FAULT_HOLD:
+        s->fault_hold = val & 0xffffff;
+        break;
     case KDC_REG_SCRATCH:
         s->scratch = val;
         break;
@@ -976,7 +994,7 @@ static const MemoryRegionOps kdc_mmio_ops = {
 
 enum {
     KNOB_SERVICE_NS, KNOB_STALL, KNOB_FATAL, KNOB_DROP, KNOB_BAD_CID, KNOB_BAD_DMA,
-    KNOB_RESET_HANG, KNOB_STUCK, KNOB_GONE, KNOB_SCRATCH,
+    KNOB_HOLD, KNOB_RESET_HANG, KNOB_STUCK, KNOB_GONE, KNOB_SCRATCH,
     /* read-only device counters, for host-side measurements */
     KNOB_STAT_DOORBELLS, KNOB_STAT_CQ_DOORBELLS, KNOB_STAT_IRQS, KNOB_STAT_DONE,
 };
@@ -988,6 +1006,7 @@ static uint32_t *kdc_knob_ptr(KdcState *s, uintptr_t knob)
     case KNOB_DROP: return &s->fault_drop;
     case KNOB_BAD_CID: return &s->fault_bad_cid;
     case KNOB_BAD_DMA: return &s->fault_bad_dma;
+    case KNOB_HOLD: return &s->fault_hold;
     case KNOB_SCRATCH: return &s->scratch;
     case KNOB_STAT_DOORBELLS: return &s->stat_doorbells;
     case KNOB_STAT_CQ_DOORBELLS: return &s->stat_cq_doorbells;
@@ -1202,6 +1221,8 @@ static void kdc_class_init(ObjectClass *oc, const void *data)
                               kdc_set_u32, NULL, (void *)(uintptr_t)KNOB_BAD_CID);
     object_class_property_add(oc, "fault-bad-dma", "uint32", kdc_get_u32,
                               kdc_set_u32, NULL, (void *)(uintptr_t)KNOB_BAD_DMA);
+    object_class_property_add(oc, "fault-hold", "uint32", kdc_get_u32, kdc_set_u32,
+                              NULL, (void *)(uintptr_t)KNOB_HOLD);
     object_class_property_add(oc, "fault-stall", "bool", kdc_get_bool, kdc_set_bool,
                               NULL, (void *)(uintptr_t)KNOB_STALL);
     object_class_property_add(oc, "fault-fatal", "bool", kdc_get_bool, kdc_set_bool,

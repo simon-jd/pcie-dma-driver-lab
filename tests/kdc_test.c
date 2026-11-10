@@ -88,6 +88,8 @@ static void release_device_knobs(void);
 #define FAULT_FATAL 2
 #define FAULT_RESET_HANG 4
 #define FAULT_STUCK 8
+#define HOLD_QUEUE_SHIFT 16 /* KDC_REG_FAULT_HOLD: [15:0] count, [23:16] queue + 1 */
+#define HOLD_COUNT_MASK 0xffff
 #define HOLD_MS 60000 /* timeout for commands a test holds device-owned on purpose */
 
 static unsigned ncpus;
@@ -2336,6 +2338,7 @@ static void *remover_main(void *arg)
 							dst + slot * 2 * PAGE, 1 + r->submitted % 5000);
 			s.flags = r->submitted % 3 == 0 ? KDC_SUBMIT_ZEROCOPY : 0;
 			s.timeout_ms = HOLD_MS;
+			s.queue = 0; /* queue 1 is the held commands' */
 			if (submit(r->fd, &s) == 0)
 				r->submitted++;
 			else if (errno == ENODEV)
@@ -2375,16 +2378,52 @@ static void *remover_main(void *arg)
 	return NULL;
 }
 
+/*
+ * Hold @n commands of @fd in the device (KDC_REG_FAULT_HOLD): fetched, device-owned,
+ * never serviced, so they are certainly outstanding when the device goes away. The
+ * hold is for queue @q, which nothing else submits to meanwhile.
+ */
+static void hold_in_device(int dev, int fd, unsigned q, unsigned n, uint8_t *src, uint8_t *dst)
+{
+	knob(dev, "fault_hold", (q + 1) << HOLD_QUEUE_SHIFT | n);
+	for (unsigned i = 0; i < n; i++) {
+		struct kdc_submit s = held(fd, 1 + i, src + i * PAGE, dst + i * 2 * PAGE, 3000,
+					   i % 2 ? KDC_SUBMIT_ZEROCOPY : 0, HOLD_MS, q);
+		CHECK(submit(fd, &s) == 0);
+	}
+	for (int i = 0; i < 5000 && read_knob(dev, "fault_hold") & HOLD_COUNT_MASK; i++)
+		sleep_ms(1);
+	CHECK((read_knob(dev, "fault_hold") & HOLD_COUNT_MASK) == 0); /* every one fetched and held */
+	CHECK(stats(fd).device_owned == n);
+}
+
+/* The held commands ended exactly once, each with ENODEV, then the file reports ENODEV. */
+static void held_ended(int fd, unsigned n)
+{
+	uint8_t seen[16] = { 0 };
+
+	for (unsigned i = 0; i < n; i++) {
+		struct kdc_completion c;
+		CHECK(read(fd, &c, sizeof(c)) == sizeof(c));
+		CHECK(c.id >= 1 && c.id <= n && !seen[c.id]);
+		seen[c.id] = 1;
+		CHECK(c.status == -ENODEV && (c.flags & KDC_COMPL_RESET)); /* ended by the removal */
+	}
+	struct kdc_completion c;
+	ERR(read(fd, &c, sizeof(c)), ENODEV);
+}
+
 static void removal_under_load(const char *qom_id, bool surprise, unsigned *nodev_out)
 {
-	enum { THREADS = 3 };
+	enum { THREADS = 3, HELD = 4 };
 	int dev = kdc_index(BDF1);
 	struct remover *r = calloc(THREADS, sizeof(*r));
 	pthread_t t[THREADS];
 	char request[96];
 
 	CHECK(dev >= 0 && r);
-	int idle = open_dev(dev), staged = open_dev(dev), fixed = open_dev(dev);
+	int idle = open_dev(dev), staged = open_dev(dev), fixed = open_dev(dev), holder = open_dev(dev);
+	uint8_t *hsrc = map_pages(HELD), *hdst = map_pages(2 * HELD);
 	uint8_t *buf = map_pages(4), *fbuf = map_pages(4);
 	struct kdc_submit s = req(staged, 1, buf, buf + 2 * PAGE, 100);
 	s.flags = KDC_SUBMIT_BATCH;
@@ -2405,6 +2444,8 @@ static void removal_under_load(const char *qom_id, bool surprise, unsigned *node
 	for (int i = 0; i < THREADS; i++)
 		while (!atomic_load(&r[i].ready))
 			sleep_ms(1);
+	/* while the threads keep submitting: a known number certainly in the device */
+	hold_in_device(dev, holder, 1, HELD, hsrc, hdst);
 	struct expect e = { 0 };
 	if (surprise) {
 		e = expect_begin("surprise", "device not responding");
@@ -2442,11 +2483,15 @@ static void removal_under_load(const char *qom_id, bool surprise, unsigned *node
 	ERR(ioctl(idle, KDC_IOC_STATS, &(struct kdc_stats){ 0 }), ENODEV);
 	CHECK(read(fixed, &c, sizeof(c)) == sizeof(c) && c.status == -ENODEV);
 	ERR(unreg_buf(fixed, fi), ENODEV);
-	CHECK(close(staged) == 0 && close(idle) == 0 && close(fixed) == 0);
+	held_ended(holder, HELD);
+	CHECK(close(staged) == 0 && close(idle) == 0 && close(fixed) == 0 && close(holder) == 0);
 	munmap(fbuf, 4 * PAGE);
-	say("  %s: %u commands from %d threads, %u completed, %u ended with ENODEV, each once",
-	    surprise ? "removal_surprise" : "removal_orderly", submitted, THREADS, ok, nodev);
-	CHECK(nodev >= 1 && ok + nodev == submitted);
+	munmap(hsrc, HELD * PAGE);
+	munmap(hdst, 2 * HELD * PAGE);
+	say("  %s: %u commands from %d threads, %u completed, %u ended with ENODEV, each once; "
+	    "%d held in the device, each ended with ENODEV",
+	    surprise ? "removal_surprise" : "removal_orderly", submitted, THREADS, ok, nodev, HELD);
+	CHECK(ok + nodev == submitted);
 	globals_idle();
 	free(r);
 	*nodev_out = nodev;

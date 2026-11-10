@@ -87,7 +87,7 @@ struct kdc_dev {
 	struct mutex files_mutex;
 	struct list_head files;
 	struct dentry *debugfs;
-	struct kdc_dbg_reg dbg_regs[10];
+	struct kdc_dbg_reg dbg_regs[11];
 	bool irqs_requested;
 	/* recovery, kdc_recover.c */
 	struct mutex reset_lock;
