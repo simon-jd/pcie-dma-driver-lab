@@ -98,8 +98,8 @@ pinned versions and checksums in `scripts/`, then runs the guest suite under TCG
 with a strict IOMMU. From a fresh clone the same steps took 407 s on four threads
 of the build host (`scripts/ci_local.sh`,
 [results/improve/ci-local.txt](results/improve/ci-local.txt)); on a GitHub runner
-the first run of the first published commit took 21 minutes; this branch has not
-run there.
+the first run of the first published commit took 21 minutes and the improvement
+round's branch (`8009a51`) 9 minutes, all steps passing.
 
 A guest run fails on any kernel, sanitizer, lockdep, DMA-API, DMAR or driver
 report outside the windows in which a test expects one, on a kmemleak record

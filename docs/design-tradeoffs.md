@@ -820,7 +820,7 @@ first published commit, 360 s for the performance round and 407 s for the improv
 round's code (`fbb9d22`'s parent `b081e53`; the qtest suite now runs twice as many tests)
 (`scripts/ci_local.sh`, output in `results/round3/ci-local.txt`, `results/perf/ci-local.txt`
 and `results/improve/ci-local.txt`; tarballs copied in, no apt step). On a GitHub runner the first run of the published commit took 21
-minutes, all steps passing; the improvement round's branch has not run there. The qtest
+minutes and the improvement round's branch (`8009a51`) 9 minutes, all steps passing. The qtest
 suite now runs every test twice (main loop and IOThreads, 42 runs). The runner has no KVM, so CI times
 nothing.
 
