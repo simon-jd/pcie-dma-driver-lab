@@ -768,18 +768,18 @@ rule's second condition missed once in each session on a different arm (`iCfixed
 batched fixed 0.985; `iDfixed` 4 KiB bounce one at a time 0.988), within 1.5%, not
 reproduced in the other session (check D: 1.011 and 1.017; 0.988 and 1.008).
 
-Before/after against the published `main` (`iE`, and `iD` for the main loop): 32 in
-flight 1.10x and 1.08x, one shared file 1.39x/1.28x (NOP/4 KiB) and 1.45x/1.26x, 32
-batched 1.02x; one command at a time and three threads on their own files 0.98x to 1.01x
-(three threads 0.98x and batched 0.99x in `iD` are among the README's losses). 64 KiB one
-at a time was inside that range in the round (0.985 in `iE`, 1.000 in `iD`, and 0.982
-with 1 of 7 pairs won in `iDfixed` without an IOMMU) but lost in check D: 0.962 and 0.961,
-with 5 and 6 of 7 pairs slower (rule 1 asks for 6), where three of the final build's seven
-boots in each session ran about 9% slower on that arm (64.0-68.0k against 72.7-75.1k/s),
-as two or three of o3's and r1c's did and none of main's; check D's registered-buffer
-sessions had 0.993 and 1.005 there. 4 KiB zero-copy one at a time in the fixed plan lost
-too: 0.991 with 0 of 7 pairs won in `iDfixed`, 0.949 (4 of 6 pairs slower, rule 1 asks for
-5) and 0.980 in check D, from slow boots of the same kind. With one IOThread: one at a
+Before/after against the published `main` (`iE`, and `iD` for the main loop): 32 in flight
+1.10x and 1.08x, one shared file 1.39x/1.28x (NOP/4 KiB) and 1.45x/1.26x, 32 batched
+1.02x; one command at a time and three threads on their own files 0.98x to 1.01x (three
+threads 0.98x and batched 0.99x in `iD` are among the README's losses). 64 KiB one at a
+time was inside that range in the round (0.985 in `iE`, 1.000 in `iD`, and 0.982 with 1 of
+7 pairs won in `iDfixed` without an IOMMU) but lost in check D: 0.962 and 0.961, with 5
+and 6 of 7 pairs slower (check D's rule asks for 6), where three of the final build's
+seven boots in each session ran about 9% slower on that arm (64.0-68.0k against
+72.7-75.1k/s), as two or three of o3's and r1c's did and none of main's; check D's fixed
+plan had 0.993 and 1.005 there. 4 KiB zero-copy one at a time in the fixed plan lost too:
+0.991 with 0 of 7 pairs won in `iDfixed`, 0.949 (4 of 6 pairs slower; check D's rule asks
+for 5) and 0.980 in check D, from slow boots of the same kind. With one IOThread: one at a
 time 1.17x-1.21x (bounce 1.15x, 64 KiB 1.08x), three threads 1.38x, batched 1.50x; 32 in
 flight 0.93x.
 
