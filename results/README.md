@@ -1,12 +1,13 @@
 # Results
 
-Raw output only; every number below points at the file it comes from. All runs
-are on emulated hardware (QEMU 10.2.1) on one shared build host (Intel
-i9-13900K). The matrix and deliberate-bug runs are correctness runs; their
-seconds include the whole guest boot and, for the KASAN kernel, a kmemleak
-scan. Timing comes only from `round3/perf/`, `perf/` and `improve/`, on KVM with a
-kernel without debug options. Commits named below belong to the development history, which was
-squashed into a single commit when the repository was published.
+Raw output only; every number below points at the file it comes from. All runs are on
+emulated hardware (QEMU 10.2.1) on one shared build host (Intel i9-13900K). The matrix
+and deliberate-bug runs are correctness runs; their seconds include the whole guest boot
+and, for the KASAN kernel, a kmemleak scan. Timing comes only from `round3/perf/`,
+`perf/` and `improve/`, on KVM with a kernel without debug options. Commits named in the
+round 1 to round 3 sections belong to the development history, which was squashed into a
+single commit (`f5c0980`) when the repository was published; the commits named in the
+performance and improvement round sections are in the published history.
 
 ## improvement round (2026-11-10)
 
@@ -22,14 +23,18 @@ attributed to their CPUs and shown as "IOThreads us" and "host CPU us" (every QE
 thread) per command; `--skip-configs` leaves a build out of a configuration its QEMU
 does not have; `bench_compare.py --new-config` pairs two configurations of one build.
 
-Build names: `base` the published `main` (`1a8de5c`); `o3r` the perf round's step before
+Build names: `base` the previous `main` (`1a8de5c`); `o3r` the perf round's step before
 registered buffers (`68094ba`), its kernel and client rebuilt (the kernel byte-identical
 to the perf round's frozen o3); `p16`, `p32`, `p3536` o3r plus a pad of inert text after
 the driver, which came out as one binary (see below); `r1` registered buffers moved to
-`kdc_fixed.c` (as a working tree; `r1c` the same as a commit); `i1` + the hold knob; `i3` +
-the id hash and batched `read()`; `i4` + IOThread mode (the branch's final code). All
-builds of a session share one QEMU binary except where the QEMU is the change (i1, i4).
-Each boot's `run.json` has the build's `build_info` (commit, source and file hashes).
+`kdc_fixed.c` (as a working tree; `r1c` the same as a commit); `i1` + the hold knob;
+`i3` + the id hash and batched `read()`; `i4` + IOThread mode (the branch's final code).
+All builds of a session share one QEMU binary except where the QEMU is the change (i1,
+i4). Each boot's `run.json` has the build's `build_info` (commit, source and file
+hashes). For r1c, i1, i3 and i4 that commit is an unpublished candidate: r1c's tree is
+`eaf9e60`'s; i1's and i3's code in `iD` and `iE` is `600a551`'s and `675ab03`'s; i4's is
+`b081e53`'s without the qtest settle described below; and `iC`'s i1 and i3 still had the
+device-wide hold count.
 
 | Directory | Command (`taskset -c 10-15,24-31 python3 scripts/run_bench.py ...`) | Boots |
 |---|---|---|
@@ -153,14 +158,14 @@ Every run compares frozen builds (`scripts/snapshot_build.py`, under `.cache/ab/
 one quiet window: `scripts/run_bench.py --builds ...` boots them in turn, round by
 round; `scripts/bench_report.py` writes `summary.md` (one table per configuration and
 build), `scripts/bench_compare.py` the paired `compare-<new>-vs-<base>.md/json` with the
-keep/reject rule. Same guest and pinning as round 3 (3 vCPUs on host CPUs 2, 4, 6, QEMU's
-main loop on 8), QEMU at nice 0, `kdc.bounce_max=65536`, rejection thresholds unchanged.
-Build names: `main` the published commit; `o1` + CQ head every 16 completions; `o2` +
-two interrupts per pass; `o3` + shadow doorbells, event index, ioeventfd; `o4` + one
-reader woken per completion (rejected, not on the branch); `o6` = o4 + registered
-buffers (measured, then rebuilt without o4); `o5` = o3 + registered buffers, the
-branch's final code. Each build's `build.json` (commit, source hashes) is in the run's
-`boot-N/run.json` under `build_info`.
+keep/reject rule. Same guest and pinning as round 3 (3 vCPUs on host CPUs 2, 4, 6,
+QEMU's main loop on 8), QEMU at nice 0, `kdc.bounce_max=65536`, rejection thresholds
+unchanged. Build names: `main` the code as first published (`b95f7ae`); `o1` + CQ head
+every 16 completions; `o2` + two interrupts per pass; `o3` + shadow doorbells, event
+index, ioeventfd; `o4` + one reader woken per completion (rejected, not on the branch);
+`o6` = o4 + registered buffers (measured, then rebuilt without o4); `o5` = o3 +
+registered buffers, the branch's final code. Each build's `build.json` (commit, source
+hashes) is in the run's `boot-N/run.json` under `build_info`.
 
 | Directory | Command (`taskset -c 10-15,24-31 python3 scripts/run_bench.py ...`) | Boots | Windows (rejected) |
 |---|---|---|---|

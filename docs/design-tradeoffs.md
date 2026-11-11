@@ -218,10 +218,11 @@ Details:
 - **Host requests.** Hot-unplug and the vanished device need the host; the
   guest logs `KDC_HOST <request>` and the harness performs it over QMP.
 
-## Performance on KVM (round 3 study of the published code)
+## Performance on KVM (round 3 study, before the optimization rounds)
 
-The study below measured `main` and set the defaults it ships with; the
-optimizations that followed, and their measurements, are in the next section.
+The study below measured the driver before it was published (`7b76676`, development
+history) and set the defaults it was first published with; the optimizations that
+followed, and their measurements, are in the next two sections.
 
 **What the numbers measure.** The device is emulated, so these are the guest
 driver plus KVM exits plus QEMU's device model around a modeled service time,
@@ -334,19 +335,20 @@ counters can resolve per window.
 ## Performance round (2026-11-09): optimizing along the command path
 
 **Method.** Each change was frozen as a build (`scripts/snapshot_build.py`: release QEMU,
-`perf` kernel, benchmark client) and measured against the published `main` and the
-previous kept build inside one quiet window: `run_bench.py --builds main,o1,...` boots
-the builds in turn, one 1-second window per arm per boot (`bench/ab.plan`), seven
-rounds, QEMU at nice 0. `scripts/bench_compare.py` pairs the n-th boot of one build with
-the n-th boot of the other, which ran next to each other in time. The rule, fixed
-before the runs it judged: the arms a change targets must win in all but at most one
-of at least six pairs against the previous kept build, and no arm may end with a
-median below the lowest value the previous build had in any pair. Figures are medians
-over the seven pairs. Change 1 was decided in its own session (`results/perf/o1-vs-main`),
-changes 2 to 4 in one session of all frozen builds (`results/perf/chain`), change 5 in
-`results/perf/final` and `results/perf/fixed`. What they measure is unchanged: the guest driver, KVM exits and
-QEMU's device model around a modeled service time of 0, on one host; not device
-throughput. Raw data and the comparison tables: `results/perf/`.
+`perf` kernel, benchmark client) and measured against the code as first published (`main`
+at `b95f7ae`) and the previous kept build inside one quiet window:
+`run_bench.py --builds main,o1,...` boots the builds in turn, one 1-second window per arm
+per boot (`bench/ab.plan`), seven rounds, QEMU at nice 0. `scripts/bench_compare.py` pairs
+the n-th boot of one build with the n-th boot of the other, which ran next to each other
+in time. The rule, fixed before the runs it judged: the arms a change targets must win in
+all but at most one of at least six pairs against the previous kept build, and no arm may
+end with a median below the lowest value the previous build had in any pair. Figures are
+medians over the seven pairs. Change 1 was decided in its own session
+(`results/perf/o1-vs-main`), changes 2 to 4 in one session of all frozen builds
+(`results/perf/chain`), change 5 in `results/perf/final` and `results/perf/fixed`. What
+they measure is unchanged: the guest driver, KVM exits and QEMU's device model around a
+modeled service time of 0, on one host; not device throughput. Raw data and the comparison
+tables: `results/perf/`.
 
 At the start, one 4 KiB command cost 3.65 VM exits: two MMIO exits to QEMU (the SQ
 doorbell and the CQ head write, about 3 us of vCPU time each), one HLT, and the rest;
@@ -549,7 +551,7 @@ margin and the registered-buffer cost.)
 ## Improvement round (2026-11-10): what the performance round left open
 
 **Method.** As in the performance round: every build frozen (`scripts/snapshot_build.py`)
-and compared inside one quiet window with the published `main` (frozen as `base`) and
+and compared inside one quiet window with the previous `main` (`1a8de5c`, frozen as `base`) and
 the previous kept step, seven paired boots, the decision rule written down before the
 runs it judged. Effects under 3% had to hold in two sessions at least an hour apart.
 What the numbers measure is unchanged: the guest driver, KVM exits and QEMU's device
@@ -631,14 +633,14 @@ Base was below o3r on every arm in both sessions (12 of 12), by 0.3-1.7% in `i2a
 0.8-4.3% in `i2b`. The three names of the p16 binary spread among themselves by up to
 4.1% on the two one-file arms and up to 2.2% on the others, which is the noise any
 single-session comparison here carries; their medians straddle 1.0. (o3r's kernel is
-byte-identical to the perf round's frozen o3; r1 has main's benchmark client, o3r o3's,
+byte-identical to the perf round's frozen o3; r1 has base's benchmark client, o3r o3's,
 which check C showed not to matter.) r1, whose hot code is o3's but whose layout after
 the driver differs by 5344 bytes, tied o3r within 0.5% on four arms in `i2b` (on the two
 one-file arms +1.5% for 4 KiB and -3.2% for NOPs; check D had 1.000 and 1.013, and 0.994
 and 1.004, so the NOP loss did not repeat) and was at 1.004 and 1.002 at 32 in flight.
 So in `i2b` most of the cost was the code in the hot functions, not where the code after
 them landed. Check D (fresh clones, two sessions, `results/improve/check-d/`) found less:
-at 32 in flight main was at 0.978 and 0.972 of o3 and r1c at 0.984 and 0.992 (2 and 1 of
+at 32 in flight base was at 0.978 and 0.972 of o3 and r1c at 0.984 and 0.992 (2 and 1 of
 7 pairs), so the move took back 30% of the cost in one session and 72% in the other; on
 the other twelve arms r1c was within 0.988-1.013 of o3.
 
@@ -659,7 +661,7 @@ in either session, and against base it won 7 of 7 on 4 KiB with three threads on
 file in both (check D: 5 and 6 of 7, 1.020 and 1.024). The registered-buffer arms
 (`iCfixed`, `iDfixed`) are in section 5.
 
-### 3. One shared file: an id hash and one lock round per read() batch: kept
+### 3. One shared file: an id hash and two lock rounds per read() batch: kept
 
 Three threads on one file got half of three files (486k vs 952k/s, 4 KiB, in the perf
 round). The file lock was taken five times per command (twice in submit, once when the
@@ -755,7 +757,7 @@ Costs on the main-loop path: none that met the rule. i4 against i3 in the main l
 NOPs one at a time 0.987, just below i3's lowest pair; `iE` 1.008 and no arm below i3's
 minimum. Within the rule but below i3 in both sessions: 4 in flight 0.984 and 0.981 (4 of
 7 pairs slower in each). Check D has no i3 build; it measured the final code at 0.991 and
-0.994 of main there.
+0.994 of base there.
 
 ### 5. Registered buffers after the move, and the before/after
 
@@ -768,20 +770,20 @@ rule's second condition missed once in each session on a different arm (`iCfixed
 batched fixed 0.985; `iDfixed` 4 KiB bounce one at a time 0.988), within 1.5%, not
 reproduced in the other session (check D: 1.011 and 1.017; 0.988 and 1.008).
 
-Before/after against the published `main` (`iE`, and `iD` for the main loop): 32 in flight
-1.10x and 1.08x, one shared file 1.39x/1.28x (NOP/4 KiB) and 1.45x/1.26x, 32 batched
-1.02x; one command at a time and three threads on their own files 0.98x to 1.01x (three
-threads 0.98x and batched 0.99x in `iD` are among the README's losses). 64 KiB one at a
-time was inside that range in the round (0.985 in `iE`, 1.000 in `iD`, and 0.982 with 1 of
-7 pairs won in `iDfixed` without an IOMMU) but lost in check D: 0.962 and 0.961, with 5
-and 6 of 7 pairs slower (check D's rule asks for 6), where three of the final build's
-seven boots in each session ran about 9% slower on that arm (64.0-68.0k against
-72.7-75.1k/s), as two or three of o3's and r1c's did and none of main's; check D's fixed
-plan had 0.993 and 1.005 there. 4 KiB zero-copy one at a time in the fixed plan lost too:
-0.991 with 0 of 7 pairs won in `iDfixed`, 0.949 (4 of 6 pairs slower; check D's rule asks
-for 5) and 0.980 in check D, from slow boots of the same kind. With one IOThread: one at a
-time 1.17x-1.21x (bounce 1.15x, 64 KiB 1.08x), three threads 1.38x, batched 1.50x; 32 in
-flight 0.93x.
+Before/after against the previous `main` (`1a8de5c`; `iE`, and `iD` for the main loop):
+32 in flight 1.10x and 1.08x, one shared file 1.39x/1.28x (NOP/4 KiB) and 1.45x/1.26x,
+32 batched 1.02x; one command at a time and three threads on their own files 0.98x to
+1.01x (three threads 0.98x and batched 0.99x in `iD` are among the README's losses).
+64 KiB one at a time was inside that range in the round (0.985 in `iE`, 1.000 in `iD`, and
+0.982 with 1 of 7 pairs won in `iDfixed` without an IOMMU) but lost in check D: 0.962 and
+0.961, with 5 and 6 of 7 pairs slower (check D's rule asks for 6), where three of the
+final build's seven boots in each session ran about 9% slower on that arm (64.0-68.0k
+against 72.7-75.1k/s), as two or three of o3's and r1c's did and none of base's; check D's
+fixed plan had 0.993 and 1.005 there. 4 KiB zero-copy one at a time in the fixed plan lost
+too: 0.991 with 0 of 7 pairs won in `iDfixed`, 0.949 (4 of 6 pairs slower; check D's rule
+asks for 5) and 0.980 in check D, from slow boots of the same kind. With one IOThread: one
+at a time 1.17x-1.21x (bounce 1.15x, 64 KiB 1.08x), three threads 1.38x, batched 1.50x;
+32 in flight 0.93x.
 
 ### What limits it now, and what was not done
 
@@ -811,18 +813,22 @@ flight 0.93x.
 10.2.1 with the device (release and ASan/UBSan), runs the qtest suite on both,
 fetches Linux 6.12.41 and builds the KASAN kernel with the driver and the
 guest clients. The QEMU, glib and Linux versions and SHA256 checksums are the
-ones pinned in `scripts/`; the actions are pinned by commit; the Ubuntu
-packages (compiler, flex, bison, libelf, static BusyBox) come from the runner
-image and are not pinned. It then runs the guest suite under TCG with a strict
-IOMMU. The whole job fits easily in a 30-minute budget: from a fresh clone the
-same steps took 363 s on four threads of the build host with `-j4` for the
-first published commit, 360 s for the performance round and 407 s for the improvement
-round's code (`fbb9d22`'s parent `b081e53`; the qtest suite now runs twice as many tests)
-(`scripts/ci_local.sh`, output in `results/round3/ci-local.txt`, `results/perf/ci-local.txt`
-and `results/improve/ci-local.txt`; tarballs copied in, no apt step). On a GitHub runner the first run of the published commit took 21
-minutes and the improvement round's branch (`8009a51`) 9 minutes, all steps passing. The qtest
-suite now runs every test twice (main loop and IOThreads, 42 runs). The runner has no KVM, so CI times
-nothing.
+ones pinned in `scripts/`; the actions are pinned by commit; the compiler and
+the Ubuntu packages are not pinned: in the runs of `8009a51` GCC 13.3.0, flex,
+bison and static BusyBox came with the runner image, and the job's
+`apt-get install` added libelf and ninja from Ubuntu's archive. It then runs
+the guest suite under TCG with a strict IOMMU. The whole job fits easily in a
+30-minute budget: from a fresh clone the same steps took 363 s on four threads
+of the build host with `-j4` for the first published commit, 360 s for the
+performance round and 407 s for the improvement round's code (`fbb9d22`'s
+parent `b081e53`; the qtest suite now runs twice as many tests)
+(`scripts/ci_local.sh`, output in `results/round3/ci-local.txt`,
+`results/perf/ci-local.txt` and `results/improve/ci-local.txt`; tarballs
+copied in, no apt step). On a GitHub runner the first run of the first
+published commit took 21 minutes and the improvement round's code (`8009a51`)
+9 minutes on its branch and 14 on `main`, all steps passing. The qtest suite
+now runs every test twice (main loop and IOThreads, 42 runs). CI runs the
+guest only under TCG, so it times nothing.
 
 ## Not done
 

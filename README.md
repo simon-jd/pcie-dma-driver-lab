@@ -13,11 +13,11 @@ faults with and without an IOMMU, a no-overlapping-destinations rule), a KVM
 study of what each command costs, and two rounds of optimizations along that path.
 The hardware exists only in QEMU; nothing here ran on a physical device.
 
-Published `main` against this branch, seven paired boots in one quiet window (session `iE`;
-the IOMMU row `iDfixed`; check D reran both from fresh clones in two sessions); the queues
-run in QEMU's main loop unless `iothreads=` is set:
+The previous `main` (`1a8de5c`) against this branch, seven paired boots in one quiet window
+(session `iE`; the IOMMU row `iDfixed`; check D reran both from fresh clones in two
+sessions); the queues run in QEMU's main loop unless `iothreads=` is set:
 
-| KVM, 4 KiB unless noted | published `main` | this branch | this branch, one IOThread |
+| KVM, 4 KiB unless noted | previous `main` (`1a8de5c`) | this branch | this branch, one IOThread |
 | --- | --- | --- | --- |
 | one at a time; NOP | 150.0k, 6.2 us; 175.4k | 149.3k (0.99x); 176.1k | 176.2k (1.17x), 5.3 us; 212.2k (1.21x) |
 | 32 in flight, a doorbell each; batched | 568.1k; 670.7k | 621.4k (1.10x); 690.2k (1.02x) | 522.0k (0.93x); 710.1k (1.07x) |
@@ -30,12 +30,12 @@ run in QEMU's main loop unless `iothreads=` is set:
 What changed: the removal tests hold a known number of commands in the device, so they no
 longer depend on timing; the registered-buffer code moved out of the functions the other
 paths run, which took back part of the 1-4% it cost them; a file's commands are found
-through a hash and `read()` takes its completions in one lock round (one shared file
-1.28x-1.39x, 1.25x-1.45x in check D); and the queues can run in IOThreads without the BQL.
-One IOThread wins where QEMU's main loop was the limit and loses where a busy device used
-to batch for free, so it is an option, not the default. Numbers are the guest driver plus
-KVM exits plus QEMU's device model around a modeled service time of 0, not device
-throughput; the IOThread column uses one more host CPU
+through a hash and `read()` takes a batch of completions in two lock rounds instead of two
+per completion (one shared file 1.28x-1.39x, 1.25x-1.45x in check D); and the queues can
+run in IOThreads without the BQL. One IOThread wins where QEMU's main loop was the limit
+and loses where a busy device used to batch for free, so it is an option, not the default.
+Numbers are the guest driver plus KVM exits plus QEMU's device model around a modeled
+service time of 0, not device throughput; the IOThread column uses one more host CPU
 ([design trade-offs](docs/design-tradeoffs.md#improvement-round-2026-11-10-what-the-performance-round-left-open), [results](results/README.md)).
 
 Limitations: emulated device and IOMMU only, one host; IOThread mode refuses TCG behind an
@@ -91,15 +91,16 @@ three (one per vCPU, on CPUs 3, 5, 7, the vCPU cores' SMT siblings);
 `--builds tree` is the checkout's own build. The published runs and their exact
 commands are listed in [results/README.md](results/README.md).
 
-CI (`.github/workflows/ci.yml`, `ubuntu-24.04`) builds QEMU with the device,
-runs the qtest suite on both builds (each test in the main loop and with
-IOThreads) and builds the KASAN kernel with the driver and the clients, from the
-pinned versions and checksums in `scripts/`, then runs the guest suite under TCG
-with a strict IOMMU. From a fresh clone the same steps took 407 s on four threads
-of the build host (`scripts/ci_local.sh`,
+CI (`.github/workflows/ci.yml`, `ubuntu-24.04`) builds QEMU with the device, runs
+the qtest suite on both builds (each test in the main loop and with IOThreads)
+and builds the KASAN kernel with the driver and the clients, from the pinned
+versions and checksums in `scripts/`, then runs the guest suite under TCG with a
+strict IOMMU. From a fresh clone the same steps took 407 s on four threads of the
+build host (`scripts/ci_local.sh`,
 [results/improve/ci-local.txt](results/improve/ci-local.txt)); on a GitHub runner
 the first run of the first published commit took 21 minutes and the improvement
-round's branch (`8009a51`) 9 minutes, all steps passing.
+round's code (`8009a51`) 9 minutes on its branch and 14 on `main`, all steps
+passing.
 
 A guest run fails on any kernel, sanitizer, lockdep, DMA-API, DMAR or driver
 report outside the windows in which a test expects one, on a kmemleak record
