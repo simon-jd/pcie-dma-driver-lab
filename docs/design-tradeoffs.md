@@ -481,14 +481,14 @@ In the earlier session with the same code (`results/perf/chain`, o6 vs o4) that 
 passed and the delayed-coalescing arm missed by a similar margin instead.
 
 The independent check (`results/perf/check-c/`, fresh clones, four more sessions) shows
-the cost is larger than that session suggested and is real. (The improvement round found
-it in the hot functions and moved the fixed path out of them; section 2 there.) At 32 in flight with a
-doorbell each, the final build against o3 had median ratios of 0.991, 0.963, 0.985,
-0.981 and 0.983 in the five sessions, with 1, 0, 2, 3 and 1 of 7 pairs faster: a cost
-of 1-4%, about 2% typically (`vCPU us` per command 1.60 -> 1.65 and 1.58 -> 1.63 in two
-of the sessions, unchanged in a third). Batched
-at 32 and the three-thread arms lose up to about 2% in some sessions and tie in others;
-one command at a time shows nothing (0.990 to 1.013). Where it is:
+the cost is larger than that session suggested and is real. (The improvement round moved
+the fixed path out of the hot functions, which took back part of the cost; section 2
+there.) At 32 in flight with a doorbell each, the final build against o3 had median
+ratios of 0.991, 0.963, 0.985, 0.981 and 0.983 in the five sessions, with 1, 0, 2, 3
+and 1 of 7 pairs faster: a cost of 1-4%, about 2% typically (`vCPU us` per command
+1.60 -> 1.65 and 1.58 -> 1.63 in two of the sessions, unchanged in a third). Batched at
+32 and the three-thread arms lose up to about 2% in some sessions and tie in others; one
+command at a time shows nothing (0.990 to 1.013). Where it is:
 
 - **Not QEMU.** The two QEMU binaries come from the same source but differ by 208 bytes
   (their build directories). The final kernel and client on o3's QEMU still lose (0.982,
@@ -588,7 +588,7 @@ Cost: none measured. `iC`, i1 against r1c, 13 arms: medians 0.991 to 1.011, none
 r1c's lowest pair (`results/improve/iC/compare-i1-vs-r1c.md`; that build still had a
 device-wide count, the final knob adds one comparison per fetched command).
 
-### 2. The registered-buffer cost: in the hot functions, removed by moving the fixed path out
+### 2. The registered-buffer cost: moving the fixed path out took back part of it
 
 The question was whether the 1-4% the other paths lost was the added code in submit and
 release or the layout of the kernel image after the driver grew by 3536 bytes of text
@@ -632,14 +632,15 @@ Base was below o3r on every arm in both sessions (12 of 12), by 0.3-1.7% in `i2a
 4.1% on the two one-file arms and up to 2.2% on the others, which is the noise any
 single-session comparison here carries; their medians straddle 1.0. (o3r's kernel is
 byte-identical to the perf round's frozen o3; r1 has main's benchmark client, o3r o3's,
-which check C showed not to matter.) r1, whose hot code is o3's but
-whose layout after the driver differs by 5344 bytes, tied o3r within 0.5% on four arms
-in `i2b` (+1.5% and -3.2% on the two one-file arms) and was at 1.004 and 1.002 at 32
-in flight. So most of the cost was the code in the hot functions, not where the code after
-them landed. Check D (fresh clones, two sessions, `results/improve/check-d/`) found less: at
-32 in flight main was at 0.978 and 0.972 of o3 and r1c at 0.984 and 0.992 (2 and 1 of 7
-pairs), so the move took back about a quarter of the cost in one session and 70% in the
-other; on the other twelve arms r1c was within 0.988-1.013 of o3.
+which check C showed not to matter.) r1, whose hot code is o3's but whose layout after
+the driver differs by 5344 bytes, tied o3r within 0.5% on four arms in `i2b` (on the two
+one-file arms +1.5% for 4 KiB and -3.2% for NOPs; check D had 1.000 and 1.013, and 0.994
+and 1.004, so the NOP loss did not repeat) and was at 1.004 and 1.002 at 32 in flight.
+So in `i2b` most of the cost was the code in the hot functions, not where the code after
+them landed. Check D (fresh clones, two sessions, `results/improve/check-d/`) found less:
+at 32 in flight main was at 0.978 and 0.972 of o3 and r1c at 0.984 and 0.992 (2 and 1 of
+7 pairs), so the move took back 30% of the cost in one session and 72% in the other; on
+the other twelve arms r1c was within 0.988-1.013 of o3.
 
 A later session (`iF`, 11:07, one session, diagnostic only, rule written before it) added
 `p3536r`, o3r plus a real 3536-byte pad (everything after the driver moved by exactly
@@ -750,30 +751,37 @@ per command (one file: 0.40 to 0.90 doorbells, 4.08 to 5.88 us). Device-side pol
 the shadow tail (an IOThread poll handler that keeps the event index behind while it
 polls) would attack exactly this; not built. The default stays the main loop.
 
-Costs on the main-loop path: none that held. i4 against i3 in the main loop: `iD` NOPs one
-at a time 0.987, just below i3's lowest pair; `iE` 1.008 and no arm below i3's minimum.
-Within the rule but in both sessions: 4 in flight 0.984 and 0.981 (3 of 7 pairs each).
-Check D has no i3 build; it measured the final code at 0.991 and 0.994 of main there.
+Costs on the main-loop path: none that met the rule. i4 against i3 in the main loop: `iD`
+NOPs one at a time 0.987, just below i3's lowest pair; `iE` 1.008 and no arm below i3's
+minimum. Within the rule but below i3 in both sessions: 4 in flight 0.984 and 0.981 (4 of
+7 pairs slower in each). Check D has no i3 build; it measured the final code at 0.991 and
+0.994 of main there.
 
 ### 5. Registered buffers after the move, and the before/after
 
 The fixed path against base (`iCfixed` with r1c, `iDfixed` with i4; 7 pairs; strict
 emulated IOMMU and none): behind the IOMMU every fixed arm within 2.1% or better (lowest:
-4 KiB one at a time 0.981 in `iCfixed`, 64 KiB 8 batched 0.988 in `iDfixed`, 0.979 and
-0.988 in check D; 32 batched 4 KiB 1.048 and 1.012); without an IOMMU the rule's second condition missed once
-in each session on a different arm (`iCfixed` 32 batched fixed 0.985; `iDfixed` 4 KiB
-bounce one at a time 0.988), within 1.5%, not reproduced in the other session.
+4 KiB one at a time 0.981 in `iCfixed`, 64 KiB 8 batched 0.988 in `iDfixed`; in check D
+64 KiB 8 batched 0.979 in one session and 4 KiB one at a time 0.988 in the other; 32
+batched 4 KiB 1.048 and 1.012, and 1.033 and 1.016 in check D); without an IOMMU the
+rule's second condition missed once in each session on a different arm (`iCfixed` 32
+batched fixed 0.985; `iDfixed` 4 KiB bounce one at a time 0.988), within 1.5%, not
+reproduced in the other session (check D: 1.011 and 1.017; 0.988 and 1.008).
 
 Before/after against the published `main` (`iE`, and `iD` for the main loop): 32 in
 flight 1.10x and 1.08x, one shared file 1.39x/1.28x (NOP/4 KiB) and 1.45x/1.26x, 32
-batched 1.02x; one command at a time and three threads on their own files unchanged
-(0.98 to 1.01) except 64 KiB one at a time: 0.985 in `iE` and 0.962 and 0.961 in check D,
-where three of the final build's seven boots in each session ran about 9% slower on that
-arm (64.0-68.0k against 72.7-75.1k/s), as two or three of o3's and r1c's did and none of
-main's. 4 KiB zero-copy one at a time in the fixed plan lost too: 0.991 with 0 of 7 pairs
-in `iDfixed`, 0.949 and 0.980 in check D, from slow boots of the same kind. With one
-IOThread: one at a time 1.17x-1.21x (64 KiB 1.08x), three threads 1.38x,
-batched 1.50x; 32 in flight 0.93x.
+batched 1.02x; one command at a time and three threads on their own files 0.98x to 1.01x
+(three threads 0.98x and batched 0.99x in `iD` are among the README's losses). 64 KiB one
+at a time was inside that range in the round (0.985 in `iE`, 1.000 in `iD`, and 0.982
+with 1 of 7 pairs won in `iDfixed` without an IOMMU) but lost in check D: 0.962 and 0.961,
+with 5 and 6 of 7 pairs slower (rule 1 asks for 6), where three of the final build's seven
+boots in each session ran about 9% slower on that arm (64.0-68.0k against 72.7-75.1k/s),
+as two or three of o3's and r1c's did and none of main's; check D's registered-buffer
+sessions had 0.993 and 1.005 there. 4 KiB zero-copy one at a time in the fixed plan lost
+too: 0.991 with 0 of 7 pairs won in `iDfixed`, 0.949 (4 of 6 pairs slower, rule 1 asks for
+5) and 0.980 in check D, from slow boots of the same kind. With one IOThread: one at a
+time 1.17x-1.21x (bounce 1.15x, 64 KiB 1.08x), three threads 1.38x, batched 1.50x; 32 in
+flight 0.93x.
 
 ### What limits it now, and what was not done
 

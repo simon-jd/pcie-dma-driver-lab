@@ -24,19 +24,19 @@ run in QEMU's main loop unless `iothreads=` is set:
 | three threads, 8 in flight each: own files; batched | 923.2k; 830.1k | 938.9k (1.00x); 803.7k (0.99x) | 1266.5k (1.38x); 1245.9k (1.50x) |
 | three threads on one file: NOP; 4 KiB | 512.1k; 484.2k | 718.6k (1.39x); 614.5k (1.28x) | 568.6k (1.10x); 504.0k (1.07x) |
 | strict emulated IOMMU, registered buffers: one at a time; 32 batched | 149.3k; 687.8k | 149.5k (1.00x); 700.7k (1.01x; 1.03x and 1.02x in check D) | not measured |
-| Losses | | three threads 0.98x and batched three threads 0.99x in `iD` (1.00x, 0.99x in `iE`); a 4 KiB bounce one at a time 0.99x in `iDfixed`; 64 KiB one at a time 0.985 in `iE` and 0.96x in both check D sessions, in which some of this branch's boots ran 9% slower | 32 in flight 0.93x and one file 1.07-1.10x (1.09-1.17x in check D) instead of 1.28-1.39x: a device that keeps up makes the driver ring and interrupt more often |
+| Losses | | three threads 0.98x and batched three threads 0.99x in `iD` (1.00x, 0.99x in `iE`); 64 KiB one at a time 0.985 in `iE` and 0.96x in both check D sessions (5 and 6 of 7 pairs slower), in which some of this branch's boots ran 9% slower; in `iDfixed` without an IOMMU, 4 KiB one at a time 0.99x (check D: 0.95x with 4 of 6 pairs slower, 0.98x) and 4 KiB bounce one at a time 0.99x (check D: 0.99x, 1.01x) | 32 in flight 0.93x and one file 1.07-1.10x (1.09-1.17x in check D) instead of 1.28-1.39x (1.25-1.45x in check D): a device that keeps up makes the driver ring and interrupt more often |
 | Correctness | | qtest 42/42 on both QEMU builds (21 tests, in the main loop and in IOThreads); KUnit 13/13 and 37/37 client cases in 10 configurations: KVM and TCG, IOMMU strict or none, ASan QEMU, KCSAN, and four with IOThreads; 16 of 16 deliberate bugs caught | in the same matrix |
 
 What changed: the removal tests hold a known number of commands in the device, so they no
 longer depend on timing; the registered-buffer code moved out of the functions the other
 paths run, which took back part of the 1-4% it cost them; a file's commands are found
 through a hash and `read()` takes its completions in one lock round (one shared file
-1.28x-1.39x); and the queues can run in IOThreads without the BQL. One IOThread wins where
-QEMU's main loop was the limit and loses where a busy device used to batch for free, so it
-is an option, not the default. Numbers are the guest driver plus KVM exits plus QEMU's
-device model around a modeled service time of 0, not device throughput; the IOThread
-column uses one more host CPU ([design trade-offs](docs/design-tradeoffs.md#improvement-round-2026-11-10-what-the-performance-round-left-open),
-[results](results/README.md)).
+1.28x-1.39x, 1.25x-1.45x in check D); and the queues can run in IOThreads without the BQL.
+One IOThread wins where QEMU's main loop was the limit and loses where a busy device used
+to batch for free, so it is an option, not the default. Numbers are the guest driver plus
+KVM exits plus QEMU's device model around a modeled service time of 0, not device
+throughput; the IOThread column uses one more host CPU
+([design trade-offs](docs/design-tradeoffs.md#improvement-round-2026-11-10-what-the-performance-round-left-open), [results](results/README.md)).
 
 Limitations: emulated device and IOMMU only, one host; IOThread mode refuses TCG behind an
 emulated IOMMU and refuses DMA to anything but RAM; no partial writes after an abort; one

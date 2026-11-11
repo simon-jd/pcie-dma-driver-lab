@@ -63,7 +63,13 @@ is within 0.02 of it and on the stated side of 1; a range if every arm it covers
 widened by 0.02; a claim holds only if it holds in both sessions. A loss is missing if the final
 code is below 0.985 of `main` with at most 2 of 7 pairs won in both sessions and the text does
 not name it. `claims.py` applies this to the comparison files and writes `claims.md` (the full
-claims table, every paired table, the counters and the per-boot rates).
+claims table, every paired table, the counters and the per-boot rates). The rule has no form
+for "most": the row for the registered-buffer move counts it as more than half of `main`'s
+loss against o3 at 32 in flight taken back by r1c, (r1c/o3 - main/o3) / (1 - main/o3), in
+both sessions. A range row that holds but is also a rule-5 loss says so. `claims.py` was
+corrected after the check (the move's rows had compared the final code with o3, which
+includes the batched `read()`; three ranges had been judged as separate ratios or with arms
+left out); `claims.md` is its output on the same comparison files.
 
 ## Results
 
@@ -77,45 +83,56 @@ round's named checks, the restored build passed the guest suite and qtest (`muta
 `ci_local.sh` from a fresh clone of `7793fab` passed in 436 s on four CPUs (`ci-local.txt`;
 the round: 407 s).
 
-**Timing claims.** 72 of the 79 rows of `claims.md` hold in both sessions, among them the README
-table's ratios except the two listed below: against `main`, 32 in flight 1.075 and 1.106, one shared file 1.431/1.448
-(NOP) and 1.253/1.289 (4 KiB), 32 batched 1.020 and 1.019, one at a time (64 KiB aside) and three threads 0.987
-to 1.009; with one IOThread three threads 1.356/1.357 and batched 1.487/1.480, NOP and 4 KiB one
-at a time 1.159-1.217, 32 in flight 0.916/0.936; the IOThread-against-main-loop table of design section 4
-for one and three IOThreads, and its counters (doorbells per command at 32 in flight 0.24 -> 0.48,
-interrupts 0.47 -> 0.73, vCPU 1.47 -> 1.88 us; three IOThreads at three threads 0.77 doorbells and
-1.00 interrupts against 0.15 and 0.29). What did not hold or needs a correction:
+**Timing claims.** 63 of the 75 rows of `claims.md` hold in both sessions, among them the
+README table's ratios except those listed below: against `main`, 32 in flight 1.075 and 1.106,
+one shared file 1.431/1.448 (NOP) and 1.253/1.289 (4 KiB) each against its own ratio (not as
+the range 1.28x-1.39x), 32 batched 1.020 and 1.019, one at a time (64 KiB aside) and three
+threads 0.987 to 1.009, the README's 0.98x and 0.99x losses among them; with one IOThread
+three threads 1.356/1.357 and batched 1.487/1.480, NOP and 4 KiB one at a time 1.159-1.217, 32
+in flight 0.916/0.936; the IOThread-against-main-loop table of design section 4 for one and
+three IOThreads, and its counters (doorbells per command at 32 in flight 0.24 -> 0.48,
+interrupts 0.47 -> 0.73, vCPU 1.47 -> 1.88 us; three IOThreads at three threads 0.77 doorbells
+and 1.00 interrupts against 0.15 and 0.29, and the vCPUs busy 2.94 of 3 in both sessions). One
+of the 63 rows, 64 KiB one at a time under "unchanged (0.98 to 1.01)", holds only through rule
+3's widening (0.962 and 0.961 against 0.96), and rule 5 counts the same arm as a loss (below).
+What did not hold or needs a correction:
 
 | Claim (where) | round | s1 | s2 | finding |
 |---|---|---|---|---|
 | batching at three threads "0.99x of not batching in the main loop" (design, limits) | 0.856 in `iE` (803.7k/938.9k), 0.892 in `iD` | 0.882 | 0.891 | the text's number is wrong |
-| behind the IOMMU "every fixed arm within 1% or better" (design 5) | 0.981 (`iCfixed`, fixed 4 KiB one at a time), 0.988 (`iDfixed`, fixed 64 KiB 8 batched) | 0.979 (fixed 64 KiB 8 batched) | 0.988 (fixed 4 KiB one at a time) | within 2.1%, not 1% |
-| one IOThread, one command at a time "1.15-1.21x" (design 4) | 64 KiB 1.089 (`iE`) | 1.088 | 1.094 | 64 KiB left out |
-| one IOThread, one file NOP 1.10x (README) | 1.104 | 1.173 | 1.161 | larger than stated |
-| strict IOMMU, fixed 4 KiB 32 batched 1.01x (README) | 1.012 | 1.033 | 1.016 | larger in `s1` |
+| one shared file "1.28x-1.39x" as a range (README) | 4 KiB 1.283, NOP 1.394 (`iE`) | 1.253, 1.431 | 1.289, 1.448 | outside the range widened to 1.26-1.41 in both sessions: 1.25-1.45 here; each ratio alone holds by rule 1 |
+| behind the IOMMU "every fixed arm within 1% or better" (design 5) | 0.981 (`iCfixed`, fixed 4 KiB one at a time), 0.988 (`iDfixed`, fixed 64 KiB 8 batched) | lowest 0.979 (fixed 64 KiB 8 batched): holds by rule 3 | lowest 0.988 (fixed 4 KiB one at a time): holds by rule 3 | holds here; the round's own files are outside 1%, so the text says within 2.1% |
+| one IOThread, one command at a time "1.15-1.21x" against the main loop (design 4) and "1.17x-1.21x" against `main` (design 5) | 64 KiB 1.089 and 1.080 (`iE`); bounce against `main` 1.145 | 64 KiB 1.088 and 1.083; bounce 1.157 | 64 KiB 1.094 and 1.066; bounce 1.162 | 64 KiB left out; bounce inside the widened range here, outside it in `iE` |
+| one IOThread, one file NOP 1.10x and one file "1.07-1.10x" (README) | NOP 1.104, 4 KiB 1.072 | NOP 1.173, 4 KiB 1.095 | NOP 1.161, 4 KiB 1.088 | NOP larger than stated: 1.09-1.17 here |
+| strict IOMMU, fixed 4 KiB 32 batched 1.01x (README) and 1.012 (design 5) | 1.012 | 1.033 (5 of 7) | 1.016 | larger in `s1` |
 | loss: 4 KiB bounce one at a time 0.99x (README) | 0.988 (`iDfixed`) | 0.988 | 1.008 | not reproduced in `s2` |
-| the move "took back most of the 1-4%" (README, design 2) | r1 vs o3r 1.004, 1.002 at 32 in flight | main/o3 0.978, r1c/o3 0.984 (2 of 7) | main/o3 0.972, r1c/o3 0.992 (1 of 7) | took back about a quarter in `s1`, 70% in `s2` |
+| the move "took back most of the 1-4%" (README, design 2) | r1 vs o3r 1.004, 1.002 at 32 in flight | main/o3 0.978, r1c/o3 0.984 (2 of 7): 30% of the cost taken back | main/o3 0.972, r1c/o3 0.992 (1 of 7): 72% | most in `s2` only |
 | r1 vs o3r one file NOP -3.2% (design 2, `i2b`) | 0.968 | 0.994 | 1.004 | not reproduced |
-| r1 vs base, one file 4 KiB, 7 of 7 in both (design 2) | 1.034, 1.022 | 1.020 (5 of 7) | 1.024 (6 of 7) | the gain holds, 7 of 7 does not |
+| r1 vs base, one file 4 KiB, 7 of 7 in both (design 2) | 1.034, 1.022 | 1.020 (5 of 7) | 1.024 (6 of 7) | fails rule 1 in `s1` (5 of 7 pairs), holds in `s2`; 7 of 7 in neither |
 
-**Losses missing from the text.**
+**Losses missing from the text** (rule 5; the text named neither when it was checked and names
+both now).
 
-- 64 KiB one at a time against `main`: 0.962 (2 of 7) and 0.961 (1 of 7). Three of the final
-  build's seven boots in each session ran about 9% slower on that arm (64.0-68.0k against
+- 64 KiB one at a time against `main`: 0.962 (2 of 7 won) and 0.961 (1 of 7). As a stated loss
+  below 0.97 it needs 6 of 7 pairs slower (rule 1), and `s1` has 5. Three of the final build's
+  seven boots in each session ran about 9% slower on that arm (64.0-68.0k against
   72.7-75.1k/s), as two or three of o3's and r1c's did; none of `main`'s 14 boots did
-  (`claims.md`, per-boot rates). The round's own `iE` has 0.985 there (2 of 7).
-- 4 KiB zero-copy one at a time in the fixed plan without an IOMMU: 0.949 (2 of 6) and 0.980
-  (2 of 7), again from slow boots of the final build (5 and 3 of 7, 124.5-143.2k against
-  145.5-152.6k/s); the round's `iDfixed` has 0.991 with 0 of 7 pairs won. In the A/B plan the same
-  arm was 0.994 and 0.991, the README's 0.99x.
-- From the round's own files: i4 against i3 at 4 in flight 0.984 (`iD`) and 0.981 (`iE`), 3 of 7
-  pairs each, not mentioned under "costs on the main-loop path". This check has no i3 build; the
-  final code against `main` there was 0.991 (2 of 7) and 0.994 (1 of 7).
+  (`claims.md`, per-boot rates). The round's own `iE` has 0.985 there (2 of 7), `iD` 1.000, and
+  `iDfixed` 0.982 (1 of 7) without an IOMMU, where this check's fixed plan had 0.993 and 1.005.
+- 4 KiB zero-copy one at a time in the fixed plan without an IOMMU: 0.949 (2 of 6 won) and
+  0.980 (2 of 7); `s1` has 4 of 6 pairs slower, one fewer than rule 1 needs for 0.949. Again
+  from slow boots of the final build (5 and 3 of 7, 124.5-143.2k against 145.5-152.6k/s); the
+  round's `iDfixed` has 0.991 with 0 of 7 pairs won. In the A/B plan the same arm was 0.994 and
+  0.991, the README's 0.99x.
+
+**Other observations.** From the round's own files: i4 against i3 at 4 in flight 0.984 (`iD`)
+and 0.981 (`iE`), 3 of 7 pairs won each. It is not a rule-5 loss (not against `main`, and more
+than 2 pairs won), but it is below 1 in both sessions, and design section 4 now names it. This
+check has no i3 build; the final code against `main` there was 0.991 (2 of 7) and 0.994 (1 of 7).
 
 **Not checked.** Everything that needs the intermediate builds (i1, i3, the p16/p32/p3536 and
 p3536r layout controls): the hold knob's cost (`iC`), i3 against i1, i4 against i3, and the layout
-sessions; the round's counts of commands ended by the removal before the knob; the vCPUs "busy
-2.94 of 3" (not in `summary.md`); the GitHub runner.
+sessions; the round's counts of commands ended by the removal before the knob; the GitHub runner.
 
 ## Files
 

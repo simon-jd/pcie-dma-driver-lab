@@ -4,7 +4,7 @@
 Usage: claims.py OUT_DIR   (OUT_DIR holds s1-ab, s1-fixed, s2-ab, s2-fixed run directories,
 each with the compare-*.json files bench_compare.py wrote and the summary.md of bench_report.py).
 Prints markdown: the claims table (rule in rule.txt), the full paired tables, the loss scan and
-the per-command counters behind the IOThread explanation."""
+the per-command counters behind the IOThread explanation (vCPU busy time from summary.json)."""
 import gzip, json, pathlib, re, sys
 
 OUT = pathlib.Path(sys.argv[1])
@@ -36,8 +36,13 @@ def load_summary(d):
     return rows
 
 
+def load_summary_json(d):
+    return {(r["config"], r["build"], r["arm"]): r["metrics"] for r in json.loads((d / "summary.json").read_text())}
+
+
 CMP = {s: {p: load_compares(OUT / f"{s}-{p}") for p in ("ab", "fixed")} for s in SESSIONS}
 SUM = {s: {p: load_summary(OUT / f"{s}-{p}") for p in ("ab", "fixed")} for s in SESSIONS}
+SUMJ = {s: load_summary_json(OUT / f"{s}-ab") for s in SESSIONS}
 
 
 def get(s, plan, base, new, cfg, ncfg, arm):
@@ -149,20 +154,39 @@ POINTS = [
 RANGES = [
     ("design 5", "one at a time and three threads on own files unchanged (0.98 to 1.01)", MAIN,
      ["nop-qd1", "zc4k-qd1", "bounce4k-qd1", "zc64k-qd1", "zc4k-t3-qd8", "zc4k-t3-qd8-batch"], 0.98, 1.01),
-    ("design 5", "one IOThread vs main: one at a time 1.17x-1.21x", IO1, ["nop-qd1", "zc4k-qd1"], 1.17, 1.21),
+    ("design 5", "one IOThread vs main: one at a time 1.17x-1.21x", IO1,
+     ["nop-qd1", "zc4k-qd1", "bounce4k-qd1", "zc64k-qd1"], 1.17, 1.21),
     ("design 4", "one IOThread vs main loop: one command at a time 1.15-1.21x", LOOP_IO1,
      ["nop-qd1", "zc4k-qd1", "bounce4k-qd1", "zc64k-qd1"], 1.15, 1.21),
     ("design 4", "one IOThread vs main loop: shared file 0.79-0.88x", LOOP_IO1,
      ["nop-t3-qd8-sharedfile", "zc4k-t3-qd8-sharedfile"], 0.79, 0.88),
     ("design 5", "strict IOMMU: every fixed arm within 1% or better", FIX_S,
      ["fixed4k-qd1", "fixed64k-qd1", "fixed4k-qd32-batch", "fixed64k-qd8-batch"], 0.99, 9.0),
-    ("README", "registered-buffer move took back most of the 1-4%: final code vs o3, paths without registered buffers", O3,
-     ["nop-qd1", "zc4k-qd1", "bounce4k-qd1", "zc64k-qd1", "zc4k-qd4", "zc4k-qd32", "zc4k-qd8-batch",
-      "zc4k-qd32-batch", "zc4k-qd32-c16", "zc4k-t3-qd8", "zc4k-t3-qd8-batch"], 0.99, 9.0),
+    ("README", "one shared file 1.28x-1.39x (what changed; losses: instead of 1.28-1.39x)", MAIN,
+     ["nop-t3-qd8-sharedfile", "zc4k-t3-qd8-sharedfile"], 1.28, 1.39),
+    ("README", "one IOThread: one file 1.07-1.10x (losses)", IO1,
+     ["nop-t3-qd8-sharedfile", "zc4k-t3-qd8-sharedfile"], 1.07, 1.10),
 ]
+# "took back most of the 1-4%": rule.txt has no form for "most". Read as r1c taking back more than
+# half of main's loss against o3 at 32 in flight (the arm of the 1-4% in check C), in both sessions.
+TOOK_BACK = ("README, design 2", "registered-buffer move took back most of the 1-4%: share of main's loss against o3 "
+             "that r1c took back, (r1c/o3 - main/o3) / (1 - main/o3), more than half", "zc4k-qd32")
+
+
+def rule5_losses():
+    """Rule 5: arms of the final code against main below 0.985 with at most 2 pairs won in both sessions."""
+    out = []
+    for c in (MAIN, IO1, FIX, FIX_S):
+        for arm in [k for k in CMP["s1"][c[0]].get(c[1:], {}) if k != "_file"]:
+            a = [get(s, *c, arm) for s in SESSIONS]
+            if all(x and x["ratio_median"] < 0.985 and x["wins"] <= 2 for x in a):
+                out.append((c, arm, a))
+    return out
 
 
 def main():
+    losses = rule5_losses()
+    loss_keys = {(c, arm) for c, arm, _ in losses}
     print("## Claims\n")
     print("| where | claim | arm | s1 | s2 | holds |")
     print("|---|---|---|---|---|---|")
@@ -175,7 +199,22 @@ def main():
         for arm in arms:
             a1, a2 = (get(s, *c, arm) for s in SESSIONS)
             j1, j2 = judge_range(a1, lo, hi), judge_range(a2, lo, hi)
-            print(f"| {where} | {text} | `{arm}` | {fmt(a1)} {j1} | {fmt(a2)} {j2} | {'yes' if j1 == j2 == 'yes' else 'no'} |")
+            verdict = "yes" if j1 == j2 == "yes" else "no"
+            if verdict == "yes" and (c, arm) in loss_keys:
+                verdict = "yes; a loss by rule 5"
+            print(f"| {where} | {text} | `{arm}` | {fmt(a1)} {j1} | {fmt(a2)} {j2} | {verdict} |")
+    where, text, arm = TOOK_BACK
+    cells, js = [], []
+    for s in SESSIONS:
+        m, r = get(s, *MAIN_O3, arm), get(s, *R1_O3, arm)
+        if m is None or r is None or m["ratio_median"] >= 1:
+            cells.append("n/a")
+            js.append("n/a")
+            continue
+        share = (r["ratio_median"] - m["ratio_median"]) / (1 - m["ratio_median"])
+        js.append("yes" if share > 0.5 else "no")
+        cells.append(f"main {fmt(m)}, r1c {fmt(r)}: {share:.2f} {js[-1]}")
+    print(f"| {where} | {text} | `{arm}` | {cells[0]} | {cells[1]} | {'yes' if js == ['yes', 'yes'] else 'no'} |")
     print("\n## Paired tables (median ratio new/base over the pairs, pairs won)\n")
     for title, c in (("final vs main, main loop", MAIN), ("final with one IOThread vs main", IO1),
                      ("final with three IOThreads vs main", ("ab", "main", "improve", "noiommu", "iothreads")),
@@ -196,11 +235,8 @@ def main():
             print(f"| {ARM_NAMES.get(arm, arm)} | " + " | ".join(cells) + " |")
         print()
     print("## Losses of the final code against main in both sessions (median < 0.985, at most 2 of 7 won)\n")
-    for c in (MAIN, IO1, FIX, FIX_S):
-        for arm in [k for k in CMP["s1"][c[0]].get(c[1:], {}) if k != "_file"]:
-            a = [get(s, *c, arm) for s in SESSIONS]
-            if all(x and x["ratio_median"] < 0.985 and x["wins"] <= 2 for x in a):
-                print(f"- {c[3]}/{c[4]} {c[0]} `{arm}`: {fmt(a[0])}, {fmt(a[1])}")
+    for c, arm, a in losses:
+        print(f"- {c[3]}/{c[4]} {c[0]} `{arm}`: {fmt(a[0])}, {fmt(a[1])}")
     print("\n## Per-command counters, final build (summary.md medians)\n")
     print("| config | arm | k cmds/s | SQ db | MSI-X | vCPU us | main util | host CPU us | session |")
     print("|---|---|---|---|---|---|---|---|---|")
@@ -217,6 +253,10 @@ def main():
         i3, i3b = (float(r[("iothread1", "improve", a)]["k cmds/s"]) for a in ("zc4k-t3-qd8", "zc4k-t3-qd8-batch"))
         print(f"\n{s}: main loop, batched/unbatched three threads {t3b:.1f}/{t3:.1f} = {t3b / t3:.3f}; one file/three files "
               f"{sh:.1f}/{t3:.1f} = {sh / t3:.3f}; one IOThread batched/unbatched {i3b:.1f}/{i3:.1f} = {i3b / i3:.3f}")
+    for s in SESSIONS:
+        m = SUMJ[s]
+        print(f"\n{s}: vCPUs busy at three threads (median `vcpu_util` of `summary.json`, of 3): " + ", ".join(
+            f"{cfg} {m[(cfg, 'improve', 'zc4k-t3-qd8')]['vcpu_util']['median']:.2f}" for cfg in ("noiommu", "iothread1", "iothreads")))
 
     print("\n## One command at a time, per boot (k cmds/s of each accepted window, in boot order)\n")
     for s in SESSIONS:

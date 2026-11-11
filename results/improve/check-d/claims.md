@@ -55,11 +55,13 @@
 | design 5 | one at a time and three threads on own files unchanged (0.98 to 1.01) | `nop-qd1` | 0.998 (2/7) yes | 1.004 (4/7) yes | yes |
 | design 5 | one at a time and three threads on own files unchanged (0.98 to 1.01) | `zc4k-qd1` | 0.994 (2/7) yes | 0.991 (2/7) yes | yes |
 | design 5 | one at a time and three threads on own files unchanged (0.98 to 1.01) | `bounce4k-qd1` | 1.002 (4/7) yes | 1.009 (4/7) yes | yes |
-| design 5 | one at a time and three threads on own files unchanged (0.98 to 1.01) | `zc64k-qd1` | 0.962 (2/7) yes | 0.961 (1/7) yes | yes |
+| design 5 | one at a time and three threads on own files unchanged (0.98 to 1.01) | `zc64k-qd1` | 0.962 (2/7) yes | 0.961 (1/7) yes | yes; a loss by rule 5 |
 | design 5 | one at a time and three threads on own files unchanged (0.98 to 1.01) | `zc4k-t3-qd8` | 0.990 (2/7) yes | 0.988 (3/7) yes | yes |
 | design 5 | one at a time and three threads on own files unchanged (0.98 to 1.01) | `zc4k-t3-qd8-batch` | 0.991 (1/7) yes | 0.987 (3/7) yes | yes |
 | design 5 | one IOThread vs main: one at a time 1.17x-1.21x | `nop-qd1` | 1.194 (7/7) yes | 1.217 (7/7) yes | yes |
 | design 5 | one IOThread vs main: one at a time 1.17x-1.21x | `zc4k-qd1` | 1.159 (7/7) yes | 1.167 (7/7) yes | yes |
+| design 5 | one IOThread vs main: one at a time 1.17x-1.21x | `bounce4k-qd1` | 1.157 (7/7) yes | 1.162 (7/7) yes | yes |
+| design 5 | one IOThread vs main: one at a time 1.17x-1.21x | `zc64k-qd1` | 1.083 (6/7) no | 1.066 (6/7) no | no |
 | design 4 | one IOThread vs main loop: one command at a time 1.15-1.21x | `nop-qd1` | 1.195 (7/7) yes | 1.213 (7/7) yes | yes |
 | design 4 | one IOThread vs main loop: one command at a time 1.15-1.21x | `zc4k-qd1` | 1.176 (7/7) yes | 1.173 (7/7) yes | yes |
 | design 4 | one IOThread vs main loop: one command at a time 1.15-1.21x | `bounce4k-qd1` | 1.148 (7/7) yes | 1.153 (7/7) yes | yes |
@@ -70,17 +72,11 @@
 | design 5 | strict IOMMU: every fixed arm within 1% or better | `fixed64k-qd1` | 1.009 (4/7) yes | 1.006 (4/7) yes | yes |
 | design 5 | strict IOMMU: every fixed arm within 1% or better | `fixed4k-qd32-batch` | 1.033 (5/7) yes | 1.016 (6/7) yes | yes |
 | design 5 | strict IOMMU: every fixed arm within 1% or better | `fixed64k-qd8-batch` | 0.979 (3/7) yes | 0.998 (3/7) yes | yes |
-| README | registered-buffer move took back most of the 1-4%: final code vs o3, paths without registered buffers | `nop-qd1` | 1.001 (4/7) yes | 0.996 (3/7) yes | yes |
-| README | registered-buffer move took back most of the 1-4%: final code vs o3, paths without registered buffers | `zc4k-qd1` | 0.994 (2/7) yes | 1.000 (3/7) yes | yes |
-| README | registered-buffer move took back most of the 1-4%: final code vs o3, paths without registered buffers | `bounce4k-qd1` | 0.999 (2/7) yes | 0.995 (2/7) yes | yes |
-| README | registered-buffer move took back most of the 1-4%: final code vs o3, paths without registered buffers | `zc64k-qd1` | 1.004 (4/7) yes | 0.975 (3/7) yes | yes |
-| README | registered-buffer move took back most of the 1-4%: final code vs o3, paths without registered buffers | `zc4k-qd4` | 0.993 (1/7) yes | 0.994 (1/7) yes | yes |
-| README | registered-buffer move took back most of the 1-4%: final code vs o3, paths without registered buffers | `zc4k-qd32` | 1.052 (7/7) yes | 1.064 (7/7) yes | yes |
-| README | registered-buffer move took back most of the 1-4%: final code vs o3, paths without registered buffers | `zc4k-qd8-batch` | 0.995 (0/7) yes | 0.988 (3/7) yes | yes |
-| README | registered-buffer move took back most of the 1-4%: final code vs o3, paths without registered buffers | `zc4k-qd32-batch` | 1.021 (5/7) yes | 1.001 (4/7) yes | yes |
-| README | registered-buffer move took back most of the 1-4%: final code vs o3, paths without registered buffers | `zc4k-qd32-c16` | 1.054 (5/7) yes | 1.069 (7/7) yes | yes |
-| README | registered-buffer move took back most of the 1-4%: final code vs o3, paths without registered buffers | `zc4k-t3-qd8` | 0.990 (2/7) yes | 0.984 (2/7) yes | yes |
-| README | registered-buffer move took back most of the 1-4%: final code vs o3, paths without registered buffers | `zc4k-t3-qd8-batch` | 0.988 (2/7) yes | 1.009 (5/7) yes | yes |
+| README | one shared file 1.28x-1.39x (what changed; losses: instead of 1.28-1.39x) | `nop-t3-qd8-sharedfile` | 1.431 (7/7) no | 1.448 (7/7) no | no |
+| README | one shared file 1.28x-1.39x (what changed; losses: instead of 1.28-1.39x) | `zc4k-t3-qd8-sharedfile` | 1.253 (7/7) no | 1.289 (7/7) yes | no |
+| README | one IOThread: one file 1.07-1.10x (losses) | `nop-t3-qd8-sharedfile` | 1.173 (7/7) no | 1.161 (7/7) no | no |
+| README | one IOThread: one file 1.07-1.10x (losses) | `zc4k-t3-qd8-sharedfile` | 1.095 (7/7) yes | 1.088 (7/7) yes | yes |
+| README, design 2 | registered-buffer move took back most of the 1-4%: share of main's loss against o3 that r1c took back, (r1c/o3 - main/o3) / (1 - main/o3), more than half | `zc4k-qd32` | main 0.978 (1/7), r1c 0.984 (2/7): 0.30 no | main 0.972 (1/7), r1c 0.992 (1/7): 0.72 yes | no |
 
 ## Paired tables (median ratio new/base over the pairs, pairs won)
 
@@ -342,6 +338,10 @@
 s1: main loop, batched/unbatched three threads 833.2/944.8 = 0.882; one file/three files 616.9/944.8 = 0.653; one IOThread batched/unbatched 1257.7/1283.1 = 0.980
 
 s2: main loop, batched/unbatched three threads 841.6/944.3 = 0.891; one file/three files 626.2/944.3 = 0.663; one IOThread batched/unbatched 1267.3/1283.2 = 0.988
+
+s1: vCPUs busy at three threads (median `vcpu_util` of `summary.json`, of 3): noiommu 2.54, iothread1 2.94, iothreads 2.94
+
+s2: vCPUs busy at three threads (median `vcpu_util` of `summary.json`, of 3): noiommu 2.54, iothread1 2.94, iothreads 2.94
 
 ## One command at a time, per boot (k cmds/s of each accepted window, in boot order)
 
