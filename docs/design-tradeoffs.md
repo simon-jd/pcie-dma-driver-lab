@@ -636,7 +636,10 @@ which check C showed not to matter.) r1, whose hot code is o3's but
 whose layout after the driver differs by 5344 bytes, tied o3r within 0.5% on four arms
 in `i2b` (+1.5% and -3.2% on the two one-file arms) and was at 1.004 and 1.002 at 32
 in flight. So most of the cost was the code in the hot functions, not where the code after
-them landed.
+them landed. Check D (fresh clones, two sessions, `results/improve/check-d/`) found less: at
+32 in flight main was at 0.978 and 0.972 of o3 and r1c at 0.984 and 0.992 (2 and 1 of 7
+pairs), so the move took back about a quarter of the cost in one session and 70% in the
+other; on the other twelve arms r1c was within 0.988-1.013 of o3.
 
 A later session (`iF`, 11:07, one session, diagnostic only, rule written before it) added
 `p3536r`, o3r plus a real 3536-byte pad (everything after the driver moved by exactly
@@ -652,7 +655,8 @@ The rule fixed before the runs asked r1 to win at least 6 of 7 pairs against bas
 in flight in both sessions: it won 5 and 5, a miss. r1 is kept anyway, stated as a miss:
 against o3r it is at 1.004 and 1.002 there, it is not below base's lowest pair on any arm
 in either session, and against base it won 7 of 7 on 4 KiB with three threads on one
-file in both. The registered-buffer arms (`iCfixed`, `iDfixed`) are in section 5.
+file in both (check D: 5 and 6 of 7, 1.020 and 1.024). The registered-buffer arms
+(`iCfixed`, `iDfixed`) are in section 5.
 
 ### 3. One shared file: an id hash and one lock round per read() batch: kept
 
@@ -733,7 +737,8 @@ commands, took 0.77 doorbells and 1.00 interrupts per command instead of 0.14 an
 One IOThread for the device on its own core's free sibling (9; the main loop on 8 is idle
 in this mode), judged by a second rule written before session `iE`, won where the main
 loop was the limit: three threads 1.36x and 1.34x, batched 1.50x and 1.52x, and one command
-at a time 1.15-1.21x, with less host CPU per command than the main loop. The gain one at
+at a time 1.15-1.21x (64 KiB 1.09x, also in check D), with less host CPU per command than
+the main loop. The gain one at
 a time is presumably the IOThread's polling: it polls its event sources for up to 32 us
 before it sleeps (QEMU's default `poll-max-ns`), so a doorbell finds it awake; not
 measured separately. It lost where the device had been busy enough to batch for free: 32
@@ -747,19 +752,27 @@ polls) would attack exactly this; not built. The default stays the main loop.
 
 Costs on the main-loop path: none that held. i4 against i3 in the main loop: `iD` NOPs one
 at a time 0.987, just below i3's lowest pair; `iE` 1.008 and no arm below i3's minimum.
+Within the rule but in both sessions: 4 in flight 0.984 and 0.981 (3 of 7 pairs each).
+Check D has no i3 build; it measured the final code at 0.991 and 0.994 of main there.
 
 ### 5. Registered buffers after the move, and the before/after
 
 The fixed path against base (`iCfixed` with r1c, `iDfixed` with i4; 7 pairs; strict
-emulated IOMMU and none): behind the IOMMU every fixed arm within 1% or better (32
-batched 4 KiB 1.048 and 1.012); without an IOMMU the rule's second condition missed once
+emulated IOMMU and none): behind the IOMMU every fixed arm within 2.1% or better (lowest:
+4 KiB one at a time 0.981 in `iCfixed`, 64 KiB 8 batched 0.988 in `iDfixed`, 0.979 and
+0.988 in check D; 32 batched 4 KiB 1.048 and 1.012); without an IOMMU the rule's second condition missed once
 in each session on a different arm (`iCfixed` 32 batched fixed 0.985; `iDfixed` 4 KiB
 bounce one at a time 0.988), within 1.5%, not reproduced in the other session.
 
 Before/after against the published `main` (`iE`, and `iD` for the main loop): 32 in
 flight 1.10x and 1.08x, one shared file 1.39x/1.28x (NOP/4 KiB) and 1.45x/1.26x, 32
 batched 1.02x; one command at a time and three threads on their own files unchanged
-(0.98 to 1.01). With one IOThread: one at a time 1.17x-1.21x, three threads 1.38x,
+(0.98 to 1.01) except 64 KiB one at a time: 0.985 in `iE` and 0.962 and 0.961 in check D,
+where three of the final build's seven boots in each session ran about 9% slower on that
+arm (64.0-68.0k against 72.7-75.1k/s), as two or three of o3's and r1c's did and none of
+main's. 4 KiB zero-copy one at a time in the fixed plan lost too: 0.991 with 0 of 7 pairs
+in `iDfixed`, 0.949 and 0.980 in check D, from slow boots of the same kind. With one
+IOThread: one at a time 1.17x-1.21x (64 KiB 1.08x), three threads 1.38x,
 batched 1.50x; 32 in flight 0.93x.
 
 ### What limits it now, and what was not done
@@ -780,7 +793,8 @@ batched 1.50x; 32 in flight 0.93x.
   the timing kernel for every build.
 - **Not done** from the list: the CQ head in the shadow page (at most 0.06 MMIO exits per
   command), delay-based coalescing only while a queue is deep, a sharded overlap
-  tracker, batching at three threads (still 0.99x of not batching in the main loop; with
+  tracker, batching at three threads (still 0.86x of not batching in the main loop, 803.7k
+  vs 938.9k/s, and 0.88x and 0.89x in check D; with
   one IOThread batching is about level with not batching, 1245.9k vs 1266.5k/s).
 
 ## CI
