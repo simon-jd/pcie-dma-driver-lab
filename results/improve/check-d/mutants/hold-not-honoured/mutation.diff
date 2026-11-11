@@ -1,0 +1,3 @@
+--- kdc_dma.c
+-            if (kdc_slot(q, i)->state == SLOT_BUSY && !kdc_slot(q, i)->held) {
++            if (kdc_slot(q, i)->state == SLOT_BUSY) { /* deliberate bug: held commands run */

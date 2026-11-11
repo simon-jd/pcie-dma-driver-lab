@@ -129,6 +129,22 @@ tests, 486 s in all. Its one-round comparisons are single pairs and decide nothi
 NOP pair of the identical-build A/B tied at 1.000; one IOThread 1.208 on NOPs one at a
 time).
 
+### Check D: `improve/check-d/`
+
+An independent rerun of the round from fresh clones of `improve` (`7793fab`), `main`
+(`1a8de5c`), o3 (`68094ba`) and r1c (`eaf9e60`), every build made again from source (the four
+timing kernels came out byte-identical to the round's), with two timing sessions 88 minutes
+apart. Rule, commands and the full claims table: [`improve/check-d/README.md`](improve/check-d/README.md).
+
+| Run | Result |
+|---|---|
+| `check-d/matrix`, `mutants`, `qtest-*.txt`, `ci-local.txt` | qtest 42/42 on both QEMU builds; 10 of 10 guest configurations pass (KUnit 13/13, 37/37 client cases, kmemleak 0); 16 of 16 deliberate bugs caught, restored build passes; the CI steps 436 s |
+| `check-d/s1-ab`, `s2-ab`: final vs main | 32 in flight 1.075, 1.106; one file 1.431, 1.448 (NOP) and 1.253, 1.289 (4 KiB); 32 batched 1.020, 1.019; 64 KiB one at a time 0.962, 0.961, a loss the text did not name |
+| the same, one IOThread | against main: three threads 1.356, 1.357; batched 1.487, 1.480; 32 in flight 0.916, 0.936; one file NOP 1.173, 1.161 (the README had 1.10x) |
+| the same, r1c and main against o3 | 32 in flight: main 0.978, 0.972; r1c 0.984, 0.992: the move took back part of the cost, not most of it |
+| `check-d/s1-fixed`, `s2-fixed` | strict IOMMU: fixed arms 0.979 to 1.033 against main; without an IOMMU 4 KiB zero-copy one at a time 0.949 and 0.980, from slow boots of the final build |
+| `check-d/claims.md` | 72 of 79 claim rows hold in both sessions; what did not hold is listed in the check's README and corrected in the text |
+
 ## perf round (2026-11-08/09)
 
 ### Timing on KVM: `perf/`

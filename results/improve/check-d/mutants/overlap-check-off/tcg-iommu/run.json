@@ -1,0 +1,99 @@
+{
+  "utc": "2026-11-11T00:50:06+00:00",
+  "accel": "tcg",
+  "iommu": true,
+  "qemu": "release",
+  "kernel": "kasan",
+  "iothreads": 0,
+  "argv": [
+    "/home/postedism/.cache/kl-check-d/improve/.cache/build/qemu/qemu-system-x86_64",
+    "-machine",
+    "q35",
+    "-accel",
+    "tcg",
+    "-cpu",
+    "max",
+    "-m",
+    "2048",
+    "-smp",
+    "4",
+    "-nodefaults",
+    "-display",
+    "none",
+    "-serial",
+    "stdio",
+    "-monitor",
+    "none",
+    "-no-reboot",
+    "-nic",
+    "none",
+    "-device",
+    "intel-iommu",
+    "-device",
+    "pcie-root-port,id=rp0,bus=pcie.0,chassis=1,addr=0x2",
+    "-device",
+    "kdc-dma,id=kdc0,bus=rp0,queues=4",
+    "-device",
+    "pcie-root-port,id=rp1,bus=pcie.0,chassis=2,addr=0x3",
+    "-device",
+    "kdc-dma,id=kdc1,bus=rp1,queues=2",
+    "-qmp",
+    "unix:/tmp/kdc-run-2iwqehq4/qmp.sock,server=on,wait=off",
+    "-kernel",
+    "/home/postedism/.cache/kl-check-d/improve/build/kernel/arch/x86/boot/bzImage",
+    "-initrd",
+    "/home/postedism/.cache/kl-check-d/improve/build/initramfs.cpio.gz",
+    "-append",
+    "console=ttyS0 panic=-1 oops=panic panic_on_warn=1 nokaslr printk.devkmsg=on intel_iommu=on iommu.strict=1"
+  ],
+  "qemu_version": "QEMU emulator version 10.2.1",
+  "mutant": "overlap-check-off",
+  "kernel_sha256": "dc56a4f73f313d34d621c7762c54b2d413dcca758a632f3b6efd0189efa16936",
+  "client_sha256": "48ac7ea3c6631d8d5f121b902670ef228b7458a1aabc922e90b6a1db2bc85b47",
+  "load_average": [
+    "3.28",
+    "2.75",
+    "3.22"
+  ],
+  "passed": false,
+  "host_actions": [],
+  "returncode": 0,
+  "seconds": 10.9,
+  "expectations": [],
+  "kmemleak_records": 0,
+  "kmemleak_driver_records": 0,
+  "cases": [
+    [
+      "device_info",
+      "6"
+    ],
+    [
+      "shadow_doorbell",
+      "21"
+    ],
+    [
+      "cq_head_batching",
+      "146"
+    ],
+    [
+      "abi_validation",
+      "79"
+    ],
+    [
+      "data_integrity",
+      "590"
+    ]
+  ],
+  "counts": [
+    "  shadow_doorbell: 4 commands behind a stalled engine, each fetched after its doorbell\r",
+    "  cq_head_batching: 16 head writes for 256 single commands; 256 with 63 in flight, batch 63\r",
+    "  data_integrity: 84 copies verified (dst bytes, guard bytes, CRC32C)\r"
+  ],
+  "problems": [
+    "report: [    9.941971] DMA-API: kdc 0000:01:00.0: cacheline tracking EEXIST, overlapping mappings aren't supported",
+    "report: [    9.942848] WARNING: CPU: 0 PID: 83 at kernel/dma/debug.c:606 add_dma_entry+0x303/0x350",
+    "report: [    9.948347] Call Trace:",
+    "report: [    9.954031] Kernel panic - not syncing: kernel: panic_on_warn set ...",
+    "report: [    9.954810] Call Trace:"
+  ]
+}

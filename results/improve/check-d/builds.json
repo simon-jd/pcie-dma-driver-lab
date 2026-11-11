@@ -1,0 +1,124 @@
+{
+  "main": {
+    "name": "main",
+    "commit": "1a8de5cd16e1a32df0a4ad8c08d9eb6bd7e11f7d",
+    "subject": "Add check C, an independent rerun of the performance round from fresh clones",
+    "sources_differ_from_commit": false,
+    "source_sha256": {
+      "configs/kernel-perf.config": "e344b8e657b32e196eb615c574b2bd327f0bee5b775e06115d6b46a290b9b0fa",
+      "include/kdc_abi.h": "0fa3d724a5c60f956ff54a373905784d524de8d327f0f4deecc64be64917c9e2",
+      "include/kdc_hw.h": "e5e0ea48de0d2fbe75f3ebf385948f77ec6ab32b1d16710cc835455fd11630b7",
+      "kernel/Kconfig": "ebc84c113dbd7028e551aea52842038c50527be3c635c1289ee2c3c3c0d8b5bd",
+      "kernel/Makefile": "bc99083bea8e4b7267b9fbe0e0169d15f7a0231e562fc385e88593701a5178d7",
+      "kernel/kdc_cmd.c": "bd50e13a6736193a00f9a77dcad389bbdb511b18e1267c20752c0938f9d645e9",
+      "kernel/kdc_drv.h": "9c3706382947fedc0a168d916b39c769393d42540a5d8e597b8722e3aadc3380",
+      "kernel/kdc_fops.c": "51893a13e6ad7bb6fbf32528439ce67c9e080de6dceb42af2acdb7340b2c24d0",
+      "kernel/kdc_kunit.c": "85f207aec0b963cca7592ad54739d97be0148c50a647839243bfca366491100d",
+      "kernel/kdc_pci.c": "c14cb7e8a965b2fd2b6c1281b0ee949bb4e8be6464fdebd2d4e48ff74a397869",
+      "kernel/kdc_recover.c": "c1cb2aa1d1215a8d311b10374bbbf1e1df399b348be0a8cdd57adf5deb1153f3",
+      "kernel/kdc_ring.h": "07d8aeef5ad37eb3dead789d2b71052979494ecfe2540f5c093e98c7c51043b0",
+      "kernel/kdc_state.h": "50900be318eb65337a8d7131c9238ac4550b37a363b8d411b26addcb79f8be88",
+      "tests/kdc_bench.c": "1de004ded677832c1e03a198dd53122c354a1af5927de1e28223fecd12bb5369",
+      "tests/kdc_test.c": "4b551e6e4243f61da4006dc71fb581e4aed65c54e22cbe3f43df0d4e3c529e49",
+      "tests/qtest/kdc_qtest.py": "cdc533aa1e1e7644e6972478bbc2ff78b521979a247c8c49c808d4353ad7b579",
+      "qemu/kdc_dma.c": "968513b2c6a44982a2f62213bc05367d16c790c2e07fd82cfcec52ebc27591a4"
+    },
+    "files": {
+      "qemu-system-x86_64": "4a150f837d76a78fe28277b0ee37d3db8abee4a2b9dd60d4631b9d34ac04c708",
+      "bzImage": "01025f9f4b6cc634f215817da3437a51a99c911f305464f9834a404d8f3cc5eb",
+      "kdc_bench": "bcc66228b18e10c0b3c19b9aad981d0afccc4e0128211ffc1bbfc59c68f1293b"
+    }
+  },
+  "o3": {
+    "name": "o3",
+    "commit": "68094ba48a52b287e8a24b84c71a94591b479f45",
+    "subject": "Ring SQ doorbells through a shadow page, an event index and an ioeventfd",
+    "sources_differ_from_commit": false,
+    "source_sha256": {
+      "configs/kernel-perf.config": "e344b8e657b32e196eb615c574b2bd327f0bee5b775e06115d6b46a290b9b0fa",
+      "include/kdc_abi.h": "8b66c5fb73f4f5d1dfd359e99bcc03143e74468417678187cc6a56ec7cfa84e1",
+      "include/kdc_hw.h": "e5e0ea48de0d2fbe75f3ebf385948f77ec6ab32b1d16710cc835455fd11630b7",
+      "kernel/Kconfig": "ebc84c113dbd7028e551aea52842038c50527be3c635c1289ee2c3c3c0d8b5bd",
+      "kernel/Makefile": "bc99083bea8e4b7267b9fbe0e0169d15f7a0231e562fc385e88593701a5178d7",
+      "kernel/kdc_cmd.c": "2499e87f8b542fa78e817de1f5b84aff3c523f1a7cf4db088b3b2e8b5d1c1767",
+      "kernel/kdc_drv.h": "c2e894ae472514895997a832fce7b5a8e8642534362306dd6250a29825c94c5c",
+      "kernel/kdc_fops.c": "419d3cd0c7100de5de13c5d1891807fce2fc319b3d5eba3a050907f4ee8c3e9c",
+      "kernel/kdc_kunit.c": "2ed03d1760dc76e26eee31799278b53d05105504de6ca013dcc21c5f3fe15667",
+      "kernel/kdc_pci.c": "2c3162c42b1c69dae1955255966b152fcaa26db144ae190b1430488000d7cfd7",
+      "kernel/kdc_recover.c": "c1cb2aa1d1215a8d311b10374bbbf1e1df399b348be0a8cdd57adf5deb1153f3",
+      "kernel/kdc_ring.h": "07d8aeef5ad37eb3dead789d2b71052979494ecfe2540f5c093e98c7c51043b0",
+      "kernel/kdc_state.h": "b3ffb8af04bffca8accb2387b572d91abc834a85cf31856eed3e13665d9859b3",
+      "tests/kdc_bench.c": "f816b2ba1b2674dcb957954815e48ee23814e7cb47ea447a000c73700e2998d2",
+      "tests/kdc_test.c": "7ba06c6b4b80ac580d2aefa1cdd6b8a821db0d7e73b5b6995c5a6704aa8be04c",
+      "tests/qtest/kdc_qtest.py": "cdc533aa1e1e7644e6972478bbc2ff78b521979a247c8c49c808d4353ad7b579",
+      "qemu/kdc_dma.c": "968513b2c6a44982a2f62213bc05367d16c790c2e07fd82cfcec52ebc27591a4"
+    },
+    "files": {
+      "qemu-system-x86_64": "8e824a9e4c11494f3ed420b6260d7bb160403c6bb1d20e8dc96bbcc0c292772b",
+      "bzImage": "5092f34d473d4eb52b5e6ce697e9eb207834e75ad46c97b95a955ebc569c3401",
+      "kdc_bench": "f1360acdece367224f615407966883dd9947233761630e57e8e358f281c4e77f"
+    }
+  },
+  "r1c": {
+    "name": "r1c",
+    "commit": "eaf9e6019b32a9a12ce703dd4c5ad2100389c4ac",
+    "subject": "Move registered buffers out of the functions the other paths run",
+    "sources_differ_from_commit": false,
+    "source_sha256": {
+      "configs/kernel-perf.config": "e344b8e657b32e196eb615c574b2bd327f0bee5b775e06115d6b46a290b9b0fa",
+      "include/kdc_abi.h": "0fa3d724a5c60f956ff54a373905784d524de8d327f0f4deecc64be64917c9e2",
+      "include/kdc_hw.h": "e5e0ea48de0d2fbe75f3ebf385948f77ec6ab32b1d16710cc835455fd11630b7",
+      "kernel/Kconfig": "ebc84c113dbd7028e551aea52842038c50527be3c635c1289ee2c3c3c0d8b5bd",
+      "kernel/Makefile": "c9d94fe42ce517c3908657cecf7ef07e9a43a9a93cc457512b5eb037567663be",
+      "kernel/kdc_cmd.c": "ef5b5afeb67af44bd74b7290c37399d890ec5b944178a0147fb162c95b9a5012",
+      "kernel/kdc_drv.h": "4f85ddc1648d068952969b3e55315109f49469f9759612a954d3e0ef1aa23a87",
+      "kernel/kdc_fixed.c": "343db9a92875a29cb94ae6ba5aeec52769d94ac7438f732767880bdcc0443deb",
+      "kernel/kdc_fops.c": "c55237fb61eb9589c08cf935687c7a991dc95798c58f6322138cc0dccd1ad0a7",
+      "kernel/kdc_kunit.c": "28bf29bc85070abaf5bd10071612aebecd40eff858239ef9a39f7506e2b28f48",
+      "kernel/kdc_pci.c": "a71b5ffbe26d86cab0a397b5a87c5662b2c0d1684517e4f6b93359f0ec8ebd11",
+      "kernel/kdc_recover.c": "c1cb2aa1d1215a8d311b10374bbbf1e1df399b348be0a8cdd57adf5deb1153f3",
+      "kernel/kdc_ring.h": "07d8aeef5ad37eb3dead789d2b71052979494ecfe2540f5c093e98c7c51043b0",
+      "kernel/kdc_state.h": "a54bd0002ac77a55432aabfb2d44e0fb6ebffb7c12ad69fbbdda5de7787a0986",
+      "tests/kdc_bench.c": "1de004ded677832c1e03a198dd53122c354a1af5927de1e28223fecd12bb5369",
+      "tests/kdc_test.c": "4b551e6e4243f61da4006dc71fb581e4aed65c54e22cbe3f43df0d4e3c529e49",
+      "tests/qtest/kdc_qtest.py": "cdc533aa1e1e7644e6972478bbc2ff78b521979a247c8c49c808d4353ad7b579",
+      "qemu/kdc_dma.c": "968513b2c6a44982a2f62213bc05367d16c790c2e07fd82cfcec52ebc27591a4"
+    },
+    "files": {
+      "qemu-system-x86_64": "b2bef79eaebc9411982b7beebbc1b64598dd6e2252d692cf06e07c7ee4d2d22d",
+      "bzImage": "875bc5a1034669c8f752d127c3911f7ae662c103d8038665fca32025670c24fd",
+      "kdc_bench": "39c91e9e93cc7ff9fc05dc8c77b9d41b25cebd483aed1ed2f9dbabee2a7b1b25"
+    }
+  },
+  "improve": {
+    "name": "improve",
+    "commit": "7793fab8081d9d47573e67b899b987594da7aceb",
+    "subject": "Record the README commands from a fresh clone of improve",
+    "sources_differ_from_commit": false,
+    "source_sha256": {
+      "configs/kernel-perf.config": "e344b8e657b32e196eb615c574b2bd327f0bee5b775e06115d6b46a290b9b0fa",
+      "include/kdc_abi.h": "0fa3d724a5c60f956ff54a373905784d524de8d327f0f4deecc64be64917c9e2",
+      "include/kdc_hw.h": "c5e9abcdf31abd46c26e04487cc27a9af3783752ecf2437b6d30418f33f564fa",
+      "kernel/Kconfig": "ebc84c113dbd7028e551aea52842038c50527be3c635c1289ee2c3c3c0d8b5bd",
+      "kernel/Makefile": "c9d94fe42ce517c3908657cecf7ef07e9a43a9a93cc457512b5eb037567663be",
+      "kernel/kdc_cmd.c": "ef5b5afeb67af44bd74b7290c37399d890ec5b944178a0147fb162c95b9a5012",
+      "kernel/kdc_drv.h": "814fe9829b4e9c7fc5b02c3e65c64e6c94f69137333c5fa2e74ed815f0724c39",
+      "kernel/kdc_fixed.c": "c3179a77b5f98e999a88a8afe3b481277759683a9f4b28219f569a1496ce0744",
+      "kernel/kdc_fops.c": "805bf84b2329b26ac11fa014c48f602de691daa04f48562874175907fc90baf1",
+      "kernel/kdc_kunit.c": "28bf29bc85070abaf5bd10071612aebecd40eff858239ef9a39f7506e2b28f48",
+      "kernel/kdc_pci.c": "2a18de98cc564a17a87aa6ec3c59d842298ce9417e6dd81250d3d87b9650d692",
+      "kernel/kdc_recover.c": "c1cb2aa1d1215a8d311b10374bbbf1e1df399b348be0a8cdd57adf5deb1153f3",
+      "kernel/kdc_ring.h": "07d8aeef5ad37eb3dead789d2b71052979494ecfe2540f5c093e98c7c51043b0",
+      "kernel/kdc_state.h": "a54bd0002ac77a55432aabfb2d44e0fb6ebffb7c12ad69fbbdda5de7787a0986",
+      "tests/kdc_bench.c": "1de004ded677832c1e03a198dd53122c354a1af5927de1e28223fecd12bb5369",
+      "tests/kdc_test.c": "4117c203f20b5e870db10d31bc666a2833b200d34f07bc4f5470f49c21202d6e",
+      "tests/qtest/kdc_qtest.py": "75b75bce2b2bcf72f256bed1b8d0948b2218366afd2d140824609190eaa6fd51",
+      "qemu/kdc_dma.c": "eb64649003425e76caa3716b9289fa71502d944331e0df204a1a22db965c61e7"
+    },
+    "files": {
+      "qemu-system-x86_64": "990dad5003eb3a0b51e1e5b2261dc77bb7dfd33e68ec2dfef60db4dd85c2f8fb",
+      "bzImage": "17cb5eaebdab1a30d235fd77be44808e732af37bbbd8d2ae9b07edf9063cdbd7",
+      "kdc_bench": "c3a97cdd08d2b82188ba22ea424f617d011d310ca960fa3292287b8094489354"
+    }
+  }
+}

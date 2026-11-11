@@ -1,0 +1,7 @@
+qemu: /home/postedism/.cache/kl-check-d/improve/.cache/build/qemu-asan/qemu-system-x86_64
+QEMU emulator version 10.2.1
+==1592==WARNING: ASan doesn't fully support makecontext/swapcontext functions and may produce false positives in some cases!
+FAIL AssertionError: first and last completion of the pass interrupt, nothing in between pass_interrupts (0.1s)
+==1596==WARNING: ASan doesn't fully support makecontext/swapcontext functions and may produce false positives in some cases!
+FAIL AssertionError: first and last completion of the pass interrupt, nothing in between pass_interrupts_iothreads (0.2s)
+KDC_QTEST FAIL tests=2 failures=2

@@ -1,0 +1,325 @@
+{
+  "utc": "2026-11-11T00:23:42+00:00",
+  "accel": "tcg",
+  "iommu": true,
+  "qemu": "asan",
+  "kernel": "kasan",
+  "iothreads": 0,
+  "argv": [
+    "/home/postedism/.cache/kl-check-d/improve/.cache/build/qemu-asan/qemu-system-x86_64",
+    "-machine",
+    "q35",
+    "-accel",
+    "tcg",
+    "-cpu",
+    "max",
+    "-m",
+    "2048",
+    "-smp",
+    "4",
+    "-nodefaults",
+    "-display",
+    "none",
+    "-serial",
+    "stdio",
+    "-monitor",
+    "none",
+    "-no-reboot",
+    "-nic",
+    "none",
+    "-device",
+    "intel-iommu",
+    "-device",
+    "pcie-root-port,id=rp0,bus=pcie.0,chassis=1,addr=0x2",
+    "-device",
+    "kdc-dma,id=kdc0,bus=rp0,queues=4",
+    "-device",
+    "pcie-root-port,id=rp1,bus=pcie.0,chassis=2,addr=0x3",
+    "-device",
+    "kdc-dma,id=kdc1,bus=rp1,queues=2",
+    "-qmp",
+    "unix:/tmp/kdc-run-d20ifgt7/qmp.sock,server=on,wait=off",
+    "-kernel",
+    "/home/postedism/.cache/kl-check-d/improve/build/kernel/arch/x86/boot/bzImage",
+    "-initrd",
+    "/home/postedism/.cache/kl-check-d/improve/build/initramfs.cpio.gz",
+    "-append",
+    "console=ttyS0 panic=-1 oops=panic panic_on_warn=1 nokaslr printk.devkmsg=on intel_iommu=on iommu.strict=1"
+  ],
+  "qemu_version": "QEMU emulator version 10.2.1",
+  "mutant": null,
+  "kernel_sha256": "aa67665d67db237fd449ba69c1fd3bbb9f5124c256eedc7705cc1c999648ddc4",
+  "client_sha256": "48ac7ea3c6631d8d5f121b902670ef228b7458a1aabc922e90b6a1db2bc85b47",
+  "load_average": [
+    "5.00",
+    "4.86",
+    "5.01"
+  ],
+  "passed": true,
+  "host_actions": [
+    {
+      "t_seen": 979.96,
+      "request": "KDC_HOST device_del kdc1",
+      "result": "ok",
+      "t_done": 979.96
+    },
+    {
+      "t_seen": 983.14,
+      "request": "KDC_HOST device_add {\"driver\": \"kdc-dma\", \"id\": \"kdc1b\", \"bus\": \"rp1\", \"queues\": 2}",
+      "result": "ok after 10 retries",
+      "t_done": 985.16
+    },
+    {
+      "t_seen": 993.28,
+      "request": "KDC_HOST qom-set kdc1b fault-gone true",
+      "result": "ok",
+      "t_done": 993.28
+    },
+    {
+      "t_seen": 993.61,
+      "request": "KDC_HOST device_del kdc1b",
+      "result": "ok",
+      "t_done": 993.61
+    }
+  ],
+  "returncode": 0,
+  "qmp_events": [
+    "DEVICE_DELETED"
+  ],
+  "seconds": 1106.9,
+  "expectations": [
+    {
+      "tag": "timeout-abort",
+      "pattern": "timed out after",
+      "matched": 1
+    },
+    {
+      "tag": "timeout-reset",
+      "pattern": "timed out after|resetting controller",
+      "matched": 2
+    },
+    {
+      "tag": "escalation",
+      "pattern": "timed out after|resetting controller|controller reset failed",
+      "matched": 3
+    },
+    {
+      "tag": "failure",
+      "pattern": "timed out after|resetting controller|controller reset failed|recovery failed",
+      "matched": 4
+    },
+    {
+      "tag": "revive",
+      "pattern": "working again",
+      "matched": 1
+    },
+    {
+      "tag": "fatal",
+      "pattern": "device error|resetting controller",
+      "matched": 2
+    },
+    {
+      "tag": "lost",
+      "pattern": "timed out after|resetting controller|completion for unknown cid",
+      "matched": 5
+    },
+    {
+      "tag": "bounded",
+      "pattern": "resetting controller",
+      "matched": 2
+    },
+    {
+      "tag": "dmar-zerocopy",
+      "pattern": "DMAR: (\\[DMA Write|DRHD: handling fault)",
+      "matched": 2
+    },
+    {
+      "tag": "dmar-bounce",
+      "pattern": "DMAR: (\\[DMA Write|DRHD: handling fault)",
+      "matched": 2
+    },
+    {
+      "tag": "probe-failures",
+      "pattern": "probe with driver kdc failed|really_probe: driver_sysfs_add failed",
+      "matched": 93
+    },
+    {
+      "tag": "surprise",
+      "pattern": "device not responding",
+      "matched": 1
+    }
+  ],
+  "kmemleak_records": 0,
+  "kmemleak_driver_records": 0,
+  "cases": [
+    [
+      "device_info",
+      "92"
+    ],
+    [
+      "shadow_doorbell",
+      "374"
+    ],
+    [
+      "cq_head_batching",
+      "2449"
+    ],
+    [
+      "abi_validation",
+      "359"
+    ],
+    [
+      "data_integrity",
+      "9780"
+    ],
+    [
+      "fixed_buffers",
+      "3359"
+    ],
+    [
+      "nop_and_batch_read",
+      "72"
+    ],
+    [
+      "queue_selection",
+      "132"
+    ],
+    [
+      "batch_flush",
+      "314"
+    ],
+    [
+      "coalescing",
+      "443"
+    ],
+    [
+      "pinned_page_not_recycled",
+      "19021"
+    ],
+    [
+      "cancel_driver_owned",
+      "1989"
+    ],
+    [
+      "cancel_device_owned",
+      "368"
+    ],
+    [
+      "cancel_race",
+      "42697"
+    ],
+    [
+      "close_with_inflight",
+      "575"
+    ],
+    [
+      "reset_semantics",
+      "148"
+    ],
+    [
+      "quotas",
+      "932"
+    ],
+    [
+      "file_isolation",
+      "80"
+    ],
+    [
+      "concurrency",
+      "8277"
+    ],
+    [
+      "shared_file",
+      "2883"
+    ],
+    [
+      "ring_overflow_all_queues",
+      "6773"
+    ],
+    [
+      "second_device",
+      "213"
+    ],
+    [
+      "unbind_rebind",
+      "5370"
+    ],
+    [
+      "timeout_abort",
+      "412"
+    ],
+    [
+      "timeout_reset",
+      "1205"
+    ],
+    [
+      "timeout_escalation",
+      "2296"
+    ],
+    [
+      "recovery_failure",
+      "4071"
+    ],
+    [
+      "sysfs_reset_under_load",
+      "1735"
+    ],
+    [
+      "fatal_recovery",
+      "580"
+    ],
+    [
+      "lost_completions",
+      "2010"
+    ],
+    [
+      "bounded_close_and_reset",
+      "1563"
+    ],
+    [
+      "dma_fault",
+      "661"
+    ],
+    [
+      "dst_overlap",
+      "469"
+    ],
+    [
+      "adjacent_destinations",
+      "2541"
+    ],
+    [
+      "fault_injection",
+      "611623"
+    ],
+    [
+      "removal_orderly",
+      "13247"
+    ],
+    [
+      "removal_surprise",
+      "2990"
+    ]
+  ],
+  "counts": [
+    "  shadow_doorbell: 4 commands behind a stalled engine, each fetched after its doorbell\r",
+    "  cq_head_batching: 16 head writes for 256 single commands; 256 with 63 in flight, batch 63\r",
+    "  data_integrity: 84 copies verified (dst bytes, guard bytes, CRC32C)\r",
+    "  fixed_buffers: 40 copies through registered buffers verified\r",
+    "  coalescing: batch of 8 in 1 interrupt, single command waited 70 ms\r",
+    "  cancel_race: 27 cancelled before the doorbell, 0 aborted by the device, 1473 completed first; 40 more aborted while held device-owned\r",
+    "  concurrency: 4 threads x 250 verified copies, own files\r",
+    "  timeout_abort: answered after 283 ms\r",
+    "  timeout_reset: ended after 924 ms, 1 command reissued\r",
+    "  sysfs_reset_under_load: 3 resets, 83 verified copies, 19 reissued\r",
+    "  fatal_recovery: 16 commands completed, 16 reissued after the reset\r",
+    "  bounded_close_and_reset: close returned after 677 ms, reset after 597 ms\r",
+    "  dma_fault: 2 faulting copies ended with -EIO (IOMMU fault reported)\r",
+    "  dst_overlap: 7 overlapping submits refused, 6 adjacent ones completed\r",
+    "  adjacent_destinations: 96 small and 6 large adjacent copies in flight together\r",
+    "  fault_injection: 28 submit and 399 probe allocation failures, all unwound\r",
+    "  removal_orderly: 99 commands from 3 threads, 51 completed, 48 ended with ENODEV, each once; 4 held in the device, each ended with ENODEV\r",
+    "  removal_surprise: 96 commands from 3 threads, 90 completed, 6 ended with ENODEV, each once; 4 held in the device, each ended with ENODEV\r"
+  ],
+  "problems": []
+}

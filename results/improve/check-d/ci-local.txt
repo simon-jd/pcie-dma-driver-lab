@@ -1,0 +1,11 @@
+commit 7793fab Record the README commands from a fresh clone of improve
+STEP build_qemu 207 s
+STEP qtest_asan 25 s
+STEP qtest_release 22 s
+STEP fetch_kernel 10 s
+STEP build_kernel 103 s
+STEP tcg_guest 69 s
+TOTAL 436 s on CPUs 12-15 (32 online, 13th Gen Intel(R) Core(TM) i9-13900K)
+KDC_QTEST PASS tests=42 failures=0
+KDC_QTEST PASS tests=42 failures=0
+PASS tcg iommu=True qemu=release kernel=kasan iothreads=0 68.5s, 37 client cases; logs in /home/postedism/.cache/kl-check-d/out/ci-local/repo/logs/tcg-iommu

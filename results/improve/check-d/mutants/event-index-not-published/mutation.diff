@@ -1,0 +1,4 @@
+--- kdc_dma.c
+-        if (kdc_dma_write(s, q->db_addr + offsetof(struct kdc_hw_dbbuf, sq_event),
+                          &ev, sizeof(ev)) != MEMTX_OK) {
++        if (0) { /* deliberate bug: the event index is never published */

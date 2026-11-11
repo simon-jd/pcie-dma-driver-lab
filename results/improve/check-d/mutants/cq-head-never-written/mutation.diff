@@ -1,0 +1,4 @@
+--- kdc_pci.c
+-		writel(q->cq_head, q->cq_db);
+		q->cq_head_db = q->cq_head;
++		q->cq_head_db = q->cq_head; /* deliberate bug: the head never reaches the device */

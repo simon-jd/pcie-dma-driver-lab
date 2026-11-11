@@ -1,0 +1,6 @@
+--- kdc_dma.c
+-    if (q->irq_pending && !kdc_coalescing(q)) {
+        kdc_queue_fire(q);
+    }
+    q->pass_fired = false;
++    q->pass_fired = false; /* deliberate bug: the rest of the pass is never announced */

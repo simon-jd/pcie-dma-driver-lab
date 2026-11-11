@@ -1,0 +1,21 @@
+{
+  "mutant": "remove-frees-queues",
+  "file": "build/linux-6.12.41/drivers/misc/kdc/kdc_pci.c",
+  "runs": [
+    {
+      "config": "tcg-iommu",
+      "failed": true,
+      "first_failed_assertion": null,
+      "allowed": [],
+      "evidence_required": [
+        "BUG: KASAN: \\S*use-after-free in kdc_"
+      ],
+      "evidence_seen": [
+        "BUG: KASAN: \\S*use-after-free in kdc_"
+      ],
+      "caught": true
+    }
+  ],
+  "caught": true,
+  "restored_build_ok": true
+}

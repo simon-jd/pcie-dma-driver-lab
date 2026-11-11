@@ -1,0 +1,18 @@
+reps 1
+# A/B plan for the performance round: run with --builds A,B[,C] --rounds 7, so that every arm
+# gets one window per boot and the builds alternate boot by boot (bench_compare.py pairs them).
+# The first arm only warms the guest up after boot; it is not compared.
+warmup               mode=nop qd=1 ms=300
+nop-qd1              mode=nop qd=1
+zc4k-qd1             mode=zc size=4096 qd=1
+bounce4k-qd1         mode=bounce size=4096 qd=1
+zc64k-qd1            mode=zc size=65536 qd=1
+zc4k-qd4             mode=zc size=4096 qd=4
+zc4k-qd32            mode=zc size=4096 qd=32
+zc4k-qd8-batch       mode=zc size=4096 qd=8 batch=1
+zc4k-qd32-batch      mode=zc size=4096 qd=32 batch=1
+zc4k-qd32-c16        mode=zc size=4096 qd=32 coalesce=3276816
+zc4k-t3-qd8          mode=zc size=4096 threads=3 qd=8
+zc4k-t3-qd8-batch    mode=zc size=4096 threads=3 qd=8 batch=1
+nop-t3-qd8-sharedfile mode=nop threads=3 qd=8 files=shared
+zc4k-t3-qd8-sharedfile mode=zc size=4096 threads=3 qd=8 files=shared

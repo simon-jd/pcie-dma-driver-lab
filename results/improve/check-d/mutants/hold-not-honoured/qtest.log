@@ -1,0 +1,7 @@
+qemu: /home/postedism/.cache/kl-check-d/improve/.cache/build/qemu-asan/qemu-system-x86_64
+QEMU emulator version 10.2.1
+==10040==WARNING: ASan doesn't fully support makecontext/swapcontext functions and may produce false positives in some cases!
+FAIL AssertionError: held commands are not serviced, the next one is [{'result': 2244463932, 'bytes': 64, 'sq_head': 3, 'sqid': 1, 'cid': 1, 'code': 0}, {'result': 1865911427, 'bytes': 64, 'sq_head': 3, 'sqid': 1, 'cid': 2, 'code': 0}, {'result': 425853433, 'bytes': 64, 'sq_head': 3, 'sqid': 1, 'cid': 3, 'code': 0}] fault_hold (0.1s)
+==10053==WARNING: ASan doesn't fully support makecontext/swapcontext functions and may produce false positives in some cases!
+FAIL AssertionError: held commands are not serviced, the next one is [{'result': 2625708561, 'bytes': 64, 'sq_head': 3, 'sqid': 1, 'cid': 1, 'code': 0}, {'result': 2983402562, 'bytes': 64, 'sq_head': 3, 'sqid': 1, 'cid': 2, 'code': 0}, {'result': 2647509954, 'bytes': 64, 'sq_head': 3, 'sqid': 1, 'cid': 3, 'code': 0}] fault_hold_iothreads (0.2s)
+KDC_QTEST FAIL tests=2 failures=2

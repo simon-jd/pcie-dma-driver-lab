@@ -1,0 +1,89 @@
+{
+  "utc": "2026-11-11T00:45:22+00:00",
+  "accel": "tcg",
+  "iommu": false,
+  "qemu": "release",
+  "kernel": "kasan",
+  "iothreads": 0,
+  "argv": [
+    "/home/postedism/.cache/kl-check-d/improve/.cache/build/qemu/qemu-system-x86_64",
+    "-machine",
+    "q35",
+    "-accel",
+    "tcg",
+    "-cpu",
+    "max",
+    "-m",
+    "2048",
+    "-smp",
+    "4",
+    "-nodefaults",
+    "-display",
+    "none",
+    "-serial",
+    "stdio",
+    "-monitor",
+    "none",
+    "-no-reboot",
+    "-nic",
+    "none",
+    "-device",
+    "pcie-root-port,id=rp0,bus=pcie.0,chassis=1,addr=0x2",
+    "-device",
+    "kdc-dma,id=kdc0,bus=rp0,queues=4",
+    "-device",
+    "pcie-root-port,id=rp1,bus=pcie.0,chassis=2,addr=0x3",
+    "-device",
+    "kdc-dma,id=kdc1,bus=rp1,queues=2",
+    "-qmp",
+    "unix:/tmp/kdc-run-eox1x1os/qmp.sock,server=on,wait=off",
+    "-kernel",
+    "/home/postedism/.cache/kl-check-d/improve/build/kernel/arch/x86/boot/bzImage",
+    "-initrd",
+    "/home/postedism/.cache/kl-check-d/improve/build/initramfs.cpio.gz",
+    "-append",
+    "console=ttyS0 panic=-1 oops=panic panic_on_warn=1 nokaslr printk.devkmsg=on"
+  ],
+  "qemu_version": "QEMU emulator version 10.2.1",
+  "mutant": "unmap-before-completion",
+  "kernel_sha256": "2ec04e0c68d9652c17ca8b3ed4e27014b84620ed3df706ad8d73e07807cf2d7e",
+  "client_sha256": "48ac7ea3c6631d8d5f121b902670ef228b7458a1aabc922e90b6a1db2bc85b47",
+  "load_average": [
+    "1.71",
+    "2.61",
+    "3.38"
+  ],
+  "passed": false,
+  "host_actions": [],
+  "returncode": 0,
+  "seconds": 23.0,
+  "expectations": [],
+  "kmemleak_records": 0,
+  "kmemleak_driver_records": 0,
+  "cases": [
+    [
+      "device_info",
+      "1"
+    ],
+    [
+      "shadow_doorbell",
+      "14"
+    ],
+    [
+      "cq_head_batching",
+      "86"
+    ],
+    [
+      "abi_validation",
+      "71"
+    ]
+  ],
+  "counts": [
+    "  shadow_doorbell: 4 commands behind a stalled engine, each fetched after its doorbell\r",
+    "  cq_head_batching: 16 head writes for 256 single commands; 256 with 63 in flight, batch 63\r"
+  ],
+  "problems": [
+    "report: [    7.102818] kdc_test: FAIL check_copy:598: memcmp(d_at, s_at, len) == 0 (errno=14 Bad address)",
+    "report: [   21.914890] kdc_init: KDC_GUEST_FAILURE exit=1"
+  ]
+}

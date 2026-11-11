@@ -1,0 +1,7 @@
+qemu: /home/postedism/.cache/kl-check-d/improve/.cache/build/qemu-asan/qemu-system-x86_64
+QEMU emulator version 10.2.1
+==9741==WARNING: ASan doesn't fully support makecontext/swapcontext functions and may produce false positives in some cases!
+FAIL AssertionError: event index published after the pass shadow_doorbell (0.1s)
+==9745==WARNING: ASan doesn't fully support makecontext/swapcontext functions and may produce false positives in some cases!
+FAIL AssertionError: event index published after the pass shadow_doorbell_iothreads (0.2s)
+KDC_QTEST FAIL tests=2 failures=2

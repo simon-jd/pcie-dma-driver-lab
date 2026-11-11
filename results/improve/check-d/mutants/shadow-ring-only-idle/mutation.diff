@@ -1,0 +1,5 @@
+--- kdc_pci.c
+-			ring = kdc_need_event(le32_to_cpu(READ_ONCE(q->db->sq_event)),
+					      q->sq_tail, old, q->depth);
++			/* deliberate bug: a busy queue is assumed to be polled */
+			ring = q->outstanding == kdc_ring_used(q->sq_tail, old, q->depth);

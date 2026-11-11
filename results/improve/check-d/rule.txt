@@ -1,0 +1,15 @@
+Check D: how a claim is judged against one session (written before session 1).
+1. A stated ratio of 1.03x or more, or 0.97x or less, holds if the median ratio over the 7 pairs
+   is on the same side of 1 with at least 6 of 7 pairs on that side, and is within 5% of the stated
+   ratio (mine/stated between 0.95 and 1.05). Same side but further away: "direction holds, size differs".
+2. A stated ratio between 0.97x and 1.03x (ties, "unchanged", "within 1%", small gains or losses)
+   holds if the median is within 0.02 of the stated value; a stated gain (1.01x or more) must also
+   have a median above 1.000, a stated loss (0.99x or less) a median below 1.000.
+3. A stated range ("0.98 to 1.01", "1.15-1.21x") holds if every arm it covers falls inside the
+   range widened by 0.02 at each end.
+4. A claim holds only if it holds in both sessions.
+5. A loss is missing from the text if an arm of the final code against main (main loop, one
+   IOThread, or the fixed plan) has a median below 0.985 with at most 2 of 7 pairs won in both
+   sessions, and the text does not name it.
+Absolute rates (k cmds/s) are facts about the round's session; they are checked against the
+round's files, and this check's values are reported next to them, not judged.
